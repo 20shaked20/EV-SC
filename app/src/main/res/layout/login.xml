@@ -10,7 +10,7 @@
         android:layout_height="match_parent">
 
         <EditText
-            android:id="@+id/username_enter"
+            android:id="@+id/username_enter_login"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:ems="10"
@@ -23,7 +23,7 @@
             app:layout_constraintVertical_bias="0.336" />
 
         <TextView
-            android:id="@+id/login_view"
+            android:id="@+id/title_login"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="#FFFFFF"
@@ -36,7 +36,7 @@
             app:layout_constraintVertical_bias="0.126" />
 
         <TextView
-            android:id="@+id/username_view"
+            android:id="@+id/username_view_login"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text=" Username"
@@ -49,7 +49,7 @@
             app:layout_constraintVertical_bias="0.265" />
 
         <EditText
-            android:id="@+id/password_enter"
+            android:id="@+id/password_enter_login"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:ems="10"
@@ -61,7 +61,7 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/password_view"
+            android:id="@+id/password_view_login"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text=" Password"
@@ -86,7 +86,7 @@
             app:layout_constraintVertical_bias="0.619" />
 
         <Button
-            android:id="@+id/register_button"
+            android:id="@+id/register_button_login"
             android:layout_width="100dp"
             android:layout_height="35dp"
             android:text="Register"

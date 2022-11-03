@@ -1,16 +1,18 @@
 plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
+    // Add the Google services Gradle plugin
+    id 'com.google.gms.google-services'/* added to support firebase */
 }
 
 android {
     namespace 'com.example.ev_sc'
-    compileSdk 32
+    compileSdk 33
 
     defaultConfig {
         applicationId "com.example.ev_sc"
         minSdk 21
-        targetSdk 32
+        targetSdk 33
         versionCode 1
         versionName "1.0"
 
@@ -48,18 +50,27 @@ android {
 
 dependencies {
 
-    implementation 'androidx.appcompat:appcompat:1.4.1'
-    implementation 'com.google.android.material:material:1.5.0'
-    implementation 'androidx.core:core-ktx:1.7.0'
-    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.3.1'
-    implementation 'androidx.activity:activity-compose:1.3.1'
+    implementation 'androidx.appcompat:appcompat:1.5.1'
+    implementation 'com.google.android.material:material:1.7.0'
+    implementation 'androidx.core:core-ktx:1.9.0'
+    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.5.1'
+    implementation 'androidx.activity:activity-compose:1.6.1'
+    //noinspection GradleDependency
     implementation "androidx.compose.ui:ui:$compose_ui_version"
+    //noinspection GradleDependency
     implementation "androidx.compose.ui:ui-tooling-preview:$compose_ui_version"
-    implementation 'androidx.compose.material:material:1.1.1'
+    implementation 'androidx.compose.material:material:1.3.0'
+
+    implementation platform('com.google.firebase:firebase-bom:31.0.2')/* added to support firebase */
+    implementation 'com.google.firebase:firebase-analytics'/* added to support firebase */
+
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
+    //noinspection GradleDependency
     androidTestImplementation "androidx.compose.ui:ui-test-junit4:$compose_ui_version"
+    //noinspection GradleDependency
     debugImplementation "androidx.compose.ui:ui-tooling:$compose_ui_version"
+    //noinspection GradleDependency
     debugImplementation "androidx.compose.ui:ui-test-manifest:$compose_ui_version"
 }
