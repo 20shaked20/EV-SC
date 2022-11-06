@@ -1,6 +1,7 @@
 package com.example.ev_sc;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
@@ -37,7 +38,15 @@ public class LoginScreen extends Activity {
         username_view_login = (TextView) (findViewById(R.id.username_view_login));
         password_view_login = (TextView) (findViewById(R.id.password_view_login));
 
-
+        /** adding the listener click to move from Login screen to Register screen.**/
+        register_button_login.setOnClickListener(new View.OnClickListener()
+        {
+            public void onClick(View view)
+            {
+                Intent login_to_register = new Intent(view.getContext(), RegisterScreen.class);
+                startActivityForResult(login_to_register, 0);
+            }
+        });
     }
 
 

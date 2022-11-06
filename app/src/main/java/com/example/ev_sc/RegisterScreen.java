@@ -1,14 +1,23 @@
 package com.example.ev_sc;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.View;
 
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
 
 public class RegisterScreen extends Activity {
 
@@ -34,27 +43,87 @@ public class RegisterScreen extends Activity {
 
     Button register_button;
 
+    FirebaseAuth fAuth;
+
     @Override
-    protected void onCreate(Bundle Instance)
-    {
+    protected void onCreate(Bundle Instance) {
         super.onCreate(Instance);
         setContentView(R.layout.register);
 
 
         title_register = (TextView) (findViewById(R.id.title_register));
         First_name_register = (TextView) (findViewById(R.id.First_name_register));
-        line_first_name_register =(EditText)(findViewById(R.id.line_first_name_register));
+        line_first_name_register = (EditText) (findViewById(R.id.line_first_name_register));
         last_name_register = (TextView) (findViewById(R.id.last_name_register));
-        line_last_name_register =(EditText)(findViewById(R.id.line_last_name_register));
+        line_last_name_register = (EditText) (findViewById(R.id.line_last_name_register));
         email_register = (TextView) (findViewById(R.id.email_register));
-        line_email_register =(EditText)(findViewById(R.id.line_email_register));
+        line_email_register = (EditText) (findViewById(R.id.line_email_register));
         username_register = (TextView) (findViewById(R.id.username_register));
-        line_uasername_register =(EditText)(findViewById(R.id.line_uasername_register));
+        line_uasername_register = (EditText) (findViewById(R.id.line_uasername_register));
         enter_password_register = (TextView) (findViewById(R.id.enter_password_register));
-        line_enter_password_register =(EditText)(findViewById(R.id.line_enter_password_register));
+        line_enter_password_register = (EditText) (findViewById(R.id.line_enter_password_register));
         confirm_password_register_ = (TextView) (findViewById(R.id.confirm_password_register_));
-        line_confirm_password_register =(EditText)(findViewById(R.id.line_confirm_password_register));
+        line_confirm_password_register = (EditText) (findViewById(R.id.line_confirm_password_register));
 
-        register_button = (Button)findViewById(R.id.register_button);
+        register_button = (Button) findViewById(R.id.register_button);
+
+        fAuth = FirebaseAuth.getInstance();
+
+        if(fAuth.getCurrentUser() != null)
+        {
+            startActivity(new Intent(getApplicationContext(),LoginScreen.class));
+            finish();
+        }
+
+        /** adding the listener click to move from Register screen to login screen after registration.*/
+        register_button.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View view) {
+                String email = line_email_register.getText().toString().trim();
+                String password = line_enter_password_register.getText().toString().trim();
+                String confirm_password = line_confirm_password_register.getText().toString().trim();
+
+                if(TextUtils.isEmpty(email))
+                {
+                    line_email_register.setError("Email Is Required");
+                    return;
+                }
+                if(TextUtils.isEmpty(password))
+                {
+                    line_enter_password_register.setError("Password Is Required");
+                    return;
+                }
+                if(TextUtils.isEmpty(confirm_password))
+                {
+                    line_confirm_password_register.setError("Confirm Password Is Required");
+                    return;
+                }
+                if(!(password.equals(confirm_password)))
+                {
+                    line_confirm_password_register.setError("Passwords are not identical");
+                }
+                /*TODO: add more exceptions*/
+
+                // register user in firebase //
+
+                fAuth.createUserWithEmailAndPassword(email,password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if(task.isSuccessful())
+                        {
+                            Toast.makeText(RegisterScreen.this, "User Created.", Toast.LENGTH_SHORT).show();
+                            startActivity(new Intent (getApplicationContext(),LoginScreen.class));
+
+                        }
+                        else
+                        {
+                            Toast.makeText(RegisterScreen.this, "Error ! "+ task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+
+                Intent register_to_login = new Intent(view.getContext(), LoginScreen.class);
+                startActivityForResult(register_to_login, 0);
+            }
+        });
     }
 }
