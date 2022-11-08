@@ -1,4 +1,4 @@
-package Register;
+package com.example.ev_sc.Register;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -13,13 +13,12 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
+import com.example.ev_sc.Login.LoginScreen;
 import com.example.ev_sc.R;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-
-import Login.LoginScreen;
 
 public class RegisterScreen extends Activity {
 
@@ -102,11 +101,12 @@ public class RegisterScreen extends Activity {
                 if(!(password.equals(confirm_password)))
                 {
                     line_confirm_password_register.setError("Passwords are not identical");
+                    return;
                 }
                 /*TODO: add more exceptions*/
 
                 // register user in firebase //
-
+                System.out.println("Email:" + email+ ", Password:"+ password);
                 fAuth.createUserWithEmailAndPassword(email,password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {

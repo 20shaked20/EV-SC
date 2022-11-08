@@ -1,4 +1,4 @@
-package Home;
+package com.example.ev_sc.Home;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -7,7 +7,7 @@ import android.view.View;
 
 import android.widget.Button;
 
-import Login.LoginScreen;
+import com.example.ev_sc.Login.LoginScreen;
 import com.example.ev_sc.R;
 import com.google.firebase.auth.FirebaseAuth;
 

@@ -1,4 +1,4 @@
-package Profile;
+package com.example.ev_sc.Profile;
 
 public class UserProfileScreen {
 }
