@@ -7,6 +7,5 @@ public interface PersonObj {
     public int getPermissions();
     public void setFirst_name(String first_name);
     public void setLast_name(String last_name);
-    public void setPermissions(int permissions);
 
 }
