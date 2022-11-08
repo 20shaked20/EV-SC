@@ -1,8 +1,7 @@
-package com.example.ev_sc;
+package Register;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
@@ -14,10 +13,13 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
+import com.example.ev_sc.R;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+
+import Login.LoginScreen;
 
 public class RegisterScreen extends Activity {
 
@@ -69,11 +71,11 @@ public class RegisterScreen extends Activity {
 
         fAuth = FirebaseAuth.getInstance();
 
-        if(fAuth.getCurrentUser() != null)
-        {
-            startActivity(new Intent(getApplicationContext(),LoginScreen.class));
-            finish();
-        }
+//        if(fAuth.getCurrentUser() != null)
+//        {
+//            startActivity(new Intent(getApplicationContext(),LoginScreen.class));
+//            finish();
+//        }
 
         /** adding the listener click to move from Register screen to login screen after registration.*/
         register_button.setOnClickListener(new View.OnClickListener() {
@@ -111,7 +113,7 @@ public class RegisterScreen extends Activity {
                         if(task.isSuccessful())
                         {
                             Toast.makeText(RegisterScreen.this, "User Created.", Toast.LENGTH_SHORT).show();
-                            startActivity(new Intent (getApplicationContext(),LoginScreen.class));
+                            startActivity(new Intent (getApplicationContext(), LoginScreen.class));
 
                         }
                         else
