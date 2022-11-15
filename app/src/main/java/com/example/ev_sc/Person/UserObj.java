@@ -6,12 +6,14 @@ public class UserObj implements PersonObj{
     public String username;
     public int Permissions =0;
     public String phone_number;
+    public String UID;
 
-    public UserObj(String first_name, String last_name, String username,String phone_number){
+    public UserObj(String first_name, String last_name, String username,String phone_number, String UID){
         this.Last_name=last_name;
         this.First_name=first_name;
         this.username=username;
         this.phone_number=phone_number;
+        this.UID = UID;
     }
 
     @Override
@@ -22,6 +24,11 @@ public class UserObj implements PersonObj{
     @Override
     public String getLast_name() {
         return Last_name;
+    }
+
+    @Override
+    public String getID() {
+        return this.UID;
     }
 
     @Override
