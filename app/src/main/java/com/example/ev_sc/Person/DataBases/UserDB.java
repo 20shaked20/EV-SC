@@ -17,10 +17,9 @@ public class UserDB {
 
     FirebaseFirestore fStore = FirebaseFirestore.getInstance();
 
-    public void AddUserToDatabase(UserObj User)
-    {
+    public void AddUserToDatabase(UserObj User) {
         DocumentReference documentReference = fStore.collection("users").document(User.getID());
-        Map<String,Object> user = new HashMap<>();
+        Map<String, Object> user = new HashMap<>();
 
         user.put("FirstName", User.getFirst_name());
         user.put("LastName", User.getLast_name());
@@ -31,7 +30,7 @@ public class UserDB {
         documentReference.set(user).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void unused) {
-                Log.d(TAG, "onSuccess: user Profile is created for "+User.getID());
+                Log.d(TAG, "onSuccess: user Profile is created for " + User.getID());
             }
         });
 
