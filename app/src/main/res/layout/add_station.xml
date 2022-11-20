@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:id="@+id/imageView88"
+        android:layout_width="96dp"
+        android:layout_height="79dp"
+        app:srcCompat="@android:drawable/ic_dialog_map"
+        tools:layout_editor_absoluteX="19dp"
+        tools:layout_editor_absoluteY="35dp" />
+
+    <TextView
+        android:id="@+id/add_grade_of_station3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text=" add grade"
+        tools:layout_editor_absoluteX="118dp"
+        tools:layout_editor_absoluteY="406dp" />
+
+    <TextView
+        android:id="@+id/add_number_of_position3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text=" add Number of position"
+        tools:layout_editor_absoluteX="119dp"
+        tools:layout_editor_absoluteY="330dp" />
+
+    <TextView
+        android:id="@+id/add_Addres3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text=" add Addres"
+        tools:layout_editor_absoluteX="123dp"
+        tools:layout_editor_absoluteY="242dp" />
+
+    <TextView
+        android:id="@+id/add_name3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="add name"
+        tools:layout_editor_absoluteX="123dp"
+        tools:layout_editor_absoluteY="167dp" />
+
+    <ImageView
+        android:id="@+id/imageView87"
+        android:layout_width="47dp"
+        android:layout_height="40dp"
+        app:srcCompat="@android:drawable/ic_menu_edit"
+        tools:layout_editor_absoluteX="36dp"
+        tools:layout_editor_absoluteY="396dp" />
+
+    <ImageView
+        android:id="@+id/imageView86"
+        android:layout_width="47dp"
+        android:layout_height="40dp"
+        app:srcCompat="@android:drawable/ic_menu_edit"
+        tools:layout_editor_absoluteX="36dp"
+        tools:layout_editor_absoluteY="309dp" />
+
+    <ImageView
+        android:id="@+id/imageView83"
+        android:layout_width="47dp"
+        android:layout_height="40dp"
+        app:srcCompat="@android:drawable/ic_menu_edit"
+        tools:layout_editor_absoluteX="36dp"
+        tools:layout_editor_absoluteY="231dp" />
+
+    <ImageView
+        android:id="@+id/imageView79"
+        android:layout_width="47dp"
+        android:layout_height="40dp"
+        app:srcCompat="@android:drawable/ic_menu_edit"
+        tools:layout_editor_absoluteX="36dp"
+        tools:layout_editor_absoluteY="154dp" />
+
+    <Button
+        android:id="@+id/button3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="add station"
+        tools:layout_editor_absoluteX="150dp"
+        tools:layout_editor_absoluteY="498dp" />
+
+    <TextView
+        android:id="@+id/titel_add_station"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="add new station"
+        tools:layout_editor_absoluteX="160dp"
+        tools:layout_editor_absoluteY="81dp" />
+</androidx.constraintlayout.widget.ConstraintLayout>
