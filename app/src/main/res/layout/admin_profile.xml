@@ -6,18 +6,42 @@
     android:layout_height="match_parent">
 
     <ImageView
-        android:id="@+id/imageView75"
-        tools:layout_editor_absoluteX="155dp"
-        tools:layout_editor_absoluteY="71dp"
-        tools:srcCompat="@tools:sample/avatars"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:id="@+id/imageView77"
+        android:layout_width="96dp"
+        android:layout_height="79dp"
+        app:srcCompat="@android:drawable/ic_dialog_map"
+        tools:layout_editor_absoluteX="16dp"
+        tools:layout_editor_absoluteY="28dp" />
 
     <ImageView
         android:id="@+id/imageView76"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        tools:layout_editor_absoluteX="149dp"
-        tools:layout_editor_absoluteY="72dp"
+        tools:layout_editor_absoluteX="141dp"
+        tools:layout_editor_absoluteY="76dp"
         tools:srcCompat="@tools:sample/avatars" />
+
+    <TextView
+        android:id="@+id/titel_admin"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Admin name"
+        tools:layout_editor_absoluteX="155dp"
+        tools:layout_editor_absoluteY="232dp" />
+
+    <Button
+        android:id="@+id/add_station_button2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="add station"
+        tools:layout_editor_absoluteX="48dp"
+        tools:layout_editor_absoluteY="341dp" />
+
+    <Button
+        android:id="@+id/edit_station_button4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="edit station"
+        tools:layout_editor_absoluteX="48dp"
+        tools:layout_editor_absoluteY="438dp" />
 </androidx.constraintlayout.widget.ConstraintLayout>
