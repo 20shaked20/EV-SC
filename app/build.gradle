@@ -67,6 +67,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-firestore:24.4.0'/* added to support firebase */
 
     implementation 'com.google.android.gms:play-services-maps:18.1.0'
+    implementation 'com.google.android.gms:play-services-location:21.0.1' /* added to support location services */
 
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.4'
