@@ -1,12 +1,12 @@
 package com.example.ev_sc.Person;
 
 public class UserObj implements PersonObj {
-    public String First_name;
-    public String Last_name;
-    public String username;
-    public int Permissions = 0;
-    public String phone_number;
-    public String UID;
+    private String First_name;
+    private String Last_name;
+    private String username;
+    private int Permissions = 0;
+    private String phone_number;
+    private String UID;
 
     public UserObj(String first_name, String last_name, String username, String phone_number, String UID) {
         this.Last_name = last_name;
