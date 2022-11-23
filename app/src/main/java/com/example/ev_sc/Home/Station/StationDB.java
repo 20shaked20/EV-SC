@@ -27,7 +27,7 @@ public class StationDB {
         documentReference.set(station).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void unused) {
-                Log.d(TAG, "onSuccess: user Profile is created for " + Station.getID());
+                Log.d(TAG, "onSuccess: Station Profile is created for " + Station.getID());
             }
         });
 
