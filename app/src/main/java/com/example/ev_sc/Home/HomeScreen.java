@@ -27,6 +27,32 @@ import com.google.android.gms.tasks.Task;
 
 public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback {
 
+    /**
+     * method to set the map.
+     *
+     * @param googleMap google map object
+     */
+    @Override
+    public void onMapReady(@NonNull GoogleMap googleMap) {
+        Toast.makeText(this, "Map is ready", Toast.LENGTH_SHORT).show();
+        Log.d(TAG, "Map is ready");
+        mMap = googleMap;
+
+        if (mLocationPermissionGranted) {
+            getDeviceLocation();
+
+            if(ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+            != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this,
+                    Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)
+            {
+                return;
+            }
+
+            mMap.setMyLocationEnabled(true);
+            mMap.getUiSettings().setMyLocationButtonEnabled(false);
+        }
+    }
+
     private static final String TAG = "MapActivity";
 
     private static final String FINE_LOCATION = Manifest.permission.ACCESS_FINE_LOCATION;
@@ -58,7 +84,8 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
 
         try {
             if (mLocationPermissionGranted) {
-                Task<Location> location = mFusedLocationProviderClient.getLastLocation();
+
+                final Task<Location> location = mFusedLocationProviderClient.getLastLocation();
                 location.addOnCompleteListener(new OnCompleteListener() {
                     @Override
                     public void onComplete(@NonNull Task task) {
@@ -94,28 +121,12 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
     }
 
     /**
-     * method to set the map.
-     *
-     * @param googleMap google map object
+     * Method to initialize the map on the screen
      */
-    @Override
-    public void onMapReady(@NonNull GoogleMap googleMap) {
-        Log.d(TAG, "Map is ready");
-
-        Toast.makeText(this, "Map is ready", Toast.LENGTH_SHORT).show();
-        mMap = googleMap;
-
-        if (mLocationPermissionGranted) {
-            getDeviceLocation();
-
-        }
-    }
-
-
     private void initMap() {
         Log.d(TAG, "initMap: initializing map...");
-
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map_home_screen);
+
         mapFragment.getMapAsync(HomeScreen.this);
     }
 
@@ -124,7 +135,6 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
      */
     private void getLocationPermission() {
         Log.d(TAG, "getLocationPermission: getting location...");
-
         String[] permissions = {Manifest.permission.ACCESS_FINE_LOCATION,
                 Manifest.permission.ACCESS_COARSE_LOCATION};
 
@@ -147,7 +157,6 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         Log.d(TAG, "onRequestPermissionResult: Called.");
-
         mLocationPermissionGranted = false;
 
         switch (requestCode) {

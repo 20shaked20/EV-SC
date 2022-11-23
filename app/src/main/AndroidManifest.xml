@@ -25,7 +25,8 @@
         <activity
             android:name=".Login.LoginScreen"
             android:exported="true"
-            android:theme="@style/Theme.EVSC">
+            android:theme="@style/Theme.EVSC"
+            android:launchMode="singleInstance">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
