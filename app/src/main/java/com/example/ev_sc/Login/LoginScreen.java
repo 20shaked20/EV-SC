@@ -14,6 +14,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 
 import com.example.ev_sc.Home.HomeScreen;
+import com.example.ev_sc.Home.Station.AddStation;
 import com.example.ev_sc.R;
 
 import com.example.ev_sc.Register.RegisterScreen;
@@ -27,6 +28,7 @@ public class LoginScreen extends Activity {
 
     Button login_button;
     Button register_button_login;
+    Button add_station_login_button; // temp
 
     EditText username_enter_login;
     EditText password_enter_login;
@@ -48,6 +50,7 @@ public class LoginScreen extends Activity {
 
         login_button = (Button) findViewById(R.id.login_button);
         register_button_login = (Button) findViewById(R.id.register_button_login);
+        add_station_login_button = (Button) findViewById(R.id.add_station_login_button);
 
         username_enter_login = (EditText) (findViewById(R.id.username_enter_login));
         password_enter_login = (EditText) (findViewById(R.id.password_enter_login));
@@ -60,6 +63,8 @@ public class LoginScreen extends Activity {
         OnClickRegisterButton();
 
         OnClickLoginButton();
+
+        OnClickAddStationButton();
 
     }
 
@@ -109,6 +114,15 @@ public class LoginScreen extends Activity {
                     }
                 });
 
+            }
+        });
+    }
+
+    private void OnClickAddStationButton() {
+        add_station_login_button.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View view) {
+                Intent login_to_add_station = new Intent(view.getContext(), AddStation.class);
+                startActivityForResult(login_to_add_station, 0);
             }
         });
     }

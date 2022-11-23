@@ -5,7 +5,7 @@ public interface StationInterface {
     /**
      * @return Integer representing the Avg grade of the station.
      */
-    public int getGrade();
+    public double getGrade();
 
     /**
      * @return String representing the Address of the station
@@ -25,9 +25,9 @@ public interface StationInterface {
     /**
      * @return List of String that contains all the reviews given by users for this station.
      */
-    public String[] getReviews();
+    //public String[] getReviews();
 
-    public void setGrade(int grade);
+    public void setGrade(double grade);
 
     public void setStation_address(String station_address);
 
@@ -35,6 +35,6 @@ public interface StationInterface {
 
     public void setStation_name(String station_name);
 
-    public void setReviews(String[] reviews);
+  //  public void setReviews(String[] reviews);
 
 }
