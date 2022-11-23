@@ -41,14 +41,16 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
         if (mLocationPermissionGranted) {
             getDeviceLocation();
 
-            if(ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
-            != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this,
-                    Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)
-            {
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                    != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this,
+                    Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 return;
             }
 
+            // shows the blue dot on the map //
             mMap.setMyLocationEnabled(true);
+
+            // pinpoint to the current location with a button, is set to false because we'll add on later //
             mMap.getUiSettings().setMyLocationButtonEnabled(false);
         }
     }

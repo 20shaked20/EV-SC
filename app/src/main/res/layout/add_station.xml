@@ -23,7 +23,7 @@
         android:layout_height="wrap_content"
         android:text=" add grade"
         tools:layout_editor_absoluteX="118dp"
-        tools:layout_editor_absoluteY="406dp" />
+        tools:layout_editor_absoluteY="344dp" />
 
     <TextView
         android:id="@+id/add_number_of_position3"
@@ -35,7 +35,7 @@
         app:layout_constraintHorizontal_bias="0.453"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.463" />
+        app:layout_constraintVertical_bias="0.465" />
 
     <TextView
         android:id="@+id/add_Addres3"
@@ -44,10 +44,10 @@
         android:text=" add Addres"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.372"
+        app:layout_constraintHorizontal_bias="0.351"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.345" />
+        app:layout_constraintVertical_bias="0.352" />
 
     <TextView
         android:id="@+id/add_name3"
@@ -56,10 +56,10 @@
         android:text="add name"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.358"
+        app:layout_constraintHorizontal_bias="0.338"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.245" />
+        app:layout_constraintVertical_bias="0.248" />
 
     <ImageView
         android:id="@+id/imageView87"
