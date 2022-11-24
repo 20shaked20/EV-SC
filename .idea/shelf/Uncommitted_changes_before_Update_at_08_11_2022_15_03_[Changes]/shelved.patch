@@ -1,0 +1,194 @@
+Index: app/src/main/java/Person/AdminObj.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package Person;\r\n\r\npublic class AdminObj {\r\n}\r\n
+===================================================================
+diff --git a/app/src/main/java/Person/AdminObj.java b/app/src/main/java/Person/AdminObj.java
+--- a/app/src/main/java/Person/AdminObj.java	
++++ b/app/src/main/java/Person/AdminObj.java	
+@@ -1,4 +1,38 @@
+ package Person;
+ 
+-public class AdminObj {
++public class AdminObj implements PersonObj  {
++    public String First_Name = "";
++    public String Last_Name = "";
++    public int Permission = 0;
++
++    @Override
++    public String getFirst_name(){
++        return First_Name;
++    }
++
++    @Override
++    public String getLast_Name() {
++        return Last_Name;
++    }
++
++    @Override
++    public int getPermission(){
++        return Permission;
++    }
++
++    @Override
++    public void setFirst_Name(String first_Name) {this.First_Name = first_Name;}
++
++    @Override
++    public void setLast_Name(String last_Name) {
++        this.Last_Name = last_Name;
++    }
++
++    @Override
++    public void setPermission(int Permission) {
++        this.Permission = Permission;
++    }
++
++
++
+ }
+Index: app/src/main/java/Person/UserObj.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package Person;\r\n\r\npublic class UserObj {\r\n}\r\n
+===================================================================
+diff --git a/app/src/main/java/Person/UserObj.java b/app/src/main/java/Person/UserObj.java
+--- a/app/src/main/java/Person/UserObj.java	
++++ b/app/src/main/java/Person/UserObj.java	
+@@ -1,4 +1,54 @@
+ package Person;
+ 
+-public class UserObj {
++public class UserObj implements PersonObj {
++    public String User_Name = "";
++    public String phone_number = "";
++    public String First_Name = "";
++    public String Last_Name = "";
++    public int Permission = 0;
++    // todo hashmap of Reviews?
++
++    @Override
++    public String getFirst_name(){
++        return First_Name;
++    }
++
++    @Override
++    public String getLast_Name() {
++        return Last_Name;
++    }
++
++    @Override
++    public int getPermission(){
++        return Permission;
++    }
++
++    @Override
++    public void setFirst_Name(String first_Name) {this.First_Name = first_Name;}
++
++    @Override
++    public void setLast_Name(String last_Name) {
++        this.Last_Name = last_Name;
++    }
++
++    @Override
++    public void setPermission(int Permission) {
++        this.Permission = Permission;
++    }
++
++    public String getPhone_number() {
++        return phone_number;
++    }
++
++    public String getUser_Name() {
++        return User_Name;
++    }
++
++    public void setPhone_number(String phone_number) {
++        this.phone_number = phone_number;
++    }
++
++    public void setUser_Name(String user_Name) {
++        this.User_Name = user_Name;
++    }
+ }
+Index: app/src/main/java/Person/PersonObj.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package Person;\r\n\r\npublic interface PersonObj {\r\n}\r\n
+===================================================================
+diff --git a/app/src/main/java/Person/PersonObj.java b/app/src/main/java/Person/PersonObj.java
+--- a/app/src/main/java/Person/PersonObj.java	
++++ b/app/src/main/java/Person/PersonObj.java	
+@@ -1,4 +1,33 @@
+ package Person;
+ 
+ public interface PersonObj {
++    /*
++     get the first name of the person
++     */
++    public String getFirst_name();
++
++    /*
++    get the last name of the person
++    */
++    public String getLast_Name();
++
++    /*
++    get the Permission of the person if admin or user
++    */
++    public int getPermission();
++
++    /*
++     set the first name of the person
++     */
++    public void setFirst_Name( String first_Name);
++
++    /*
++    set the last name of the person
++    */
++    public void setLast_Name(String last_Name);
++
++    /*
++    set the Permission of the person if admin or user
++    */
++    public void setPermission(int permission);
+ }
+Index: app/src/main/java/Home/Station/StationObj.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package Home.Station;\r\n\r\npublic class StationObj {\r\n}\r\n
+===================================================================
+diff --git a/app/src/main/java/Home/Station/StationObj.java b/app/src/main/java/Home/Station/StationObj.java
+--- a/app/src/main/java/Home/Station/StationObj.java	
++++ b/app/src/main/java/Home/Station/StationObj.java	
+@@ -1,4 +1,29 @@
+ package Home.Station;
+ 
+ public class StationObj {
+-}
++    public String Name = "";
++    public String Addres = "";
++    public int num_of_position = 0;
++    public int Rating = 0;
++    public String[] Reviews = new String[5]; //todo change for hashmap
++
++    public String getName() {return this.Name;}
++
++    public String getAddres() {return this.Addres;}
++
++    public int getNum_of_position() {
++        return this.num_of_position;
++    }
++
++    public int getRating() {
++        return this.Rating;
++    }
++
++    public void setAddres(String addres) {Addres = addres;}
++
++    public void setName(String name) {Name = name;}
++
++    public void setNum_of_position(int num_of_position) {this.num_of_position = num_of_position;}
++
++    public void setRating(int rating) {Rating = rating;}
++}
+\ No newline at end of file
