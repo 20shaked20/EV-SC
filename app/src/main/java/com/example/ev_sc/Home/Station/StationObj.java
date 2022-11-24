@@ -13,7 +13,7 @@ public class StationObj implements StationInterface {
     private int charging_stations;
     private String station_name;
     //private String[] reviews; // todo: this could probably better be represented as JSON or other data structure
-    private String SID;
+    private final String SID;
 
     public StationObj(double grade, String station_address, int charging_stations, String station_name,GeoPoint location) {
         this.grade = grade;
