@@ -24,12 +24,7 @@ public class StationDB {
         station.put("Charging Stations",Station.getCharging_stations());
         station.put("Location",Station.getLocation());
         station.put("Name",Station.getStation_name());
-        documentReference.set(station).addOnSuccessListener(new OnSuccessListener<Void>() {
-            @Override
-            public void onSuccess(Void unused) {
-                Log.d(TAG, "onSuccess: Station Profile is created for " + Station.getID());
-            }
-        });
+        documentReference.set(station).addOnSuccessListener(unused -> Log.d(TAG, "onSuccess: Station Profile is created for " + Station.getID()));
 
     }
 
