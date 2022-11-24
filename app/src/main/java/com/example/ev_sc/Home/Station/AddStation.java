@@ -9,7 +9,6 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.ev_sc.R;
-import com.example.ev_sc.Register.RegisterScreen;
 import com.google.firebase.firestore.GeoPoint;
 
 public class AddStation extends Activity {
@@ -79,40 +78,39 @@ public class AddStation extends Activity {
     }
 
     private boolean validate_input(String s_name, String s_address, String s_charging, String s_grade, String s_lat, String s_lon) {
-        boolean flag = true;
-        if (TextUtils.isEmpty(s_name)) {
+
+        if (TextUtils.isEmpty(s_name) || (TextUtils.isDigitsOnly(s_name))) {
             station_name.setError("Name is empty");
-            flag = false;
+            return false;
         }
-        if (TextUtils.isEmpty(s_address)) {
+        if (TextUtils.isEmpty(s_address) || (TextUtils.isDigitsOnly(s_address))) {
             station_address.setError("Address is empty");
-            flag = false;
+            return false;
         }
 
-        if (TextUtils.isEmpty(s_charging)) {
+        if (TextUtils.isEmpty(s_charging) || !(TextUtils.isDigitsOnly(s_charging))) {
             station_charging.setError("Must indicate how many charging stations");
-            flag = false;
+            return false;
         }
 
-        if (TextUtils.isEmpty(s_grade)) {
+        if (TextUtils.isEmpty(s_grade) || !(TextUtils.isDigitsOnly(s_charging))) {
             station_avg_grade.setError("Must indicate station grade");
-            flag = false;
-
+            return false;
         }
 
-        if (TextUtils.isEmpty(s_lat)) {
-            station_latitude.setError("Confirm Password Is Required");
-            flag = false;
+        if (TextUtils.isEmpty(s_lat) || !(TextUtils.isDigitsOnly(s_charging))) {
+            station_latitude.setError("Latitude is required");
+            return false;
         }
 
-        if (TextUtils.isEmpty(s_lon)) {
-            station_longtitude.setError("Confirm Password Is Required");
-            flag = false;
+        if (TextUtils.isEmpty(s_lon) || !(TextUtils.isDigitsOnly(s_charging))) {
+            station_longtitude.setError("Longitude is required");
+            return false;
         }
-        return flag;
+        return true;
     }
 
-    private void clear_text(){
+    private void clear_text() {
         station_name.getText().clear();
         station_address.getText().clear();
         station_charging.getText().clear();
