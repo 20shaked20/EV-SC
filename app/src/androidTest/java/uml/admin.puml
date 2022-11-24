@@ -1,0 +1,40 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+class Admin {
+-First_name;
+-String Last_name;
+-int Permissions;
+-String UID;
++ String getFirst_name()
++ String getLast_name()
++ String getID()
++ int getPermissions()
++void setFirst_name(String first_name)
++void setLast_name(String last_name)
+}
+
+class loginScreen {
+}
+
+class homeScreen {
+}
+
+class profileScreen {
+}
+
+class new_reviews {
+}
+class edit_station_screen {
+}
+
+class add_station_screen {
+}
+
+loginScreen <|-- Admin
+homeScreen <|-- loginScreen
+profileScreen <|-- homeScreen
+new_reviews <|-- homeScreen
+add_station_screen <|-- profileScreen
+edit_station_screen <|-- profileScreen
+@enduml
