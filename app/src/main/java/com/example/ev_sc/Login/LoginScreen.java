@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 
 import android.widget.Button;
@@ -95,19 +96,22 @@ public class LoginScreen extends Activity {
                 /*TODO: add more exceptions*/
 
                 //authenticate the user
-                fAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            //successfully login.
-                            Toast.makeText(LoginScreen.this, "Logged in Successfully", Toast.LENGTH_SHORT).show();
-                            startActivity(new Intent(getApplicationContext(), HomeScreen.class));
-                        } else {
-                            // email or password incorrect or user does not exist
-                            Toast.makeText(LoginScreen.this, "Email Or Password Incorrect " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                });
+                System.out.println("Email:" + email+ "Pass: "+ password);
+                startActivity(new Intent(getApplicationContext(), HomeScreen.class));
+
+//                fAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+//                    @Override
+//                    public void onComplete(@NonNull Task<AuthResult> task) {
+//                        if (task.isSuccessful()) {
+//                            //successfully login.
+//                            Toast.makeText(LoginScreen.this, "Logged in Successfully", Toast.LENGTH_SHORT).show();
+////                            startActivity(new Intent(getApplicationContext(), HomeScreen.class));
+//                        } else {
+//                            // email or password incorrect or user does not exist
+//                            Toast.makeText(LoginScreen.this, "Email Or Password Incorrect " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+//                        }
+//                    }
+//                });
 
             }
         });

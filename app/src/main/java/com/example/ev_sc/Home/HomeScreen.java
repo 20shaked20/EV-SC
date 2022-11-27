@@ -3,12 +3,19 @@ package com.example.ev_sc.Home;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.pm.PackageManager;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
+import android.view.inputmethod.EditorInfo;
+import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -23,6 +30,22 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.GeoPoint;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 
 public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback {
@@ -49,9 +72,10 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
 
             // shows the blue dot on the map //
             mMap.setMyLocationEnabled(true);
-
             // pinpoint to the current location with a button, is set to false because we'll add on later //
             mMap.getUiSettings().setMyLocationButtonEnabled(false);
+
+            init();
         }
     }
 
@@ -62,18 +86,88 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1234;
     private static final float DEFAULT_ZOOM = 15f;
 
+    /*widgets*/
+    private EditText search_bar;
+
     /*vars*/
     private Boolean mLocationPermissionGranted = false;
     private GoogleMap mMap;
     private FusedLocationProviderClient mFusedLocationProviderClient;
 
+    FirebaseFirestore fStore = FirebaseFirestore.getInstance();
 
     @Override
     public void onCreate(Bundle Instance) {
         super.onCreate(Instance);
         setContentView(R.layout.home);
 
+        search_bar = (EditText) findViewById(R.id.search_bar);
+
         getLocationPermission();
+    }
+
+    /**
+     * this method allows for overriding buttons in the keyboard ( enter .. )
+     * and calls for geoLocate to locate the required place
+     */
+    private void init() {
+        Log.d(TAG, "init: initializing");
+
+        search_bar.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent keyEvent) {
+                if (actionId == EditorInfo.IME_ACTION_SEARCH ||
+                        actionId == EditorInfo.IME_ACTION_DONE ||
+                        keyEvent.getAction() == KeyEvent.ACTION_DOWN ||
+                        keyEvent.getAction() == KeyEvent.KEYCODE_ENTER) {
+                    //execute method for searching the location//
+                    geoLocate();
+                }
+                return false;
+            }
+        });
+    }
+
+    /**
+     * This method locates the address ltlng from the database given the address name!
+     */
+    private void geoLocate() {
+        Log.d(TAG, "geoLocate: geolocationg");
+
+        String searchString = search_bar.getText().toString().trim();
+
+        fStore.collection("stations")
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+//                                Log.d(TAG, document.getId() + " => " + document.getData());
+                                // find the relevant document regarding the search string //
+                                if (document.get("Name").equals(searchString)) {
+                                    Log.d(TAG, document.getId() + " => " + document.getData());
+
+                                    // get the latlng//
+                                    GeoPoint geoPoint = document.getGeoPoint("Location");
+                                    double lat = geoPoint.getLatitude();
+                                    double lng = geoPoint.getLongitude();
+                                    LatLng latLng = new LatLng(lat, lng);
+                                    Log.d(TAG, "LATLNG: " + latLng.toString());
+
+                                    moveCamera(latLng, DEFAULT_ZOOM);
+
+                                    return;
+                                }
+                            }
+                            search_bar.setError("Station does not exist.");
+
+                        } else {
+                            Log.d(TAG, "Error getting documents: ", task.getException());
+
+                        }
+                    }
+                });
     }
 
     /**
@@ -184,3 +278,29 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
 
 
 }
+
+/**
+ * working doc pulling for firestore: ->
+ * <p>
+ * DocumentReference docRef = fStore.collection("stations").document("bUizB60oCmdnKWZyuYbA");
+ * docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+ *
+ * @Override public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+ * if (task.isSuccessful()) {
+ * DocumentSnapshot document = task.getResult();
+ * if (document.exists()) {
+ * Log.d(TAG, "DocumentSnapshot data: " + document.getData().get("Location"));
+ * GeoPoint geoPoint = document.getGeoPoint("Location");
+ * double lat = geoPoint.getLatitude();
+ * double lng = geoPoint.getLongitude();
+ * LatLng latLng = new LatLng(lat, lng);
+ * Log.d(TAG, "LATLNG: "+ latLng.toString());
+ * } else {
+ * Log.d(TAG, "No such document");
+ * }
+ * } else {
+ * Log.d(TAG, "get failed with ", task.getException());
+ * }
+ * }
+ * });
+ */
