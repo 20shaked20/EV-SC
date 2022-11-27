@@ -24,20 +24,9 @@ public class StationDB {
         station.put("Charging Stations",Station.getCharging_stations());
         station.put("Location",Station.getLocation());
         station.put("Name",Station.getStation_name());
-
-        documentReference.set(station).addOnSuccessListener(new OnSuccessListener<Void>() {
-            @Override
-            public void onSuccess(Void unused) {
-                Log.d(TAG, "onSuccess: user Profile is created for " + Station.getID());
-            }
-        });
+        documentReference.set(station).addOnSuccessListener(unused -> Log.d(TAG, "onSuccess: Station Profile is created for " + Station.getID()));
 
     }
 
-    public static void main(String[] args) {
-        StationDB db = new StationDB();
-        StationObj test_station = new StationObj(1,"test",1,"abu test", new String[]{"test1", "test2"},"test_station");
-        db.AddStationToDatabase(test_station);
-    }
 }
 
