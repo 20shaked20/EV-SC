@@ -2,32 +2,40 @@ package com.example.ev_sc.Home.Station;
 
 import com.google.firebase.firestore.GeoPoint;
 
+import java.util.UUID;
+
 public class StationObj implements StationInterface {
 
-    private int grade;
+    private double grade;
     private double avg_grade;
     private String station_address;
     private GeoPoint location; // https://firebase.google.com/docs/reference/kotlin/com/google/firebase/firestore/GeoPoint
     private int charging_stations;
     private String station_name;
-    private String[] reviews; // todo: this could probably better be represented as JSON or other data structure
-    private String SID;
+    //private String[] reviews; // todo: this could probably better be represented as JSON or other data structure
+    private final String SID;
 
-    public StationObj(int grade, String station_address, int charging_stations, String station_name, String[] reviews, String SID) {
+    public StationObj(double grade, String station_address, int charging_stations, String station_name,GeoPoint location) {
         this.grade = grade;
         this.station_address = station_address;
         this.charging_stations = charging_stations;
         this.station_name = station_name;
-        this.SID = SID;
+        this.SID = UUID.randomUUID().toString();
+        this.location = location;
         //todo: for loop to fit the reviews in the object
     }
 
-    public String getID(){return SID;}
-    public int getGrade() {
+    public String getID() {
+        return SID;
+    }
+
+    public double getGrade() {
         return grade;
     }
 
-    public double getAverageGrade() {return avg_grade;}
+    public double getAverageGrade() {
+        return avg_grade;
+    }
 
     public String getStation_address() {
         return station_address;
@@ -41,13 +49,12 @@ public class StationObj implements StationInterface {
         return station_name;
     }
 
-    public String[] getReviews() {
-        return reviews;
+
+    public GeoPoint getLocation() {
+        return location;
     }
 
-    public GeoPoint getLocation(){return location;}
-
-    public void setGrade(int grade) {
+    public void setGrade(double grade) {
         this.grade = grade;
     }
 
@@ -58,9 +65,8 @@ public class StationObj implements StationInterface {
     public void setCharging_stations(int charging_stations) {
         this.charging_stations = charging_stations;
     }
-
-
-    public void setLocation(GeoPoint new_location){
+    
+    public void setLocation(GeoPoint new_location) {
         this.location = new_location;
     }
 
@@ -68,11 +74,7 @@ public class StationObj implements StationInterface {
         this.station_name = station_name;
     }
 
-    public void setReviews(String[] reviews) {
-        this.reviews = reviews;
-    }
-
-    public void setAvgGrade(double avgGrade){
+    public void setAvgGrade(double avgGrade) {
         this.avg_grade = avgGrade;
     }
 
