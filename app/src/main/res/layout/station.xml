@@ -1,504 +1,110 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    >
 
-    <ImageView
-        android:id="@+id/imageView8"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.931"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.038"
-        app:srcCompat="@android:drawable/ic_menu_edit" />
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
-    <ImageView
-        android:id="@+id/imageView7"
-        android:layout_width="29dp"
-        android:layout_height="35dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.785"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.356"
-        app:srcCompat="@android:drawable/star_big_off" />
+        <TextView
+            android:id="@+id/rate_of_station"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Rate"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.061"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.37" />
 
-    <ImageView
-        android:id="@+id/imageView60"
-        android:layout_width="24dp"
-        android:layout_height="23dp"
-        app:srcCompat="@android:drawable/star_big_off"
-        tools:layout_editor_absoluteX="275dp"
-        tools:layout_editor_absoluteY="604dp" />
+        <TextView
+            android:id="@+id/address"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Address"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.052"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.203" />
 
-    <ImageView
-        android:id="@+id/imageView61"
-        android:layout_width="24dp"
-        android:layout_height="23dp"
-        app:srcCompat="@android:drawable/star_big_off"
-        tools:layout_editor_absoluteX="317dp"
-        tools:layout_editor_absoluteY="605dp" />
+        <TextView
+            android:id="@+id/the_num_of_chargers"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="x"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.467"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.279" />
 
-    <ImageView
-        android:id="@+id/imageView59"
-        android:layout_width="24dp"
-        android:layout_height="23dp"
-        app:srcCompat="@android:drawable/star_big_off"
-        tools:layout_editor_absoluteX="322dp"
-        tools:layout_editor_absoluteY="528dp" />
+        <TextView
+            android:id="@+id/amount_of_chargers"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Amount of chargers"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.066"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.277" />
 
-    <ImageView
-        android:id="@+id/imageView58"
-        android:layout_width="24dp"
-        android:layout_height="23dp"
-        app:srcCompat="@android:drawable/star_big_off"
-        tools:layout_editor_absoluteX="329dp"
-        tools:layout_editor_absoluteY="387dp" />
+        <TextView
+            android:id="@+id/name_of_station"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="The Name of the station"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.532"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.125" />
 
-    <ImageView
-        android:id="@+id/imageView57"
-        android:layout_width="24dp"
-        android:layout_height="23dp"
-        app:srcCompat="@android:drawable/star_big_off"
-        tools:layout_editor_absoluteX="280dp"
-        tools:layout_editor_absoluteY="527dp" />
+        <ImageView
+            android:id="@+id/return_map_station_widget"
+            android:layout_width="96dp"
+            android:layout_height="79dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.06"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.042"
+            app:srcCompat="@android:drawable/ic_dialog_map" />
 
-    <ImageView
-        android:id="@+id/imageView54"
-        android:layout_width="23dp"
-        android:layout_height="22dp"
-        app:srcCompat="@android:drawable/btn_star_big_on"
-        tools:layout_editor_absoluteX="281dp"
-        tools:layout_editor_absoluteY="658dp" />
+        <ImageView
+            android:id="@+id/imageView8"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.931"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.038"
+            app:srcCompat="@android:drawable/ic_menu_edit" />
 
-    <ImageView
-        android:id="@+id/imageView55"
-        android:layout_width="23dp"
-        android:layout_height="22dp"
-        app:srcCompat="@android:drawable/btn_star_big_on"
-        tools:layout_editor_absoluteX="322dp"
-        tools:layout_editor_absoluteY="658dp" />
+        <TextView
+            android:id="@+id/address_of_station"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="The Address"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.302"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.205" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <ImageView
-        android:id="@+id/imageView52"
-        android:layout_width="23dp"
-        android:layout_height="22dp"
-        app:srcCompat="@android:drawable/btn_star_big_on"
-        tools:layout_editor_absoluteX="198dp"
-        tools:layout_editor_absoluteY="528dp" />
-
-    <ImageView
-        android:id="@+id/imageView53"
-        android:layout_width="23dp"
-        android:layout_height="22dp"
-        app:srcCompat="@android:drawable/btn_star_big_on"
-        tools:layout_editor_absoluteX="239dp"
-        tools:layout_editor_absoluteY="528dp" />
-
-    <ImageView
-        android:id="@+id/imageView50"
-        android:layout_width="23dp"
-        android:layout_height="22dp"
-        app:srcCompat="@android:drawable/btn_star_big_on"
-        tools:layout_editor_absoluteX="289dp"
-        tools:layout_editor_absoluteY="466dp" />
-
-    <ImageView
-        android:id="@+id/imageView51"
-        android:layout_width="23dp"
-        android:layout_height="22dp"
-        app:srcCompat="@android:drawable/btn_star_big_on"
-        tools:layout_editor_absoluteX="330dp"
-        tools:layout_editor_absoluteY="466dp" />
-
-    <ImageView
-        android:id="@+id/imageView49"
-        android:layout_width="23dp"
-        android:layout_height="22dp"
-        app:srcCompat="@android:drawable/btn_star_big_on"
-        tools:layout_editor_absoluteX="289dp"
-        tools:layout_editor_absoluteY="388dp" />
-
-    <ImageView
-        android:id="@+id/imageView48"
-        android:layout_width="23dp"
-        android:layout_height="22dp"
-        app:srcCompat="@android:drawable/btn_star_big_on"
-        tools:layout_editor_absoluteX="205dp"
-        tools:layout_editor_absoluteY="388dp" />
-
-    <ImageView
-        android:id="@+id/imageView46"
-        android:layout_width="23dp"
-        android:layout_height="22dp"
-        app:srcCompat="@android:drawable/btn_star_big_on"
-        tools:layout_editor_absoluteX="248dp"
-        tools:layout_editor_absoluteY="388dp" />
-
-    <ImageView
-        android:id="@+id/imageView47"
-        android:layout_width="23dp"
-        android:layout_height="22dp"
-        app:srcCompat="@android:drawable/btn_star_big_on"
-        tools:layout_editor_absoluteX="162dp"
-        tools:layout_editor_absoluteY="388dp" />
-
-    <ImageView
-        android:id="@+id/imageView45"
-        android:layout_width="23dp"
-        android:layout_height="22dp"
-        app:srcCompat="@android:drawable/btn_star_big_on"
-        tools:layout_editor_absoluteX="198dp"
-        tools:layout_editor_absoluteY="658dp" />
-
-    <ImageView
-        android:id="@+id/imageView43"
-        android:layout_width="23dp"
-        android:layout_height="22dp"
-        app:srcCompat="@android:drawable/btn_star_big_on"
-        tools:layout_editor_absoluteX="239dp"
-        tools:layout_editor_absoluteY="660dp" />
-
-    <ImageView
-        android:id="@+id/imageView44"
-        android:layout_width="23dp"
-        android:layout_height="22dp"
-        app:srcCompat="@android:drawable/btn_star_big_on"
-        tools:layout_editor_absoluteX="162dp"
-        tools:layout_editor_absoluteY="660dp" />
-
-    <ImageView
-        android:id="@+id/imageView42"
-        android:layout_width="23dp"
-        android:layout_height="22dp"
-        app:srcCompat="@android:drawable/btn_star_big_on"
-        tools:layout_editor_absoluteX="205dp"
-        tools:layout_editor_absoluteY="601dp" />
-
-    <ImageView
-        android:id="@+id/imageView40"
-        android:layout_width="23dp"
-        android:layout_height="22dp"
-        app:srcCompat="@android:drawable/btn_star_big_on"
-        tools:layout_editor_absoluteX="237dp"
-        tools:layout_editor_absoluteY="604dp" />
-
-    <ImageView
-        android:id="@+id/imageView41"
-        android:layout_width="23dp"
-        android:layout_height="22dp"
-        app:srcCompat="@android:drawable/btn_star_big_on"
-        tools:layout_editor_absoluteX="162dp"
-        tools:layout_editor_absoluteY="601dp" />
-
-    <ImageView
-        android:id="@+id/imageView39"
-        android:layout_width="23dp"
-        android:layout_height="22dp"
-        app:srcCompat="@android:drawable/btn_star_big_on"
-        tools:layout_editor_absoluteX="162dp"
-        tools:layout_editor_absoluteY="528dp" />
-
-    <ImageView
-        android:id="@+id/imageView37"
-        android:layout_width="23dp"
-        android:layout_height="22dp"
-        app:srcCompat="@android:drawable/btn_star_big_on"
-        tools:layout_editor_absoluteX="205dp"
-        tools:layout_editor_absoluteY="466dp" />
-
-    <ImageView
-        android:id="@+id/imageView38"
-        android:layout_width="23dp"
-        android:layout_height="22dp"
-        app:srcCompat="@android:drawable/btn_star_big_on"
-        tools:layout_editor_absoluteX="248dp"
-        tools:layout_editor_absoluteY="466dp" />
-
-    <ImageView
-        android:id="@+id/imageView32"
-        android:layout_width="23dp"
-        android:layout_height="22dp"
-        app:srcCompat="@android:drawable/btn_star_big_on"
-        tools:layout_editor_absoluteX="162dp"
-        tools:layout_editor_absoluteY="466dp" />
-
-    <ImageView
-        android:id="@+id/imageView28"
-        android:layout_width="49dp"
-        android:layout_height="57dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.063"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.669"
-        tools:srcCompat="@tools:sample/avatars" />
-
-    <ImageView
-        android:id="@+id/imageView29"
-        android:layout_width="49dp"
-        android:layout_height="57dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.063"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.775"
-        tools:srcCompat="@tools:sample/avatars" />
-
-    <ImageView
-        android:id="@+id/imageView30"
-        android:layout_width="49dp"
-        android:layout_height="57dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.063"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.875"
-        tools:srcCompat="@tools:sample/avatars" />
-
-    <ImageView
-        android:id="@+id/imageView31"
-        android:layout_width="49dp"
-        android:layout_height="57dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.055"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.976"
-        tools:srcCompat="@tools:sample/avatars" />
-
-    <TextView
-        android:id="@+id/review7"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="my review"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.244"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.74" />
-
-    <TextView
-        android:id="@+id/review6"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="my review"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.224"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.931" />
-
-    <TextView
-        android:id="@+id/review"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="my review"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.224"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.844" />
-
-    <TextView
-        android:id="@+id/review4"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="my review"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.244"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.549" />
-
-    <TextView
-        android:id="@+id/review5"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="my review"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.244"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.658" />
-
-    <ImageView
-        android:id="@+id/imageView6"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.654"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.359"
-        app:srcCompat="@android:drawable/btn_star_big_on" />
-
-    <ImageView
-        android:id="@+id/imageView5"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.511"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.359"
-        app:srcCompat="@android:drawable/btn_star_big_on" />
-
-    <ImageView
-        android:id="@+id/imageView4"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.366"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.359"
-        app:srcCompat="@android:drawable/btn_star_big_on" />
-
-    <TextView
-        android:id="@+id/name_of_station"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="The Name of the station"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.532"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.125" />
-
-    <TextView
-        android:id="@+id/addres_of_station"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Addres"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.038"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.205" />
-
-    <TextView
-        android:id="@+id/Number_of_position"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Number of position"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.054"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.28" />
-
-    <TextView
-        android:id="@+id/grade_of_station"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="grade"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.061"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.37" />
-
-    <ImageView
-        android:id="@+id/imageView3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.224"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.359"
-        app:srcCompat="@android:drawable/btn_star_big_on" />
-
-    <TextView
-        android:id="@+id/textView5"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Reviews:"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.081"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.478" />
-
-    <ImageView
-        android:id="@+id/imageView9"
-        android:layout_width="96dp"
-        android:layout_height="79dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.06"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.042"
-        app:srcCompat="@android:drawable/ic_dialog_map" />
-
-    <TextView
-        android:id="@+id/addres_station"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="the addres"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.302"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.205" />
-
-    <TextView
-        android:id="@+id/the_num_of_sta"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="x"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.467"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.279" />
-
-    <ImageView
-        android:id="@+id/imageView27"
-        android:layout_width="49dp"
-        android:layout_height="57dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.055"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.56"
-        tools:srcCompat="@tools:sample/avatars" />
-
-    <ImageView
-        android:id="@+id/imageView56"
-        android:layout_width="24dp"
-        android:layout_height="23dp"
-        app:srcCompat="@android:drawable/star_big_off"
-        tools:layout_editor_absoluteX="329dp"
-        tools:layout_editor_absoluteY="387dp" />
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+</RelativeLayout>

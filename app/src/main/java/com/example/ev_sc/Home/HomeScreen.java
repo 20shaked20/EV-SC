@@ -2,21 +2,26 @@ package com.example.ev_sc.Home;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
@@ -28,6 +33,8 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -88,6 +95,17 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
 
     /*widgets*/
     private EditText search_bar;
+    /*popup station*/
+    private AlertDialog.Builder dialogBuilder;
+    private AlertDialog dialog;
+    private TextView name_of_station;
+    private TextView address;
+    private TextView amount_of_chargers;
+    private TextView rate_of_station;
+    private TextView address_of_station;
+    private TextView the_num_of_chargers;
+
+    private ImageView return_map_station_widget;
 
     /*vars*/
     private Boolean mLocationPermissionGranted = false;
@@ -145,7 +163,6 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
                             for (QueryDocumentSnapshot document : task.getResult()) {
-//                                Log.d(TAG, document.getId() + " => " + document.getData());
                                 // find the relevant document regarding the search string //
                                 if (document.get("Name").equals(searchString)) {
                                     Log.d(TAG, document.getId() + " => " + document.getData());
@@ -214,8 +231,22 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
      */
     private void moveCamera(LatLng latLng, float zoom) {
         Log.d(TAG, "moveCamera: Moving the camera to: (lat: " + latLng.latitude + ", lng: " + latLng.longitude + " )");
-
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoom));
+
+        //create a marker on map//
+        MarkerOptions options = new MarkerOptions()
+                .position(latLng)
+                .title("Test");
+        mMap.addMarker(options);
+
+        // TODO: make this display the relevant data//
+        mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+            @Override
+            public boolean onMarkerClick(@NonNull Marker marker) {
+                createNewStationPopup();
+                return true;
+            }
+        });
     }
 
     /**
@@ -278,31 +309,38 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
         }
     }
 
+    /**
+     * method to open up the poppable map
+     */
+    public void createNewStationPopup(){
+
+        dialogBuilder = new AlertDialog.Builder(this);
+        final View PopupStation = getLayoutInflater().inflate(R.layout.station,null);
+
+        /*widgets*/
+        name_of_station = (TextView) PopupStation.findViewById(R.id.name_of_station);
+        address = (TextView) PopupStation.findViewById(R.id.address);
+        amount_of_chargers = (TextView) PopupStation.findViewById(R.id.amount_of_chargers);
+        rate_of_station = (TextView) PopupStation.findViewById(R.id.rate_of_station);
+        address_of_station = (TextView) PopupStation.findViewById(R.id.address_of_station);
+        the_num_of_chargers = (TextView) PopupStation.findViewById(R.id.the_num_of_chargers);
+
+        return_map_station_widget = (ImageView) PopupStation.findViewById(R.id.return_map_station_widget);
+
+        dialogBuilder.setView(PopupStation);
+        dialog = dialogBuilder.create();
+        dialog.show();
+
+
+        // listener to return to the map //
+        return_map_station_widget.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+
+    }
+
 
 }
-
-/**
- * working doc pulling for firestore: ->
- * <p>
- * DocumentReference docRef = fStore.collection("stations").document("bUizB60oCmdnKWZyuYbA");
- * docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
- *
- * @Override public void onComplete(@NonNull Task<DocumentSnapshot> task) {
- * if (task.isSuccessful()) {
- * DocumentSnapshot document = task.getResult();
- * if (document.exists()) {
- * Log.d(TAG, "DocumentSnapshot data: " + document.getData().get("Location"));
- * GeoPoint geoPoint = document.getGeoPoint("Location");
- * double lat = geoPoint.getLatitude();
- * double lng = geoPoint.getLongitude();
- * LatLng latLng = new LatLng(lat, lng);
- * Log.d(TAG, "LATLNG: "+ latLng.toString());
- * } else {
- * Log.d(TAG, "No such document");
- * }
- * } else {
- * Log.d(TAG, "get failed with ", task.getException());
- * }
- * }
- * });
- */
