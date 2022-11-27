@@ -104,6 +104,8 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
         search_bar = (EditText) findViewById(R.id.search_bar);
 
         getLocationPermission();
+
+        //TODO: LoadStations(); ( Better for searching )
     }
 
     /**
