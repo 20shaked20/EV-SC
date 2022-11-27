@@ -65,7 +65,7 @@ public class StationObj implements StationInterface {
     public void setCharging_stations(int charging_stations) {
         this.charging_stations = charging_stations;
     }
-
+    
     public void setLocation(GeoPoint new_location) {
         this.location = new_location;
     }
