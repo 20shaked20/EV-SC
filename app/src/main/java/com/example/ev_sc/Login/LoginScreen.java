@@ -104,19 +104,19 @@ public class LoginScreen extends Activity {
                 System.out.println("Email:" + email+ "Pass: "+ password);
                 startActivity(new Intent(getApplicationContext(), HomeScreen.class));
 
-//                fAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-//                    @Override
-//                    public void onComplete(@NonNull Task<AuthResult> task) {
-//                        if (task.isSuccessful()) {
-//                            //successfully login.
-//                            Toast.makeText(LoginScreen.this, "Logged in Successfully", Toast.LENGTH_SHORT).show();
-////                            startActivity(new Intent(getApplicationContext(), HomeScreen.class));
-//                        } else {
-//                            // email or password incorrect or user does not exist
-//                            Toast.makeText(LoginScreen.this, "Email Or Password Incorrect " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
-//                        }
-//                    }
-//                });
+                fAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            //successfully login.
+                            Toast.makeText(LoginScreen.this, "Logged in Successfully", Toast.LENGTH_SHORT).show();
+                            startActivity(new Intent(getApplicationContext(), HomeScreen.class));
+                        } else {
+                            // email or password incorrect or user does not exist
+                            Toast.makeText(LoginScreen.this, "Email Or Password Incorrect " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
 
             }
         });
