@@ -25,6 +25,8 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import com.example.ev_sc.Home.Station.StationDB;
+import com.example.ev_sc.Home.Station.StationObj;
 import com.example.ev_sc.R;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -95,6 +97,7 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
 
     /*widgets*/
     private EditText search_bar;
+
     /*popup station*/
     private AlertDialog.Builder dialogBuilder;
     private AlertDialog dialog;
@@ -106,6 +109,8 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
     private TextView the_num_of_chargers;
 
     private ImageView return_map_station_widget;
+
+    private StationObj current_station; // this is a ref to the station we are currently looking at //
 
     /*vars*/
     private Boolean mLocationPermissionGranted = false;
@@ -165,14 +170,17 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 // find the relevant document regarding the search string //
                                 if (document.get("Name").equals(searchString)) {
-                                    Log.d(TAG, document.getId() + " => " + document.getData());
+
+                                    //parsing the station document from the database//
+                                    StationDB s_DB = new StationDB();
+                                    current_station = s_DB.GetStationFromDatabase(document);
+                                    Log.d(TAG, "Station is: " + current_station.toString());
 
                                     // get the latlng//
-                                    GeoPoint geoPoint = document.getGeoPoint("Location");
+                                    GeoPoint geoPoint = current_station.getLocation();
                                     double lat = geoPoint.getLatitude();
                                     double lng = geoPoint.getLongitude();
                                     LatLng latLng = new LatLng(lat, lng);
-                                    Log.d(TAG, "LATLNG: " + latLng.toString());
 
                                     moveCamera(latLng, DEFAULT_ZOOM);
 
@@ -182,7 +190,7 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
                             search_bar.setError("Station does not exist.");
 
                         } else {
-                            Log.d(TAG, "Error getting documents: ", task.getException());
+                            Log.e(TAG, "Error getting documents: ", task.getException());
 
                         }
                     }
@@ -310,22 +318,31 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
     }
 
     /**
-     * method to open up the poppable map
+     * This is an outsource method, it creates the poppable station widget
+     * it invokes the moment we click on a marker omn the map and shows the details of the station
      */
-    public void createNewStationPopup(){
+    @SuppressLint("SetTextI18n") // ignores cases where numbers are turned to strings.
+    public void createNewStationPopup() {
 
         dialogBuilder = new AlertDialog.Builder(this);
-        final View PopupStation = getLayoutInflater().inflate(R.layout.station,null);
+        final View PopupStation = getLayoutInflater().inflate(R.layout.station, null);
 
         /*widgets*/
         name_of_station = (TextView) PopupStation.findViewById(R.id.name_of_station);
-        address = (TextView) PopupStation.findViewById(R.id.address);
-        amount_of_chargers = (TextView) PopupStation.findViewById(R.id.amount_of_chargers);
         rate_of_station = (TextView) PopupStation.findViewById(R.id.rate_of_station);
+        return_map_station_widget = (ImageView) PopupStation.findViewById(R.id.return_map_station_widget);
+
+        address = (TextView) PopupStation.findViewById(R.id.address);
         address_of_station = (TextView) PopupStation.findViewById(R.id.address_of_station);
+
+        amount_of_chargers = (TextView) PopupStation.findViewById(R.id.amount_of_chargers);
         the_num_of_chargers = (TextView) PopupStation.findViewById(R.id.the_num_of_chargers);
 
-        return_map_station_widget = (ImageView) PopupStation.findViewById(R.id.return_map_station_widget);
+
+        name_of_station.setText(current_station.getStation_name());
+        address_of_station.setText(current_station.getStation_address());
+        the_num_of_chargers.setText(Integer.toString(current_station.getCharging_stations()));
+        rate_of_station.setText(Double.toString(current_station.getAverageGrade()));
 
         dialogBuilder.setView(PopupStation);
         dialog = dialogBuilder.create();

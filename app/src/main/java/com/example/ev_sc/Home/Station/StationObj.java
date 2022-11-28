@@ -78,5 +78,15 @@ public class StationObj implements StationInterface {
         this.avg_grade = avgGrade;
     }
 
+    public String toString()
+    {
+        return "Address: "+this.station_address+
+                ", Average Rating: "+this.avg_grade+
+                ", Charging Stations: "+this.charging_stations+
+                ", Name: "+this.station_name+
+                ", Location: "+this.location;
+
+    }
+
     // todo: function to calculate average grade based on reviews
 }
