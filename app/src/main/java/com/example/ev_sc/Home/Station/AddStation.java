@@ -22,35 +22,31 @@ public class AddStation extends Activity {
 
     Button add_station_button;
 
+    String name;
+    String address;
+    String charging_stations;
+    String station_average_grade;
+    String latitude;
+    String longtitude;
+
+    private static final String TAG = "Add Station"; // tag for logging
+
     @Override
     protected void onCreate(Bundle Instance) {
         super.onCreate(Instance);
         setContentView(R.layout.add_station);
-
-        // init widgets //
-        station_name = findViewById(R.id.station_name);
-        station_address = findViewById(R.id.station_address);
-        station_charging = findViewById(R.id.station_charging);
-        station_avg_grade = findViewById(R.id.station_avg_grade);
-        station_latitude = findViewById(R.id.station_latitude);
-        station_longtitude = findViewById(R.id.station_longtitude);
-        add_station_button = findViewById(R.id.add_station_button);
-
-
+        init_widgets();
         OnClickAddButton();
     }
 
     private void OnClickAddButton() {
         add_station_button.setOnClickListener(view -> {
-            String name = station_name.getText().toString().trim();
-            String address = station_address.getText().toString().trim();
-            String charging_stations = station_charging.getText().toString().trim();
-            String station_average_grade = station_avg_grade.getText().toString().trim();
-            String latitude = station_latitude.getText().toString().trim();
-            String longtitude = station_longtitude.getText().toString().trim();
+
+            get_user_input();
 
             if (!validate_input(name, address, charging_stations, station_average_grade, latitude, longtitude)) {
                 Toast.makeText(AddStation.this, "Error! Incorrect Input!", Toast.LENGTH_SHORT).show();
+                Log.e(TAG, "Couldn't validate input for station");
                 return;
             }
             // preparing the geo location
@@ -62,18 +58,22 @@ public class AddStation extends Activity {
             int charging = Integer.parseInt(charging_stations);
             double station_grade = Double.parseDouble(station_average_grade);
 
-            // creating Station object and adding it to database
+            StationObj station_to_add = new StationObj(station_grade, address, charging, name, station_coords);
+            StationDB db = new StationDB();
+            Log.d(TAG, "\n" + station_to_add.toString()); // logging station details for debugging
+
+            // adding station to database
             try {
-                StationObj station_to_add = new StationObj(station_grade, address, charging, name, station_coords);
-                StationDB db = new StationDB();
                 db.AddStationToDatabase(station_to_add);
                 Toast.makeText(AddStation.this, "Station Added!", Toast.LENGTH_SHORT).show();
-                Log.d("add station", "Success");
+                Log.d(TAG, "Success");
             } catch (Exception e) {
                 Toast.makeText(AddStation.this, "Error ! " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                Log.e(TAG, "Failure adding station to database because of an exception, " + e.getMessage());
             }
 
             clear_text();
+            clear_input();
         });
     }
 
@@ -117,5 +117,42 @@ public class AddStation extends Activity {
         station_avg_grade.getText().clear();
         station_latitude.getText().clear();
         station_longtitude.getText().clear();
+
+        Log.d(TAG,"Cleared user input text");
+    }
+
+    private void init_widgets() {
+        station_name = findViewById(R.id.station_name);
+        station_address = findViewById(R.id.station_address);
+        station_charging = findViewById(R.id.station_charging);
+        station_avg_grade = findViewById(R.id.station_avg_grade);
+        station_latitude = findViewById(R.id.station_latitude);
+        station_longtitude = findViewById(R.id.station_longtitude);
+        add_station_button = findViewById(R.id.add_station_button);
+
+        Log.d(TAG, "Initialized widgets");
+    }
+
+    private void get_user_input(){
+        name = station_name.getText().toString().trim();
+        address = station_address.getText().toString().trim();
+        charging_stations = station_charging.getText().toString().trim();
+        station_average_grade = station_avg_grade.getText().toString().trim();
+        latitude = station_latitude.getText().toString().trim();
+        longtitude = station_longtitude.getText().toString().trim();
+
+        Log.d(TAG, "Data to add: " + name + ", " + address + ", " + "charging_stations: " + charging_stations
+                + ", " + "Average Grade: " + station_average_grade + ", " + "Coordinates: " + latitude + "," + longtitude);
+    }
+
+    private void clear_input(){
+        name = "";
+        address = "";
+        charging_stations = "";
+        station_average_grade = "";
+        latitude = "";
+        longtitude = "";
+
+        Log.d(TAG, "Cleared input");
     }
 }

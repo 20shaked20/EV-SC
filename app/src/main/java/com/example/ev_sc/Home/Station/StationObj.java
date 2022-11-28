@@ -1,5 +1,7 @@
 package com.example.ev_sc.Home.Station;
 
+import androidx.annotation.NonNull;
+
 import com.google.firebase.firestore.GeoPoint;
 
 import java.util.UUID;
@@ -76,6 +78,16 @@ public class StationObj implements StationInterface {
 
     public void setAvgGrade(double avgGrade) {
         this.avg_grade = avgGrade;
+    }
+
+    @NonNull
+    public String toString(){ // override toString method to better represent station data (logging etc.)
+        return "Station Name: " + this.getStation_name() + "\n" +
+                "Station Grade: " + this.getGrade() +"\n" +
+                "Station Location: " + this.getLocation().toString() + "\n" +
+                "Charging Stations: " + this.getCharging_stations() + "\n" +
+                "Station Address: " + this.getStation_address() + "\n" +
+                "Station ID: " + this.getID() + "\n";
     }
 
     // todo: function to calculate average grade based on reviews
