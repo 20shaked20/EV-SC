@@ -60,7 +60,7 @@ public class AddStation extends Activity {
 
             StationObj station_to_add = new StationObj(station_grade, address, charging, name, station_coords);
             StationDB db = new StationDB();
-            Log.d(TAG, station_to_add.toString()); // logging station details for debugging
+            Log.d(TAG, "\n" + station_to_add.toString()); // logging station details for debugging
 
             // adding station to database
             try {
