@@ -50,6 +50,8 @@ import com.google.firebase.firestore.GeoPoint;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import org.w3c.dom.Text;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -88,7 +90,7 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
         }
     }
 
-    private static final String TAG = "MapActivity";
+    private static final String TAG = "MapHome";
 
     private static final String FINE_LOCATION = Manifest.permission.ACCESS_FINE_LOCATION;
     private static final String COURSE_LOCATION = Manifest.permission.ACCESS_COARSE_LOCATION;
@@ -102,11 +104,9 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
     private AlertDialog.Builder dialogBuilder;
     private AlertDialog dialog;
     private TextView name_of_station;
-    private TextView address;
-    private TextView amount_of_chargers;
     private TextView rate_of_station;
-    private TextView address_of_station;
     private TextView the_num_of_chargers;
+    private TextView address_of_station;
 
     private ImageView return_map_station_widget;
 
@@ -182,7 +182,7 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
                                     double lng = geoPoint.getLongitude();
                                     LatLng latLng = new LatLng(lat, lng);
 
-                                    moveCamera(latLng, DEFAULT_ZOOM);
+                                    moveCamera(latLng, DEFAULT_ZOOM, true);
 
                                     return;
                                 }
@@ -217,7 +217,7 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
                             Location currentLocation = (Location) task.getResult();
 
                             //move camera to the current location of the user//
-                            moveCamera(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()), DEFAULT_ZOOM);
+                            moveCamera(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()), DEFAULT_ZOOM, false);
 
                         } else {
                             Log.d(TAG, "onComplete getDeviceLocation: current location is null");
@@ -236,25 +236,28 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
      *
      * @param latLng coordinates of the location (latitude,longitude)
      * @param zoom   float representing the desired zooming of the map.
+     * @param marker   true = create a marker, false = dont create marker.
      */
-    private void moveCamera(LatLng latLng, float zoom) {
+    private void moveCamera(LatLng latLng, float zoom, boolean marker) {
         Log.d(TAG, "moveCamera: Moving the camera to: (lat: " + latLng.latitude + ", lng: " + latLng.longitude + " )");
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoom));
 
         //create a marker on map//
-        MarkerOptions options = new MarkerOptions()
-                .position(latLng)
-                .title("Test");
-        mMap.addMarker(options);
+        if (marker) {
+            MarkerOptions options = new MarkerOptions()
+                    .position(latLng)
+                    .title("Test");
+            mMap.addMarker(options);
 
-        // TODO: make this display the relevant data//
-        mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
-            @Override
-            public boolean onMarkerClick(@NonNull Marker marker) {
-                createNewStationPopup();
-                return true;
-            }
-        });
+            // TODO: make this display the relevant data//
+            mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+                @Override
+                public boolean onMarkerClick(@NonNull Marker marker) {
+                    createNewStationPopup();
+                    return true;
+                }
+            });
+        }
     }
 
     /**
@@ -321,7 +324,8 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
      * This is an outsource method, it creates the poppable station widget
      * it invokes the moment we click on a marker omn the map and shows the details of the station
      */
-    @SuppressLint("SetTextI18n") // ignores cases where numbers are turned to strings.
+    @SuppressLint({"SetTextI18n", "CutPasteId"})
+    // ignores cases where numbers are turned to strings.
     public void createNewStationPopup() {
 
         dialogBuilder = new AlertDialog.Builder(this);
@@ -330,13 +334,9 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
         /*widgets*/
         name_of_station = (TextView) PopupStation.findViewById(R.id.name_of_station);
         rate_of_station = (TextView) PopupStation.findViewById(R.id.rate_of_station);
-        return_map_station_widget = (ImageView) PopupStation.findViewById(R.id.return_map_station_widget);
-
-        address = (TextView) PopupStation.findViewById(R.id.address);
-        address_of_station = (TextView) PopupStation.findViewById(R.id.address_of_station);
-
-        amount_of_chargers = (TextView) PopupStation.findViewById(R.id.amount_of_chargers);
         the_num_of_chargers = (TextView) PopupStation.findViewById(R.id.the_num_of_chargers);
+        address_of_station = (TextView) PopupStation.findViewById(R.id.address_of_station);
+        return_map_station_widget = (ImageView) PopupStation.findViewById(R.id.return_map_station_widget);
 
 
         name_of_station.setText(current_station.getStation_name());
