@@ -2,24 +2,31 @@ package com.example.ev_sc.Home;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import com.example.ev_sc.Home.Station.StationDB;
+import com.example.ev_sc.Home.Station.StationObj;
 import com.example.ev_sc.R;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -28,6 +35,8 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -40,6 +49,8 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.GeoPoint;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+
+import org.w3c.dom.Text;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -79,7 +90,7 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
         }
     }
 
-    private static final String TAG = "MapActivity";
+    private static final String TAG = "MapHome";
 
     private static final String FINE_LOCATION = Manifest.permission.ACCESS_FINE_LOCATION;
     private static final String COURSE_LOCATION = Manifest.permission.ACCESS_COARSE_LOCATION;
@@ -88,6 +99,18 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
 
     /*widgets*/
     private EditText search_bar;
+
+    /*popup station*/
+    private AlertDialog.Builder dialogBuilder;
+    private AlertDialog dialog;
+    private TextView name_of_station;
+    private TextView rate_of_station;
+    private TextView the_num_of_chargers;
+    private TextView address_of_station;
+
+    private ImageView return_map_station_widget;
+
+    private StationObj current_station; // this is a ref to the station we are currently looking at //
 
     /*vars*/
     private Boolean mLocationPermissionGranted = false;
@@ -145,19 +168,21 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
                             for (QueryDocumentSnapshot document : task.getResult()) {
-//                                Log.d(TAG, document.getId() + " => " + document.getData());
                                 // find the relevant document regarding the search string //
                                 if (document.get("Name").equals(searchString)) {
-                                    Log.d(TAG, document.getId() + " => " + document.getData());
+
+                                    //parsing the station document from the database//
+                                    StationDB s_DB = new StationDB();
+                                    current_station = s_DB.GetStationFromDatabase(document);
+                                    Log.d(TAG, "Station is: " + current_station.toString());
 
                                     // get the latlng//
-                                    GeoPoint geoPoint = document.getGeoPoint("Location");
+                                    GeoPoint geoPoint = current_station.getLocation();
                                     double lat = geoPoint.getLatitude();
                                     double lng = geoPoint.getLongitude();
                                     LatLng latLng = new LatLng(lat, lng);
-                                    Log.d(TAG, "LATLNG: " + latLng.toString());
 
-                                    moveCamera(latLng, DEFAULT_ZOOM);
+                                    moveCamera(latLng, DEFAULT_ZOOM, true);
 
                                     return;
                                 }
@@ -165,7 +190,7 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
                             search_bar.setError("Station does not exist.");
 
                         } else {
-                            Log.d(TAG, "Error getting documents: ", task.getException());
+                            Log.e(TAG, "Error getting documents: ", task.getException());
 
                         }
                     }
@@ -192,7 +217,7 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
                             Location currentLocation = (Location) task.getResult();
 
                             //move camera to the current location of the user//
-                            moveCamera(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()), DEFAULT_ZOOM);
+                            moveCamera(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()), DEFAULT_ZOOM, false);
 
                         } else {
                             Log.d(TAG, "onComplete getDeviceLocation: current location is null");
@@ -211,11 +236,28 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
      *
      * @param latLng coordinates of the location (latitude,longitude)
      * @param zoom   float representing the desired zooming of the map.
+     * @param marker   true = create a marker, false = dont create marker.
      */
-    private void moveCamera(LatLng latLng, float zoom) {
+    private void moveCamera(LatLng latLng, float zoom, boolean marker) {
         Log.d(TAG, "moveCamera: Moving the camera to: (lat: " + latLng.latitude + ", lng: " + latLng.longitude + " )");
-
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoom));
+
+        //create a marker on map//
+        if (marker) {
+            MarkerOptions options = new MarkerOptions()
+                    .position(latLng)
+                    .title("Test");
+            mMap.addMarker(options);
+
+            // TODO: make this display the relevant data//
+            mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+                @Override
+                public boolean onMarkerClick(@NonNull Marker marker) {
+                    createNewStationPopup();
+                    return true;
+                }
+            });
+        }
     }
 
     /**
@@ -278,31 +320,44 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
         }
     }
 
+    /**
+     * This is an outsource method, it creates the poppable station widget
+     * it invokes the moment we click on a marker omn the map and shows the details of the station
+     */
+    @SuppressLint({"SetTextI18n", "CutPasteId"})
+    // ignores cases where numbers are turned to strings.
+    public void createNewStationPopup() {
+
+        dialogBuilder = new AlertDialog.Builder(this);
+        final View PopupStation = getLayoutInflater().inflate(R.layout.station, null);
+
+        /*widgets*/
+        name_of_station = (TextView) PopupStation.findViewById(R.id.name_of_station);
+        rate_of_station = (TextView) PopupStation.findViewById(R.id.rate_of_station);
+        the_num_of_chargers = (TextView) PopupStation.findViewById(R.id.the_num_of_chargers);
+        address_of_station = (TextView) PopupStation.findViewById(R.id.address_of_station);
+        return_map_station_widget = (ImageView) PopupStation.findViewById(R.id.return_map_station_widget);
+
+
+        name_of_station.setText(current_station.getStation_name());
+        address_of_station.setText(current_station.getStation_address());
+        the_num_of_chargers.setText(Integer.toString(current_station.getCharging_stations()));
+        rate_of_station.setText(Double.toString(current_station.getAverageGrade()));
+
+        dialogBuilder.setView(PopupStation);
+        dialog = dialogBuilder.create();
+        dialog.show();
+
+
+        // listener to return to the map //
+        return_map_station_widget.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+
+    }
+
 
 }
-
-/**
- * working doc pulling for firestore: ->
- * <p>
- * DocumentReference docRef = fStore.collection("stations").document("bUizB60oCmdnKWZyuYbA");
- * docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
- *
- * @Override public void onComplete(@NonNull Task<DocumentSnapshot> task) {
- * if (task.isSuccessful()) {
- * DocumentSnapshot document = task.getResult();
- * if (document.exists()) {
- * Log.d(TAG, "DocumentSnapshot data: " + document.getData().get("Location"));
- * GeoPoint geoPoint = document.getGeoPoint("Location");
- * double lat = geoPoint.getLatitude();
- * double lng = geoPoint.getLongitude();
- * LatLng latLng = new LatLng(lat, lng);
- * Log.d(TAG, "LATLNG: "+ latLng.toString());
- * } else {
- * Log.d(TAG, "No such document");
- * }
- * } else {
- * Log.d(TAG, "get failed with ", task.getException());
- * }
- * }
- * });
- */

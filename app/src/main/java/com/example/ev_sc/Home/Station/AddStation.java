@@ -4,9 +4,9 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import com.example.ev_sc.R;
 import com.google.firebase.firestore.GeoPoint;
@@ -35,11 +35,13 @@ public class AddStation extends Activity {
     protected void onCreate(Bundle Instance) {
         super.onCreate(Instance);
         setContentView(R.layout.add_station);
+
         init_widgets();
         OnClickAddButton();
     }
 
     private void OnClickAddButton() {
+    
         add_station_button.setOnClickListener(view -> {
 
             get_user_input();

@@ -80,6 +80,7 @@ public class StationObj implements StationInterface {
         this.avg_grade = avgGrade;
     }
 
+
     @NonNull
     public String toString(){ // override toString method to better represent station data (logging etc.)
         return "Station Name: " + this.getStation_name() + "\n" +
