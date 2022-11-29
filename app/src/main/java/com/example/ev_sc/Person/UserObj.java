@@ -1,12 +1,14 @@
 package com.example.ev_sc.Person;
 
+import androidx.annotation.NonNull;
+
 public class UserObj implements PersonObj {
     private String First_name;
     private String Last_name;
     private String username;
-    private int Permissions = 0;
+    private final int Permissions = 0;
     private String phone_number;
-    private String UID;
+    private final String UID;
 
     public UserObj(String first_name, String last_name, String username, String phone_number, String UID) {
         this.Last_name = last_name;
@@ -76,5 +78,14 @@ public class UserObj implements PersonObj {
      */
     public void setPhone_number(String phone_number) {
         this.phone_number = phone_number;
+    }
+
+    @NonNull
+    public String toString(){ // override toString method to better represent user data (logging etc.)
+        return "Full Name: " + this.getFirst_name() + this.getLast_name() +  "\n" +
+                "Username: " + this.getUsername() +"\n" +
+                "Phone Number: " + this.getPhone_number() + "\n" +
+                "Permissions: " + this.getPermissions() + "\n" +
+                "User ID: " + this.getID() + "\n";
     }
 }
