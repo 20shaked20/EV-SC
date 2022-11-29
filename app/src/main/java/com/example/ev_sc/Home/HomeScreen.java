@@ -3,14 +3,14 @@ package com.example.ev_sc.Home;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.location.Address;
-import android.location.Geocoder;
 import android.location.Location;
 import android.os.Bundle;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
@@ -19,14 +19,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import com.example.ev_sc.Home.Station.AddStation;
 import com.example.ev_sc.Home.Station.StationDB;
 import com.example.ev_sc.Home.Station.StationObj;
+import com.example.ev_sc.Profile.UserProfileScreen;
 import com.example.ev_sc.R;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -39,24 +39,10 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.GeoPoint;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
-
-import org.w3c.dom.Text;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
 
 
 public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback {
@@ -129,6 +115,37 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
         getLocationPermission();
 
         //TODO: LoadStations(); ( Better for searching )
+    }
+
+    /**
+     * this method responsible for creating the menu bar
+     *
+     * @param menu menu bar
+     * @return true on success.
+     */
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.home_appbar, menu);
+        return true;
+    }
+
+    /**
+     * this method is responsible for handling the listeners on the action bar items
+     * @param item menu bar item
+     * @return true on success
+     */
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        switch (item.getItemId()) {
+
+            case R.id.profile_menu:
+                startActivity(new Intent(HomeScreen.this, UserProfileScreen.class));
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+
+        }
     }
 
     /**
@@ -236,7 +253,7 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
      *
      * @param latLng coordinates of the location (latitude,longitude)
      * @param zoom   float representing the desired zooming of the map.
-     * @param marker   true = create a marker, false = dont create marker.
+     * @param marker true = create a marker, false = dont create marker.
      */
     private void moveCamera(LatLng latLng, float zoom, boolean marker) {
         Log.d(TAG, "moveCamera: Moving the camera to: (lat: " + latLng.latitude + ", lng: " + latLng.longitude + " )");
