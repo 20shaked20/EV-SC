@@ -1,0 +1,23 @@
+@startuml
+'https://plantuml.com/activity-diagram-beta
+
+start
+:user;
+:start use the app;
+if (login) then (registered)
+  if (Enter username and password) then (correct)
+
+  else (incorrect try again)
+    stop
+  endif
+else (Unregistered)
+    :register;
+    :Signed up successfully;
+
+
+
+endif
+:home;
+:Using the app;
+
+@enduml

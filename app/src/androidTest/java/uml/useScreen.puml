@@ -1,0 +1,57 @@
+@startuml
+'https://plantuml.com/use-case-diagram
+
+:Main Admin: as Admin
+(Use the application- user) as (Use1)
+(Use the application-admin) as (Use2)
+(login)as (login1)
+(login)as (login2)
+(home) as (home1)
+(home) as (home2)
+(register) as (register)
+(profile user) as (profile1)
+(edit profile) as (edit profile)
+(profile admin) as (profile2)
+(search station) as (search station)
+(station) as (station)
+(add station) as (add station)
+(edit station) as (edit station)
+(favorites) as (favorites)
+(reviews) as (reviews)
+(new reviews) as (new reviews)
+
+User --> (Use1)
+(Use1) --> (register)
+(Use1) --> (login1)
+(register) --> (home1)
+(login1) --> (home1)
+(home1)-->(profile1)
+(profile1)-->(edit profile)
+(profile1)-->(favorites)
+(home1)-->(search station)
+(search station)--> (station)
+(station)--> (reviews)
+(station)..->(home1)
+(reviews)..->(home1)
+(favorites)..->(home1)
+(edit profile)..->(home1)
+note right of User : The order of screens for user
+
+''''''''''''''''''''''''''''
+Admin ---> (Use2)
+(Use2) --> (login2)
+(login2) --> (home2)
+(home2)-->(profile2)
+(profile2)..->(home2)
+(add station)..->(home2)
+(edit station)..->(home2)
+(profile2) --> (add station)
+(profile2) --> (edit station)
+(home2)-->(new reviews)
+(new reviews)..->(home2)
+note right of Admin : The order of screens for admin
+
+
+
+
+@enduml
