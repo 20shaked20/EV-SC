@@ -141,6 +141,7 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
 
             case R.id.profile_menu:
                 startActivity(new Intent(HomeScreen.this, UserProfileScreen.class));
+                finish();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
