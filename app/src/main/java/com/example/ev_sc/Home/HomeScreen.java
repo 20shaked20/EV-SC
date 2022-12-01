@@ -23,7 +23,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
-import com.example.ev_sc.Home.Station.AddStation;
 import com.example.ev_sc.Home.Station.StationDB;
 import com.example.ev_sc.Home.Station.StationObj;
 import com.example.ev_sc.Profile.UserProfileScreen;
@@ -131,6 +130,7 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
 
     /**
      * this method is responsible for handling the listeners on the action bar items
+     *
      * @param item menu bar item
      * @return true on success
      */
@@ -178,6 +178,8 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
 
         String searchString = search_bar.getText().toString().trim();
 
+        //TODO: consider moving some of the code to StationDB//
+
         fStore.collection("stations")
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -191,7 +193,7 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
                                     //parsing the station document from the database//
                                     StationDB s_DB = new StationDB();
                                     current_station = s_DB.GetStationFromDatabase(document);
-                                    Log.d(TAG, "Station is: " + current_station.toString());
+                                    Log.d(TAG, "geoLocate: Station is => " + current_station.toString());
 
                                     // get the latlng//
                                     GeoPoint geoPoint = current_station.getLocation();
@@ -199,7 +201,7 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
                                     double lng = geoPoint.getLongitude();
                                     LatLng latLng = new LatLng(lat, lng);
 
-                                    moveCamera(latLng, DEFAULT_ZOOM, true);
+                                    moveCamera(latLng, true);
 
                                     return;
                                 }
@@ -207,7 +209,7 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
                             search_bar.setError("Station does not exist.");
 
                         } else {
-                            Log.e(TAG, "Error getting documents: ", task.getException());
+                            Log.e(TAG, "geoLocate: Error getting documents: ", task.getException());
 
                         }
                     }
@@ -234,7 +236,7 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
                             Location currentLocation = (Location) task.getResult();
 
                             //move camera to the current location of the user//
-                            moveCamera(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()), DEFAULT_ZOOM, false);
+                            moveCamera(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()), false);
 
                         } else {
                             Log.d(TAG, "onComplete getDeviceLocation: current location is null");
@@ -252,12 +254,11 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
      * this method moves the current camera to a new location on the map
      *
      * @param latLng coordinates of the location (latitude,longitude)
-     * @param zoom   float representing the desired zooming of the map.
      * @param marker true = create a marker, false = dont create marker.
      */
-    private void moveCamera(LatLng latLng, float zoom, boolean marker) {
+    private void moveCamera(LatLng latLng, boolean marker) {
         Log.d(TAG, "moveCamera: Moving the camera to: (lat: " + latLng.latitude + ", lng: " + latLng.longitude + " )");
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoom));
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, HomeScreen.DEFAULT_ZOOM));
 
         //create a marker on map//
         if (marker) {
@@ -284,6 +285,7 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
         Log.d(TAG, "initMap: initializing map...");
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map_home_screen);
 
+        assert mapFragment != null;
         mapFragment.getMapAsync(HomeScreen.this);
     }
 
