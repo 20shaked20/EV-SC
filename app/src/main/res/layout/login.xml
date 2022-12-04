@@ -13,25 +13,27 @@
             android:id="@+id/imageView31"
             android:layout_width="24dp"
             android:layout_height="344dp"
+            android:src="@drawable/ic_side_bg"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.036"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="1.0"
-            app:srcCompat="@drawable/ic_side_bg" />
+             />
 
         <ImageView
             android:id="@+id/imageView3"
             android:layout_width="22dp"
             android:layout_height="190dp"
+            android:src="@drawable/ic_side_bg"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.094"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="1.0"
-            app:srcCompat="@drawable/ic_side_bg" />
+            />
 
         <EditText
             android:id="@+id/username_enter_login"
@@ -112,6 +114,8 @@
             android:text="LOGIN"
             android:textAllCaps="false"
             android:textSize="16sp"
+            android:textColor="@color/white"
+            android:background="@color/teal_700"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.875"
@@ -124,6 +128,8 @@
             style="@android:style/Widget.DeviceDefault.Button.Inset"
             android:layout_width="254dp"
             android:layout_height="49dp"
+            android:textColor="@color/white"
+            android:background="@color/teal_700"
             android:text="new user? Register"
             android:textSize="16sp"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -137,25 +143,28 @@
             android:id="@+id/add_station_login_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:background="@color/teal_700"
             android:text="Add Station"
+            android:textColor="@color/white"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.913"
+            app:layout_constraintHorizontal_bias="0.936"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.257" />
+            app:layout_constraintVertical_bias="0.279" />
 
         <ImageView
             android:id="@+id/imageView6"
             android:layout_width="116dp"
             android:layout_height="106dp"
+            android:src="@drawable/ic_register_hero"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.865"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.081"
-            app:srcCompat="@drawable/ic_register_hero" />
+           />
 
         <ImageView
             android:id="@+id/imageView7"
@@ -167,7 +176,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.308"
-            app:srcCompat="@android:drawable/ic_dialog_email" />
+            android:src="@android:drawable/ic_dialog_email" />
 
         <ImageView
             android:id="@+id/imageView9"
@@ -179,7 +188,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.54"
-            app:srcCompat="@android:drawable/ic_lock_idle_lock" />
+            android:src="@android:drawable/ic_lock_idle_lock" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </LinearLayout>

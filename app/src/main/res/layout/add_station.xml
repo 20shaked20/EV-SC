@@ -6,35 +6,40 @@
     android:layout_height="match_parent">
 
 
+
     <ImageView
         android:id="@+id/imageView50"
         android:layout_width="22dp"
         android:layout_height="190dp"
+        android:src="@drawable/ic_side_bg"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.938"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.774"
-        app:srcCompat="@drawable/ic_side_bg" />
+        />
 
     <ImageView
         android:id="@+id/imageView49"
         android:layout_width="24dp"
         android:layout_height="344dp"
+        android:src="@drawable/ic_side_bg"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.698"
-        app:srcCompat="@drawable/ic_side_bg" />
+         />
 
     <Button
         android:id="@+id/add_station_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/add_station"
+        android:textColor="@color/white"
+        android:background="@color/teal_700"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.176"
@@ -160,32 +165,21 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.711" />
 
-    <ImageView
-        android:id="@+id/imageView47"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:srcCompat="@drawable/button_background_blue"
-        tools:layout_editor_absoluteX="-85dp"
-        tools:layout_editor_absoluteY="30dp" />
 
-    <ImageView
-        android:id="@+id/imageView48"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:srcCompat="@android:drawable/ic_dialog_map"
-        tools:layout_editor_absoluteX="25dp"
-        tools:layout_editor_absoluteY="29dp" />
+
+
 
     <ImageView
         android:id="@+id/imageView52"
         android:layout_width="138dp"
         android:layout_height="137dp"
+        android:src="@drawable/ic_login_hero"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="1.0"
-        app:srcCompat="@drawable/ic_login_hero" />
+        />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

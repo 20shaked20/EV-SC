@@ -15,7 +15,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.823"
-        app:srcCompat="@drawable/ic_side_bg" />
+        android:src="@drawable/ic_side_bg" />
 
     <ImageView
         android:id="@+id/imageView19"
@@ -27,7 +27,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.718"
-        app:srcCompat="@drawable/ic_side_bg" />
+        android:src="@drawable/ic_side_bg" />
 
     <ImageView
         android:id="@+id/imageView10"
@@ -39,7 +39,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.832"
-        app:srcCompat="@drawable/ic_add_img" />
+        android:src="@drawable/ic_add_img" />
 
     <ImageView
         android:id="@+id/imageView21"
@@ -51,7 +51,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.909"
-        app:srcCompat="@drawable/ic_add_img" />
+        android:src="@drawable/ic_add_img" />
 
     <ImageView
         android:id="@+id/imageView16"
@@ -63,7 +63,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.593"
-        app:srcCompat="@drawable/ic_add_img" />
+        android:src="@drawable/ic_add_img" />
 
     <TextView
         android:id="@+id/review2"
@@ -168,36 +168,16 @@
         app:layout_constraintVertical_bias="0.82" />
 
     <ImageView
-        android:id="@+id/imageView2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:srcCompat="@drawable/button_background_blue"
-        tools:layout_editor_absoluteX="-91dp"
-        tools:layout_editor_absoluteY="20dp" />
-
-    <ImageView
-        android:id="@+id/imageView18"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:srcCompat="@drawable/button_background_blue"
-        tools:layout_editor_absoluteX="310dp"
-        tools:layout_editor_absoluteY="20dp" />
-
-    <ImageView
         android:id="@+id/imageView51"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:srcCompat="@android:drawable/ic_menu_edit"
-        tools:layout_editor_absoluteX="327dp"
-        tools:layout_editor_absoluteY="28dp" />
-
-    <ImageView
-        android:id="@+id/imageView53"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:srcCompat="@android:drawable/ic_dialog_map"
-        tools:layout_editor_absoluteX="44dp"
-        tools:layout_editor_absoluteY="28dp" />
+        android:src="@android:drawable/ic_menu_edit"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.978"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.028" />
 
     <ImageView
         android:id="@+id/imageView12"
@@ -209,7 +189,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.464"
-        app:srcCompat="@drawable/ic_add_img" />
+        android:src="@drawable/ic_add_img" />
 
     <ImageView
         android:id="@+id/imageView23"
@@ -221,6 +201,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.979"
-        app:srcCompat="@drawable/ic_login_hero" />
+        android:src="@drawable/ic_login_hero" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

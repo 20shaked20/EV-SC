@@ -9,6 +9,7 @@ import android.view.View;
 
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -38,6 +39,8 @@ public class LoginScreen extends Activity {
     TextView username_view_login;
     TextView password_view_login;
 
+
+
     FirebaseAuth fAuth;
 
     @Override
@@ -59,6 +62,8 @@ public class LoginScreen extends Activity {
         title_login = (TextView) (findViewById(R.id.title_login));
         username_view_login = (TextView) (findViewById(R.id.username_view_login));
         password_view_login = (TextView) (findViewById(R.id.password_view_login));
+
+
 
         // init listeners //
         OnClickRegisterButton();
