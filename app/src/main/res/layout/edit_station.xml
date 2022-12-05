@@ -9,25 +9,27 @@
         android:id="@+id/imageView26"
         android:layout_width="22dp"
         android:layout_height="190dp"
+        android:src="@drawable/ic_side_bg"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.958"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.0"
-        app:srcCompat="@drawable/ic_side_bg" />
+        />
 
     <ImageView
         android:id="@+id/imageView25"
         android:layout_width="16dp"
         android:layout_height="352dp"
+        android:src="@drawable/ic_side_bg"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.0"
-        app:srcCompat="@drawable/ic_side_bg" />
+         />
 
     <TextView
         android:id="@+id/titel_edit_station2"
@@ -54,7 +56,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.474"
-        app:srcCompat="@android:drawable/ic_menu_edit" />
+        android:src="@android:drawable/ic_menu_edit"/>
 
     <TextView
         android:id="@+id/change_grade_of_station"
@@ -108,7 +110,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.751"
-        app:srcCompat="@android:drawable/ic_menu_edit" />
+        android:src="@android:drawable/ic_menu_edit"/>
 
     <ImageView
         android:id="@+id/imageView81"
@@ -120,7 +122,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.621"
-        app:srcCompat="@android:drawable/ic_menu_edit" />
+        android:src="@android:drawable/ic_menu_edit"/>
 
     <ImageView
         android:id="@+id/imageView80"
@@ -132,7 +134,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.319"
-        app:srcCompat="@android:drawable/ic_menu_edit" />
+        android:src="@android:drawable/ic_menu_edit" />
 
     <TextView
         android:id="@+id/name_of_station3"
@@ -154,6 +156,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="remove station"
+        android:textColor="@color/white"
+        android:background="@color/teal_700"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.065"
@@ -180,6 +184,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="save"
+        android:textColor="@color/white"
+        android:background="@color/teal_700"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.95"
@@ -188,18 +194,14 @@
         app:layout_constraintVertical_bias="0.807" />
 
     <ImageView
-        android:id="@+id/imageView20"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:srcCompat="@drawable/button_background_blue"
-        tools:layout_editor_absoluteX="-74dp"
-        tools:layout_editor_absoluteY="38dp" />
-
-    <ImageView
         android:id="@+id/imageView24"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:srcCompat="@android:drawable/ic_dialog_map"
-        tools:layout_editor_absoluteX="40dp"
-        tools:layout_editor_absoluteY="45dp" />
+        android:src="@android:drawable/ic_dialog_map"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.042"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.028" />
 </androidx.constraintlayout.widget.ConstraintLayout>

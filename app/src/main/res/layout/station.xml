@@ -11,24 +11,16 @@
         android:layout_height="match_parent">
 
         <ImageView
-            android:id="@+id/imageView41"
-            android:layout_width="286dp"
-            android:layout_height="37dp"
-            app:srcCompat="@drawable/button_background_blue"
-            tools:layout_editor_absoluteX="-145dp"
-            tools:layout_editor_absoluteY="21dp" />
-
-        <ImageView
             android:id="@+id/imageView29"
             android:layout_width="22dp"
             android:layout_height="190dp"
+            android:src="@drawable/ic_side_bg"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.892"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.924"
-            app:srcCompat="@drawable/ic_side_bg" />
+            app:layout_constraintVertical_bias="0.924" />
 
         <TextView
             android:id="@+id/Rate"
@@ -130,52 +122,52 @@
             app:layout_constraintVertical_bias="0.446" />
 
         <ImageView
-            android:id="@+id/imageView27"
-            android:layout_width="286dp"
-            android:layout_height="37dp"
-            app:srcCompat="@drawable/button_background_blue"
-            tools:layout_editor_absoluteX="266dp"
-            tools:layout_editor_absoluteY="21dp" />
-
-        <ImageView
             android:id="@+id/imageView28"
             android:layout_width="35dp"
             android:layout_height="40dp"
-            app:srcCompat="@android:drawable/ic_menu_edit"
-            tools:layout_editor_absoluteX="360dp"
-            tools:layout_editor_absoluteY="21dp" />
+            android:src="@android:drawable/ic_menu_edit"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.957"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.028" />
 
         <ImageView
             android:id="@+id/imageView8"
             android:layout_width="24dp"
             android:layout_height="344dp"
+            android:src="@drawable/ic_side_bg"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.987"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="1.0"
-            app:srcCompat="@drawable/ic_side_bg" />
+            app:layout_constraintVertical_bias="1.0" />
 
         <ImageView
-            android:id="@+id/imageView39"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:srcCompat="@android:drawable/ic_dialog_map"
-            tools:layout_editor_absoluteX="28dp"
-            tools:layout_editor_absoluteY="26dp" />
+            android:id="@+id/return_map_station_widget"
+            android:layout_width="48dp"
+            android:layout_height="37dp"
+            android:src="@android:drawable/ic_dialog_map"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.044"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.028" />
 
         <ImageView
             android:id="@+id/imageView42"
             android:layout_width="121dp"
             android:layout_height="131dp"
+            android:src="@drawable/ic_login_hero"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.997"
-            app:srcCompat="@drawable/ic_login_hero" />
+            app:layout_constraintVertical_bias="0.997" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
