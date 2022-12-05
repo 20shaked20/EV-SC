@@ -17,6 +17,8 @@ public class StationDB {
 
     FirebaseFirestore fStore = FirebaseFirestore.getInstance();
 
+    final private String TAG = "StationDB";
+
     /**
      * this method adds a new station to the database.
      * @param Station Station Object
@@ -30,7 +32,9 @@ public class StationDB {
         station.put("Charging Stations",Station.getCharging_stations());
         station.put("Location",Station.getLocation());
         station.put("Name",Station.getStation_name());
-        documentReference.set(station).addOnSuccessListener(unused -> Log.d(TAG, "onSuccess: Station Profile is created for " + Station.getID()));
+
+        //Check//
+        documentReference.set(station).addOnSuccessListener(unused -> Log.d(TAG, "Station Profile is created for " + Station.getID()));
 
     }
 

@@ -29,6 +29,7 @@
         app:layout_constraintVertical_bias="0.718"
         app:srcCompat="@drawable/ic_side_bg" />
 
+
     <ImageView
         android:id="@+id/imageView10"
         android:layout_width="31dp"
@@ -69,8 +70,17 @@
         android:id="@+id/review2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="96dp"
-        android:text="my review"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.636" />
+
+    <ImageView
+        android:id="@+id/imageView12"
+        android:layout_width="37dp"
+        android:layout_height="34dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -80,7 +90,6 @@
         android:id="@+id/my_second_favorites_station_user"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="My second favorites station"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.403"
@@ -92,28 +101,33 @@
         android:id="@+id/my_first_favorites_station_user"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="My first favorites station"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.355"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.457" />
+        app:layout_constraintVertical_bias="0.637"
+        app:srcCompat="@android:drawable/ic_dialog_map" />
 
     <ImageView
-        android:id="@+id/imageView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:id="@+id/profile_pic_user"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_weight="1"
+        android:adjustViewBounds="true"
+        android:cropToPadding="false"
+        android:scaleType="centerCrop"
+        android:src="@drawable/profile"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.455"
+        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.033"
-        tools:srcCompat="@tools:sample/avatars" />
+        app:layout_constraintVertical_bias="0.083" />
 
     <TextView
-        android:id="@+id/username"
+        android:id="@+id/profile_username_user"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="username"
@@ -141,8 +155,8 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.377" />
 
-    <TextView
-        android:id="@+id/My_reviews_user"
+    <ImageView
+        android:id="@+id/edit_profile_user"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="My reviews:"

@@ -3,14 +3,14 @@ package com.example.ev_sc.Home;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.location.Address;
-import android.location.Geocoder;
 import android.location.Location;
 import android.os.Bundle;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
@@ -19,14 +19,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import com.example.ev_sc.Home.Station.StationDB;
 import com.example.ev_sc.Home.Station.StationObj;
+import com.example.ev_sc.Profile.UserProfileScreen;
 import com.example.ev_sc.R;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -39,24 +38,10 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.GeoPoint;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
-
-import org.w3c.dom.Text;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
 
 
 public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback {
@@ -132,6 +117,39 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
     }
 
     /**
+     * this method responsible for creating the menu bar
+     *
+     * @param menu menu bar
+     * @return true on success.
+     */
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.home_appbar, menu);
+        return true;
+    }
+
+    /**
+     * this method is responsible for handling the listeners on the action bar items
+     *
+     * @param item menu bar item
+     * @return true on success
+     */
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        switch (item.getItemId()) {
+
+            case R.id.profile_menu:
+                startActivity(new Intent(HomeScreen.this, UserProfileScreen.class));
+                finish();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+
+        }
+    }
+
+    /**
      * this method allows for overriding buttons in the keyboard ( enter .. )
      * and calls for geoLocate to locate the required place
      */
@@ -161,6 +179,8 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
 
         String searchString = search_bar.getText().toString().trim();
 
+        //TODO: consider moving some of the code to StationDB//
+
         fStore.collection("stations")
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -174,7 +194,7 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
                                     //parsing the station document from the database//
                                     StationDB s_DB = new StationDB();
                                     current_station = s_DB.GetStationFromDatabase(document);
-                                    Log.d(TAG, "Station is: " + current_station.toString());
+                                    Log.d(TAG, "geoLocate: Station is => " + current_station.toString());
 
                                     // get the latlng//
                                     GeoPoint geoPoint = current_station.getLocation();
@@ -182,7 +202,7 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
                                     double lng = geoPoint.getLongitude();
                                     LatLng latLng = new LatLng(lat, lng);
 
-                                    moveCamera(latLng, DEFAULT_ZOOM, true);
+                                    moveCamera(latLng, true);
 
                                     return;
                                 }
@@ -190,7 +210,7 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
                             search_bar.setError("Station does not exist.");
 
                         } else {
-                            Log.e(TAG, "Error getting documents: ", task.getException());
+                            Log.e(TAG, "geoLocate: Error getting documents: ", task.getException());
 
                         }
                     }
@@ -217,7 +237,7 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
                             Location currentLocation = (Location) task.getResult();
 
                             //move camera to the current location of the user//
-                            moveCamera(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()), DEFAULT_ZOOM, false);
+                            moveCamera(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()), false);
 
                         } else {
                             Log.d(TAG, "onComplete getDeviceLocation: current location is null");
@@ -235,12 +255,11 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
      * this method moves the current camera to a new location on the map
      *
      * @param latLng coordinates of the location (latitude,longitude)
-     * @param zoom   float representing the desired zooming of the map.
-     * @param marker   true = create a marker, false = dont create marker.
+     * @param marker true = create a marker, false = dont create marker.
      */
-    private void moveCamera(LatLng latLng, float zoom, boolean marker) {
+    private void moveCamera(LatLng latLng, boolean marker) {
         Log.d(TAG, "moveCamera: Moving the camera to: (lat: " + latLng.latitude + ", lng: " + latLng.longitude + " )");
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoom));
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, HomeScreen.DEFAULT_ZOOM));
 
         //create a marker on map//
         if (marker) {
@@ -267,6 +286,7 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
         Log.d(TAG, "initMap: initializing map...");
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map_home_screen);
 
+        assert mapFragment != null;
         mapFragment.getMapAsync(HomeScreen.this);
     }
 

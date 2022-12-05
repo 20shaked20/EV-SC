@@ -149,6 +149,7 @@ public class RegisterScreen extends Activity {
 
                 Intent register_to_login = new Intent(view.getContext(), LoginScreen.class);
                 startActivityForResult(register_to_login, 0);
+                finish();
             }
         });
     }
