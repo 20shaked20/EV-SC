@@ -42,10 +42,9 @@ public class UserProfileScreen extends AppCompatActivity {
     private ImageView edit_profile;
 
     //vars//
-    private UserObj current_user;
     final private String TAG = "UserProfile";
+    private String username;
 
-    FirebaseFirestore fStore = FirebaseFirestore.getInstance();
     FirebaseAuth fAuth = FirebaseAuth.getInstance();
     StorageReference fStorage = FirebaseStorage.getInstance().getReference();
 
@@ -55,12 +54,22 @@ public class UserProfileScreen extends AppCompatActivity {
 
         Log.d(TAG, "Initializing Profile Screen");
 
-
         super.onCreate(Instance);
         setContentView(R.layout.user_profile);
 
+        getExtras();
         init_widgets();
-        load_user_data();
+        set_user_data_in_layout();
+
+    }
+
+    private void getExtras() {
+        Log.d(TAG,"getExtras => getting the data from the previous intent to load user.");
+        Bundle user_data = getIntent().getExtras();
+
+        if (user_data != null) {
+            this.username = user_data.getString("Username");
+        }
     }
 
     /**
@@ -133,7 +142,7 @@ public class UserProfileScreen extends AppCompatActivity {
     }
 
     private void uploadImageToFirebase(Uri imageUri) {
-        StorageReference fileRef = this.fStorage.child("users/"+fAuth.getCurrentUser().getUid()+"profile_pic.png");
+        StorageReference fileRef = this.fStorage.child("users/" + fAuth.getCurrentUser().getUid() + "profile_pic.png");
         fileRef.putFile(imageUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
             @Override
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
@@ -148,23 +157,6 @@ public class UserProfileScreen extends AppCompatActivity {
 
     }
 
-    /**
-     * this method loads the current user data into his profile using the database information!
-     */
-    private void load_user_data() {
-        Log.d(TAG, "load_user_data: loading User data from database");
-        String Client_UID = fAuth.getCurrentUser().getUid();
-
-        // this is parsing the data from firestore using the string UID of the current user logged in!//
-        fStore.collection("users").
-                document(Client_UID).get().addOnSuccessListener(documentSnapshot -> {
-                    UserDB db = new UserDB();
-                    current_user = db.GetUserFromDatabase(documentSnapshot);
-                    Log.d(TAG, "CURRENT USER: => \n" + current_user.toString());
-                    set_user_data_in_layout();
-                });
-    }
-
 
     /**
      * This method is responsible for updating the user profile via the current user login details.
@@ -172,7 +164,7 @@ public class UserProfileScreen extends AppCompatActivity {
     private void set_user_data_in_layout() {
         Log.d(TAG, "set_user_data_in_profile: Updating User Profile");
 
-        StorageReference profileRef = this.fStorage.child("users/"+fAuth.getCurrentUser().getUid()+"profile_pic.png");
+        StorageReference profileRef = this.fStorage.child("users/" + fAuth.getCurrentUser().getUid() + "profile_pic.png");
         profileRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
             @Override
             public void onSuccess(Uri uri) {
@@ -180,7 +172,7 @@ public class UserProfileScreen extends AppCompatActivity {
             }
         });
 
-        this.profile_username.setText(this.current_user.getUsername());
+        this.profile_username.setText(this.username);
         //below should be the entire code for the user profile..//
     }
 }
