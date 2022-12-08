@@ -3,9 +3,11 @@ package com.example.ev_sc.Home;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -14,6 +16,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -25,6 +28,8 @@ import androidx.core.content.ContextCompat;
 
 import com.example.ev_sc.Home.Station.StationDB;
 import com.example.ev_sc.Home.Station.StationObj;
+import com.example.ev_sc.Person.DataBases.UserDB;
+import com.example.ev_sc.Person.UserObj;
 import com.example.ev_sc.Profile.UserProfileScreen;
 import com.example.ev_sc.R;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -38,10 +43,18 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.GeoPoint;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+
+import java.io.BufferedInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 
 public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback {
@@ -104,6 +117,10 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
 
     FirebaseFirestore fStore = FirebaseFirestore.getInstance();
 
+    /*user profile handle*/
+    private FirebaseAuth fAuth = FirebaseAuth.getInstance();
+    private UserObj current_user;
+
     @Override
     public void onCreate(Bundle Instance) {
         super.onCreate(Instance);
@@ -112,8 +129,10 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
         search_bar = (EditText) findViewById(R.id.search_bar);
 
         getLocationPermission();
+        load_user_data();
 
         //TODO: LoadStations(); ( Better for searching )
+
     }
 
     /**
@@ -140,7 +159,11 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
         switch (item.getItemId()) {
 
             case R.id.profile_menu:
-                startActivity(new Intent(HomeScreen.this, UserProfileScreen.class));
+                Intent home_to_profile = new Intent(HomeScreen.this, UserProfileScreen.class);
+                //load profile upon clicking on it//
+                home_to_profile.putExtra("Username", current_user.getUsername());
+                startActivity(home_to_profile);
+
                 finish();
                 return true;
             default:
@@ -150,12 +173,29 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
     }
 
     /**
+     * this method loads the current user data,
+     * using that data we transfer it via the intent to the user profile (onOptionItemSelected)
+     */
+    public void load_user_data() {
+        Log.d(TAG, "load_user_data: loading User data from database");
+        String Client_UID = fAuth.getCurrentUser().getUid();
+
+        // this is parsing the data from firestore using the string UID of the current user logged in!//
+        fStore.collection("users").
+                document(Client_UID).get().addOnSuccessListener(documentSnapshot -> {
+                    UserDB db = new UserDB();
+                    current_user = db.GetUserFromDatabase(documentSnapshot);
+                    Log.d(TAG, "CURRENT USER: => \n" + current_user.toString());
+                });
+    }
+
+    /**
      * this method allows for overriding buttons in the keyboard ( enter .. )
      * and calls for geoLocate to locate the required place
      */
     private void init() {
         Log.d(TAG, "init: initializing");
-
+        //TODO: avoid free text upon pressing ENTER
         search_bar.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent keyEvent) {
@@ -368,6 +408,25 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
         dialog = dialogBuilder.create();
         dialog.show();
 
+        ImageButton waze_nav = PopupStation.findViewById(R.id.waze_nav);
+
+        waze_nav.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String latitude = Double.toString(current_station.getLocation().getLatitude());
+                String longitude = Double.toString(current_station.getLocation().getLongitude());
+                try {
+                    // Launch Waze to look for desired station:
+                    String url = "https://waze.com/ul?q=66%20Acacia%20Avenue&ll="+latitude+","+longitude+"&navigate=yes";
+                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+                    startActivity(intent);
+                } catch (ActivityNotFoundException ex) {
+                    // If Waze is not installed, open it in Google Play:
+                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=com.waze"));
+                    startActivity(intent);
+                }
+            }
+        });
 
         // listener to return to the map //
         return_map_station_widget.setOnClickListener(new View.OnClickListener() {
