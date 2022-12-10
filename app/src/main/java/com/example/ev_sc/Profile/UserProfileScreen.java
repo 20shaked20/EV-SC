@@ -63,6 +63,7 @@ public class UserProfileScreen extends AppCompatActivity {
 
     }
 
+
     private UserObj getExtras() {
         Log.d(TAG, "getExtras => getting the data from the previous intent to load user.");
         UserObj user_data = getIntent().getParcelableExtra("User");

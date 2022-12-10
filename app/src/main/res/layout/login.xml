@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -73,10 +74,10 @@
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.235"
+            app:layout_constraintHorizontal_bias="0.216"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.3" />
+            app:layout_constraintVertical_bias="0.31" />
 
         <EditText
             android:id="@+id/password_enter_login"
@@ -91,6 +92,7 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.629" />
 
+
         <TextView
             android:id="@+id/password_view_login"
             android:layout_width="wrap_content"
@@ -100,11 +102,10 @@
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.239"
+            app:layout_constraintHorizontal_bias="0.255"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.531" />
-
+            app:layout_constraintVertical_bias="0.541" />
 
         <Button
             android:id="@+id/login_button"
@@ -154,27 +155,27 @@
 
         <ImageView
             android:id="@+id/imageView7"
-            android:layout_width="46dp"
-            android:layout_height="43dp"
+            android:layout_width="35dp"
+            android:layout_height="30dp"
+            android:src="@android:drawable/ic_dialog_email"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.099"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.308"
-            android:src="@android:drawable/ic_dialog_email" />
+            app:layout_constraintVertical_bias="0.308" />
 
         <ImageView
             android:id="@+id/imageView9"
-            android:layout_width="39dp"
-            android:layout_height="38dp"
+            android:layout_width="35dp"
+            android:layout_height="30dp"
+            android:src="@android:drawable/ic_lock_idle_lock"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.114"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.54"
-            android:src="@android:drawable/ic_lock_idle_lock" />
+            app:layout_constraintVertical_bias="0.54" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </LinearLayout>

@@ -15,9 +15,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -44,6 +46,7 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.GeoPoint;
@@ -106,6 +109,7 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
     private TextView rate_of_station;
     private TextView the_num_of_chargers;
     private TextView address_of_station;
+    private FloatingActionButton rate_station;
 
     private ImageView return_map_station_widget;
 
@@ -407,6 +411,7 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
         the_num_of_chargers = (TextView) PopupStation.findViewById(R.id.the_num_of_chargers);
         address_of_station = (TextView) PopupStation.findViewById(R.id.address_of_station);
         return_map_station_widget = (ImageView) PopupStation.findViewById(R.id.return_map_station_widget);
+        rate_station = (FloatingActionButton) PopupStation.findViewById(R.id.rate_station_button);
 
 
         name_of_station.setText(current_station.getStation_name());
@@ -418,8 +423,34 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
         dialog = dialogBuilder.create();
         dialog.show();
 
-        ImageButton waze_nav = PopupStation.findViewById(R.id.waze_nav);
+        // invokes the rating of the station popup window //
+        rate_station.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                View PopupRating = getLayoutInflater().inflate(R.layout.rating,null);
+                dialogBuilder.setView(PopupRating);
+                dialog = dialogBuilder.create();
+                dialog.show();
 
+                //widgets//
+                Button button_submit_rating = (Button) PopupRating.findViewById(R.id.button_submit_rating);
+                RatingBar rating_bar = (RatingBar) PopupRating.findViewById(R.id.rating_bar);
+
+                button_submit_rating.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Double curr_grade = current_station.getAverageGrade();
+                        //TODO: create a good updating grade mechanisem relied upon database//
+//                        Double update_grade = curr_grade
+                        rate_of_station.setText(Double.toString(rating_bar.getRating()));
+                        dialog.dismiss();
+                    }
+                });
+            }
+        });
+
+        // waze directions upon clicking on the button //
+        ImageButton waze_nav = PopupStation.findViewById(R.id.waze_nav);
         waze_nav.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
