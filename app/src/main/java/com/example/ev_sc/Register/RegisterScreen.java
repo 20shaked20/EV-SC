@@ -135,7 +135,7 @@ public class RegisterScreen extends Activity {
                             Toast.makeText(RegisterScreen.this, "User Created.", Toast.LENGTH_SHORT).show();
 
                             //extract data and add it to database//
-                            UserObj newUser = new UserObj(first_name, last_name, username, "0", fAuth.getCurrentUser().getUid());
+                            UserObj newUser = new UserObj(first_name, last_name, username, "0", fAuth.getCurrentUser().getUid(),0);
                             UserDB newUserDB = new UserDB();
                             newUserDB.AddUserToDatabase(newUser);
 

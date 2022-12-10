@@ -1,21 +1,36 @@
 package com.example.ev_sc.Person;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import androidx.annotation.NonNull;
 
-public class UserObj implements PersonObj {
+import java.util.UUID;
+
+public class UserObj implements PersonObj, Parcelable {
     private String First_name;
     private String Last_name;
     private String username;
-    private final int Permissions = 0;
+    private int Permissions;
     private String phone_number;
-    private final String UID;
+    private String UID;
 
-    public UserObj(String first_name, String last_name, String username, String phone_number, String UID) {
+    public UserObj (String first_name, String last_name, String username, String phone_number, String UID, int permissions) {
         this.Last_name = last_name;
         this.First_name = first_name;
         this.username = username;
         this.phone_number = phone_number;
         this.UID = UID;
+        this.Permissions = permissions;
+    }
+
+    public UserObj (UserObj user){
+        this.First_name = user.getFirst_name();
+        this.Last_name = user.getLast_name();
+        this.username = user.getUsername();
+        this.Permissions = user.getPermissions();
+        this.phone_number = user.getPhone_number();
+        this.UID = user.getID();
     }
 
     @Override
@@ -88,4 +103,45 @@ public class UserObj implements PersonObj {
                 "Permissions: " + this.getPermissions() + "\n" +
                 "User ID: " + this.getID() + "\n";
     }
+
+    public UserObj(Parcel in){
+        readFromParcel( in );
+    }
+
+    public static final Parcelable.Creator CREATOR = new Parcelable.Creator() {
+        public UserObj createFromParcel(Parcel in ) {
+            return new UserObj(in);
+        }
+
+        public UserObj[] newArray(int size) {
+            return new UserObj[size];
+        }
+    };
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(@NonNull Parcel dest, int flags) {
+        dest.writeString(First_name);
+        dest.writeString(Last_name);
+        dest.writeString(username);
+        dest.writeString(phone_number);
+        dest.writeInt(Permissions);
+        dest.writeString(UID);
+    }
+
+    private void readFromParcel(Parcel in ) {
+
+        First_name = in .readString();
+        Last_name  = in .readString();
+        username   = in .readString();
+        phone_number       = in .readString();
+        Permissions = in. readInt();
+        UID = in. readString();
+    }
+
+
 }

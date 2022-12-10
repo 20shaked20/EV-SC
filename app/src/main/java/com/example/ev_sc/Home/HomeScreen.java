@@ -30,6 +30,7 @@ import com.example.ev_sc.Home.Station.StationDB;
 import com.example.ev_sc.Home.Station.StationObj;
 import com.example.ev_sc.Person.DataBases.UserDB;
 import com.example.ev_sc.Person.UserObj;
+import com.example.ev_sc.Profile.AdminProfileScreen;
 import com.example.ev_sc.Profile.UserProfileScreen;
 import com.example.ev_sc.R;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -126,7 +127,7 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
         super.onCreate(Instance);
         setContentView(R.layout.home);
 
-        search_bar = (EditText) findViewById(R.id.search_bar);
+        search_bar = findViewById(R.id.search_bar);
 
         getLocationPermission();
         load_user_data();
@@ -159,13 +160,22 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
         switch (item.getItemId()) {
 
             case R.id.profile_menu:
-                Intent home_to_profile = new Intent(HomeScreen.this, UserProfileScreen.class);
-                //load profile upon clicking on it//
-                home_to_profile.putExtra("Username", current_user.getUsername());
-                startActivity(home_to_profile);
+                if (current_user.getPermissions() == 1){
+                    Intent home_to_admin_profile = new Intent(HomeScreen.this, AdminProfileScreen.class);
+                    home_to_admin_profile.putExtra("User",current_user);
 
-                finish();
-                return true;
+                    startActivity(home_to_admin_profile);
+                    finish();
+                    return true;
+                } else {
+                    Intent home_to_profile = new Intent(HomeScreen.this, UserProfileScreen.class);
+                    //load profile upon clicking on it//
+                    home_to_profile.putExtra("Username", current_user.getUsername());
+                    startActivity(home_to_profile);
+
+                    finish();
+                    return true;
+                }
             default:
                 return super.onOptionsItemSelected(item);
 
