@@ -63,6 +63,9 @@ public class UserProfileScreen extends AppCompatActivity {
 
     }
 
+    /**
+     * this method gets the user data from the previous instance using intent.getExtras.
+     */
     private void getExtras() {
         Log.d(TAG,"getExtras => getting the data from the previous intent to load user.");
         Bundle user_data = getIntent().getExtras();
