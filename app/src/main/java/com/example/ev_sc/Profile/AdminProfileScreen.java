@@ -71,10 +71,10 @@ public class AdminProfileScreen extends AppCompatActivity {
     }
 
     private UserObj getExtras() {
-        Log.d(TAG,"getExtras => getting the data from the previous intent to load user.");
+        Log.d(TAG, "getExtras => getting the data from the previous intent to load user.");
         UserObj user_data = getIntent().getParcelableExtra("User");
-
-        Log.d(TAG,"getExtras => grabbed user data \n" +user_data.toString());
+        assert user_data != null;
+        Log.d(TAG, "getExtras => grabbed user data \n" + user_data.toString());
         return new UserObj(user_data);
     }
 
@@ -180,13 +180,9 @@ public class AdminProfileScreen extends AppCompatActivity {
             }
         });
 
-        Log.d(TAG,"Current user: \n" + curr.toString());
         this.admin_name.setText(curr.getUsername());
         //below should be the entire code for the user profile..//
     }
-
-
-
 
 
 }

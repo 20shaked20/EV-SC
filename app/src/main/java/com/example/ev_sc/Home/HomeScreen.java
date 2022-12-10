@@ -170,7 +170,7 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
                 } else {
                     Intent home_to_profile = new Intent(HomeScreen.this, UserProfileScreen.class);
                     //load profile upon clicking on it//
-                    home_to_profile.putExtra("Username", current_user.getUsername());
+                    home_to_profile.putExtra("User", current_user);
                     startActivity(home_to_profile);
 
                     finish();

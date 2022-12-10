@@ -15,7 +15,7 @@ public class UserObj implements PersonObj, Parcelable {
     private String phone_number;
     private String UID;
 
-    public UserObj (String first_name, String last_name, String username, String phone_number, String UID, int permissions) {
+    public UserObj(String first_name, String last_name, String username, String phone_number, String UID, int permissions) {
         this.Last_name = last_name;
         this.First_name = first_name;
         this.username = username;
@@ -24,7 +24,7 @@ public class UserObj implements PersonObj, Parcelable {
         this.Permissions = permissions;
     }
 
-    public UserObj (UserObj user){
+    public UserObj(UserObj user) {
         this.First_name = user.getFirst_name();
         this.Last_name = user.getLast_name();
         this.username = user.getUsername();
@@ -65,6 +65,7 @@ public class UserObj implements PersonObj, Parcelable {
 
     /**
      * Get method to receive the phone number of the user.
+     *
      * @return String representing the phone number of the user.
      */
     public String getPhone_number() {
@@ -73,6 +74,7 @@ public class UserObj implements PersonObj, Parcelable {
 
     /**
      * Get method to receive the username of the user.
+     *
      * @return String representing the username of the user.
      */
     public String getUsername() {
@@ -81,6 +83,7 @@ public class UserObj implements PersonObj, Parcelable {
 
     /**
      * Change the username method.
+     *
      * @param username String with the new username
      */
     public void setUsername(String username) {
@@ -89,6 +92,7 @@ public class UserObj implements PersonObj, Parcelable {
 
     /**
      * Change the phone method.
+     *
      * @param phone_number String with the new phone number
      */
     public void setPhone_number(String phone_number) {
@@ -96,20 +100,24 @@ public class UserObj implements PersonObj, Parcelable {
     }
 
     @NonNull
-    public String toString(){ // override toString method to better represent user data (logging etc.)
-        return "Full Name: " + this.getFirst_name() + this.getLast_name() +  "\n" +
-                "Username: " + this.getUsername() +"\n" +
+    public String toString() { // override toString method to better represent user data (logging etc.)
+        return "Full Name: " + this.getFirst_name() + this.getLast_name() + "\n" +
+                "Username: " + this.getUsername() + "\n" +
                 "Phone Number: " + this.getPhone_number() + "\n" +
                 "Permissions: " + this.getPermissions() + "\n" +
                 "User ID: " + this.getID() + "\n";
     }
 
-    public UserObj(Parcel in){
-        readFromParcel( in );
+    // ===============================================
+    // All code below is the implementation of the Parcelable interface
+    // ===============================================
+
+    public UserObj(Parcel in) {
+        readFromParcel(in);
     }
 
     public static final Parcelable.Creator CREATOR = new Parcelable.Creator() {
-        public UserObj createFromParcel(Parcel in ) {
+        public UserObj createFromParcel(Parcel in) {
             return new UserObj(in);
         }
 
@@ -133,15 +141,19 @@ public class UserObj implements PersonObj, Parcelable {
         dest.writeString(UID);
     }
 
-    private void readFromParcel(Parcel in ) {
+    private void readFromParcel(Parcel in) {
 
-        First_name = in .readString();
-        Last_name  = in .readString();
-        username   = in .readString();
-        phone_number       = in .readString();
-        Permissions = in. readInt();
-        UID = in. readString();
+        First_name = in.readString();
+        Last_name = in.readString();
+        username = in.readString();
+        phone_number = in.readString();
+        Permissions = in.readInt();
+        UID = in.readString();
     }
+
+    // ===============================================
+    // End of Parcelable implementation
+    // ===============================================
 
 
 }
