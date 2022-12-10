@@ -43,6 +43,7 @@
         <activity android:name=".Home.HomeScreen" />
         <activity android:name=".Home.Station.AddStation"/>
         <activity android:name=".Profile.UserProfileScreen"/>
+        <activity android:name=".Profile.AdminProfileScreen"/>
 
 
     </application>

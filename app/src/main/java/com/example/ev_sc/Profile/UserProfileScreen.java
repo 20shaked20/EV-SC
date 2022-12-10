@@ -57,19 +57,18 @@ public class UserProfileScreen extends AppCompatActivity {
         super.onCreate(Instance);
         setContentView(R.layout.user_profile);
 
-        getExtras();
+        UserObj curr = getExtras();
         init_widgets();
-        set_user_data_in_layout();
+        set_user_data_in_layout(curr);
 
     }
 
-    private void getExtras() {
-        Log.d(TAG,"getExtras => getting the data from the previous intent to load user.");
-        Bundle user_data = getIntent().getExtras();
-
-        if (user_data != null) {
-            this.username = user_data.getString("Username");
-        }
+    private UserObj getExtras() {
+        Log.d(TAG, "getExtras => getting the data from the previous intent to load user.");
+        UserObj user_data = getIntent().getParcelableExtra("User");
+        assert user_data != null;
+        Log.d(TAG, "getExtras => grabbed user data \n" + user_data.toString());
+        return new UserObj(user_data);
     }
 
     /**
@@ -161,7 +160,7 @@ public class UserProfileScreen extends AppCompatActivity {
     /**
      * This method is responsible for updating the user profile via the current user login details.
      */
-    private void set_user_data_in_layout() {
+    private void set_user_data_in_layout(UserObj curr) {
         Log.d(TAG, "set_user_data_in_profile: Updating User Profile");
 
         StorageReference profileRef = this.fStorage.child("users/" + fAuth.getCurrentUser().getUid() + "profile_pic.png");
@@ -172,7 +171,7 @@ public class UserProfileScreen extends AppCompatActivity {
             }
         });
 
-        this.profile_username.setText(this.username);
+        this.profile_username.setText(curr.getUsername());
         //below should be the entire code for the user profile..//
     }
 }

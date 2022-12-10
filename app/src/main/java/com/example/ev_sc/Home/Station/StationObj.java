@@ -1,12 +1,16 @@
 package com.example.ev_sc.Home.Station;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import androidx.annotation.NonNull;
 
+import com.example.ev_sc.Person.UserObj;
 import com.google.firebase.firestore.GeoPoint;
 
 import java.util.UUID;
 
-public class StationObj implements StationInterface {
+public class StationObj implements StationInterface, Parcelable {
 
     private double grade;
     private double avg_grade;
@@ -15,9 +19,9 @@ public class StationObj implements StationInterface {
     private int charging_stations;
     private String station_name;
     //private String[] reviews; // todo: this could probably better be represented as JSON or other data structure
-    private final String SID;
+    private String SID;
 
-    public StationObj(double grade, String station_address, int charging_stations, String station_name,GeoPoint location) {
+    public StationObj(double grade, String station_address, int charging_stations, String station_name, GeoPoint location) {
         this.grade = grade;
         this.station_address = station_address;
         this.charging_stations = charging_stations;
@@ -25,6 +29,16 @@ public class StationObj implements StationInterface {
         this.SID = UUID.randomUUID().toString();
         this.location = location;
         //todo: for loop to fit the reviews in the object
+    }
+
+    public StationObj(StationObj station) {
+        this.grade = station.getGrade();
+        this.avg_grade = station.getAverageGrade();
+        this.station_address = station.getStation_address();
+        this.location = station.getLocation();
+        this.charging_stations = station.getCharging_stations();
+        this.station_name = station.getStation_name();
+        this.SID = station.getID();
     }
 
     public String getID() {
@@ -67,7 +81,7 @@ public class StationObj implements StationInterface {
     public void setCharging_stations(int charging_stations) {
         this.charging_stations = charging_stations;
     }
-    
+
     public void setLocation(GeoPoint new_location) {
         this.location = new_location;
     }
@@ -82,9 +96,9 @@ public class StationObj implements StationInterface {
 
 
     @NonNull
-    public String toString(){ // override toString method to better represent station data (logging etc.)
+    public String toString() { // override toString method to better represent station data (logging etc.)
         return "Station Name: " + this.getStation_name() + "\n" +
-                "Station Grade: " + this.getGrade() +"\n" +
+                "Station Grade: " + this.getGrade() + "\n" +
                 "Station Location: " + this.getLocation().toString() + "\n" +
                 "Charging Stations: " + this.getCharging_stations() + "\n" +
                 "Station Address: " + this.getStation_address() + "\n" +
@@ -92,4 +106,58 @@ public class StationObj implements StationInterface {
     }
 
     // todo: function to calculate average grade based on reviews
+
+    // ===============================================
+    // All code below is the implementation of the Parcelable interface
+    // ===============================================
+
+    public StationObj(Parcel in) {
+        readFromParcel(in);
+    }
+
+    public static final Parcelable.Creator CREATOR = new Parcelable.Creator() {
+        public StationObj createFromParcel(Parcel in) {
+            return new StationObj(in);
+        }
+
+        public StationObj[] newArray(int size) {
+            return new StationObj[size];
+        }
+    };
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(@NonNull Parcel dest, int flags) {
+        dest.writeDouble(grade);
+        dest.writeDouble(avg_grade);
+        dest.writeString(station_address);
+        dest.writeDouble(location.getLatitude());
+        dest.writeDouble(location.getLongitude());
+        dest.writeInt(charging_stations);
+        dest.writeString(station_name);
+        dest.writeString(SID);
+
+    }
+
+    private void readFromParcel(Parcel in) {
+
+        grade = in.readInt();
+        avg_grade = in.readDouble();
+        station_address = in.readString();
+        Double lat = location.getLatitude();
+        Double lon = location.getLongitude();
+        location = new GeoPoint(lat, lon);
+        charging_stations = in.readInt();
+        station_name = in.readString();
+        SID = in.readString();
+    }
+
+    // ===============================================
+    // End of Parcelable implementation
+    // ===============================================
+
 }

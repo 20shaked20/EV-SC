@@ -44,11 +44,13 @@ public class UserDB {
         //parser from firebase to object
         String f_name = doc.getString("FirstName");
         String l_name = doc.getString("LastName");
-        Double permission = doc.getDouble("Permission");
+        Double d_permission = doc.getDouble("Permission");
         String phone = doc.getString("Phone");
         String user_name = doc.getString("UserName");
 
-        return new UserObj(f_name, l_name, user_name, phone, doc.getId());
+        Integer permission = d_permission.intValue(); // stupid trick to bypass firebase restrictions
+
+        return new UserObj(f_name, l_name, user_name, phone, doc.getId(), permission);
     }
 
 }
