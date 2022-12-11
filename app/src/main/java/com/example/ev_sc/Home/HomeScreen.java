@@ -121,7 +121,7 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
     private Boolean mLocationPermissionGranted = false;
     private GoogleMap mMap;
     private FusedLocationProviderClient mFusedLocationProviderClient;
-    private HashMap<String, StationObj> all_stations = new HashMap<String,StationObj>(); // this is used to map all the stations upon login //
+    private HashMap<String, StationObj> all_stations = new HashMap<String, StationObj>(); // this is used to map all the stations upon login //
 
     FirebaseFirestore fStore = FirebaseFirestore.getInstance();
 
@@ -202,7 +202,11 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
                             StationDB s_DB = new StationDB();
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 // load all stations data from database to the hashmap with unique key of doc id//
-                                all_stations.put(document.getId(), s_DB.GetStationFromDatabase(document));
+                                StationObj tmp_station = s_DB.GetStationFromDatabase(document);
+                                all_stations.put(document.getId(), tmp_station);
+
+                                //init map markers on the map//
+                                createMarker(tmp_station.getLatLng());
 
                             }
                         } else {
@@ -265,13 +269,10 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
             if (station.getValue().getStation_name().equals(searchString)) {
                 // get the latlng//
                 current_station = station.getValue(); //updating the current station//
-                GeoPoint geoPoint = station.getValue().getLocation();
-                Log.d(TAG, "STATION LOCATION =>" + geoPoint);
-                double lat = geoPoint.getLatitude();
-                double lng = geoPoint.getLongitude();
-                LatLng latLng = new LatLng(lat, lng);
+                Log.d(TAG, "STATION LOCATION =>" + current_station.getLatLng());
 
-                moveCamera(latLng, true);
+                moveCamera(current_station.getLatLng());
+//                createMarker(current_station.getLatLng());
                 return;
             }
         }
@@ -333,7 +334,7 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
                             Location currentLocation = (Location) task.getResult();
 
                             //move camera to the current location of the user//
-                            moveCamera(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()), false);
+                            moveCamera(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()));
 
                         } else {
                             Log.d(TAG, "onComplete getDeviceLocation: current location is null");
@@ -351,28 +352,31 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
      * this method moves the current camera to a new location on the map
      *
      * @param latLng coordinates of the location (latitude,longitude)
-     * @param marker true = create a marker, false = dont create marker.
      */
-    private void moveCamera(LatLng latLng, boolean marker) {
+    private void moveCamera(LatLng latLng) {
         Log.d(TAG, "moveCamera: Moving the camera to: (lat: " + latLng.latitude + ", lng: " + latLng.longitude + " )");
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, HomeScreen.DEFAULT_ZOOM));
+    }
 
-        //create a marker on map//
-        if (marker) {
-            MarkerOptions options = new MarkerOptions()
-                    .position(latLng)
-                    .title("Test");
-            mMap.addMarker(options);
+    /**
+     * this method is responsible for creating a station marker on the map.
+     *
+     * @param latLng
+     */
+    private void createMarker(LatLng latLng) {
+        MarkerOptions options = new MarkerOptions()
+                .position(latLng)
+                .title("");
+        mMap.addMarker(options);
 
-            // TODO: make this display the relevant data//
-            mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
-                @Override
-                public boolean onMarkerClick(@NonNull Marker marker) {
-                    createNewStationPopup();
-                    return true;
-                }
-            });
-        }
+        // TODO: make this display the relevant data//
+        mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+            @Override
+            public boolean onMarkerClick(@NonNull Marker marker) {
+                createNewStationPopup();
+                return true;
+            }
+        });
     }
 
     /**
