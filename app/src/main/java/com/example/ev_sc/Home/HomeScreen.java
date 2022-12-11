@@ -59,6 +59,8 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
 
 
 public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback {
@@ -119,6 +121,7 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
     private Boolean mLocationPermissionGranted = false;
     private GoogleMap mMap;
     private FusedLocationProviderClient mFusedLocationProviderClient;
+    private HashMap<String, StationObj> all_stations = new HashMap<String,StationObj>(); // this is used to map all the stations upon login //
 
     FirebaseFirestore fStore = FirebaseFirestore.getInstance();
 
@@ -134,6 +137,7 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
         search_bar = findViewById(R.id.search_bar);
 
         getLocationPermission();
+        load_stations_data();
         load_user_data();
 
         //TODO: LoadStations(); ( Better for searching )
@@ -164,9 +168,9 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
         switch (item.getItemId()) {
 
             case R.id.profile_menu:
-                if (current_user.getPermissions() == 1){
+                if (current_user.getPermissions() == 1) {
                     Intent home_to_admin_profile = new Intent(HomeScreen.this, AdminProfileScreen.class);
-                    home_to_admin_profile.putExtra("User",current_user);
+                    home_to_admin_profile.putExtra("User", current_user);
 
                     startActivity(home_to_admin_profile);
                     finish();
@@ -184,6 +188,28 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
                 return super.onOptionsItemSelected(item);
 
         }
+    }
+
+    private void load_stations_data() {
+        Log.d(TAG, "loading_stations_data: loading Stations data from database to object");
+
+        fStore.collection("stations")
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            StationDB s_DB = new StationDB();
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                // load all stations data from database to the hashmap with unique key of doc id//
+                                all_stations.put(document.getId(), s_DB.GetStationFromDatabase(document));
+
+                            }
+                        } else {
+                            Log.e(TAG, "geoLocate: Error getting documents: ", task.getException());
+                        }
+                    }
+                });
     }
 
     /**
@@ -235,40 +261,56 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
 
         //TODO: consider moving some of the code to StationDB//
 
-        fStore.collection("stations")
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-                            for (QueryDocumentSnapshot document : task.getResult()) {
-                                // find the relevant document regarding the search string //
-                                if (document.get("Name").equals(searchString)) {
+        for (Map.Entry<String, StationObj> station : this.all_stations.entrySet()) {
+            if (station.getValue().getStation_name().equals(searchString)) {
+                // get the latlng//
+                current_station = station.getValue(); //updating the current station//
+                GeoPoint geoPoint = station.getValue().getLocation();
+                Log.d(TAG, "STATION LOCATION =>" + geoPoint);
+                double lat = geoPoint.getLatitude();
+                double lng = geoPoint.getLongitude();
+                LatLng latLng = new LatLng(lat, lng);
 
-                                    //parsing the station document from the database//
-                                    StationDB s_DB = new StationDB();
-                                    current_station = s_DB.GetStationFromDatabase(document);
-                                    Log.d(TAG, "geoLocate: Station is => " + current_station.toString());
-
-                                    // get the latlng//
-                                    GeoPoint geoPoint = current_station.getLocation();
-                                    double lat = geoPoint.getLatitude();
-                                    double lng = geoPoint.getLongitude();
-                                    LatLng latLng = new LatLng(lat, lng);
-
-                                    moveCamera(latLng, true);
-
-                                    return;
-                                }
-                            }
-                            search_bar.setError("Station does not exist.");
-
-                        } else {
-                            Log.e(TAG, "geoLocate: Error getting documents: ", task.getException());
-
-                        }
-                    }
-                });
+                moveCamera(latLng, true);
+                return;
+            }
+        }
+        search_bar.setError("Station does not exist.");
+//
+//        fStore.collection("stations")
+//                .get()
+//                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+//                    @Override
+//                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+//                        if (task.isSuccessful()) {
+//                            for (QueryDocumentSnapshot document : task.getResult()) {
+//                                // find the relevant document regarding the search string //
+//                                if (document.get("Name").equals(searchString)) {
+//
+//                                    //parsing the station document from the database//
+//                                    StationDB s_DB = new StationDB();
+//                                    current_station = s_DB.GetStationFromDatabase(document);
+//                                    Log.d(TAG, "geoLocate: Station is => " + current_station.toString());
+//
+//                                    // get the latlng//
+//                                    GeoPoint geoPoint = current_station.getLocation();
+//                                    double lat = geoPoint.getLatitude();
+//                                    double lng = geoPoint.getLongitude();
+//                                    LatLng latLng = new LatLng(lat, lng);
+//
+//                                    moveCamera(latLng, true);
+//
+//                                    return;
+//                                }
+//                            }
+//                            search_bar.setError("Station does not exist.");
+//
+//                        } else {
+//                            Log.e(TAG, "geoLocate: Error getting documents: ", task.getException());
+//
+//                        }
+//                    }
+//                });
     }
 
     /**
@@ -427,7 +469,7 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
         rate_station.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                View PopupRating = getLayoutInflater().inflate(R.layout.rating,null);
+                View PopupRating = getLayoutInflater().inflate(R.layout.rating, null);
                 dialogBuilder.setView(PopupRating);
                 dialog = dialogBuilder.create();
                 dialog.show();
@@ -458,7 +500,7 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
                 String longitude = Double.toString(current_station.getLocation().getLongitude());
                 try {
                     // Launch Waze to look for desired station:
-                    String url = "https://waze.com/ul?q=66%20Acacia%20Avenue&ll="+latitude+","+longitude+"&navigate=yes";
+                    String url = "https://waze.com/ul?q=66%20Acacia%20Avenue&ll=" + latitude + "," + longitude + "&navigate=yes";
                     Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
                     startActivity(intent);
                 } catch (ActivityNotFoundException ex) {
