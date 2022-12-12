@@ -32,6 +32,7 @@ public class StationDB {
         station.put("Charging Stations",Station.getCharging_stations());
         station.put("Location",Station.getLocation());
         station.put("Name",Station.getStation_name());
+//        station.put("HashMap", Station.getGradelist());
 
         //Check//
         documentReference.set(station).addOnSuccessListener(unused -> Log.d(TAG, "Station Profile is created for " + Station.getID()));
@@ -51,6 +52,7 @@ public class StationDB {
         String s_name = doc.getString("Name");
         String s_address = doc.getString("Address");
         GeoPoint s_loc = doc.getGeoPoint("Location");
+//        HashMap<String ,Double> map = doc.get();
 
         assert c_stations != null;
         assert avg_rating!= null;

@@ -5,14 +5,19 @@ import android.os.Parcelable;
 
 import androidx.annotation.NonNull;
 
-import com.example.ev_sc.Person.UserObj;
+import com.example.ev_sc.Reviews.reviewsObj;
 import com.google.firebase.firestore.GeoPoint;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.UUID;
 
 public class StationObj implements StationInterface, Parcelable {
 
     private double grade;
+//    private HashMap<String,Double> gradeMap = new HashMap<>();
+    private List<reviewsObj> gradeMap = new ArrayList<reviewsObj>();
     private double avg_grade;
     private String station_address;
     private GeoPoint location; // https://firebase.google.com/docs/reference/kotlin/com/google/firebase/firestore/GeoPoint
@@ -28,6 +33,7 @@ public class StationObj implements StationInterface, Parcelable {
         this.station_name = station_name;
         this.SID = UUID.randomUUID().toString();
         this.location = location;
+//        this.gradeMap=map;
         //todo: for loop to fit the reviews in the object
     }
 
@@ -39,10 +45,15 @@ public class StationObj implements StationInterface, Parcelable {
         this.charging_stations = station.getCharging_stations();
         this.station_name = station.getStation_name();
         this.SID = station.getID();
+        this.gradeMap= station.getGradelist();
     }
 
     public String getID() {
         return SID;
+    }
+
+    public List<reviewsObj> getGradelist() {
+        return gradeMap;
     }
 
     public double getGrade() {
@@ -81,6 +92,7 @@ public class StationObj implements StationInterface, Parcelable {
     public void setCharging_stations(int charging_stations) {
         this.charging_stations = charging_stations;
     }
+
 
     public void setLocation(GeoPoint new_location) {
         this.location = new_location;

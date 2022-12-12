@@ -12,6 +12,8 @@ import android.widget.Toast;
 import com.example.ev_sc.R;
 import com.google.firebase.firestore.GeoPoint;
 
+import java.util.HashMap;
+
 public class AddStation extends Activity {
 
     EditText station_name;
@@ -29,6 +31,7 @@ public class AddStation extends Activity {
     String station_average_grade;
     String latitude;
     String longtitude;
+    HashMap<String, Double> grade_map;
 
     private static final String TAG = "Add Station"; // tag for logging
 

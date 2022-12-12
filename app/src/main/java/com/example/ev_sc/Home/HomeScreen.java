@@ -35,6 +35,7 @@ import com.example.ev_sc.Person.UserObj;
 import com.example.ev_sc.Profile.AdminProfileScreen;
 import com.example.ev_sc.Profile.UserProfileScreen;
 import com.example.ev_sc.R;
+import com.example.ev_sc.Reviews.reviewsObj;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -440,9 +441,21 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
                     @Override
                     public void onClick(View v) {
                         Double curr_grade = current_station.getAverageGrade();
+                        reviewsObj review = new reviewsObj(current_user.getID(),curr_grade,"");
+                        current_station.getGradelist().add(review);
+                        double grade_sum=0;
+                        double grade=0;
+                        if(current_station.getGradelist().size()>0){
+                        for (int i=0; i<=current_station.getGradelist().size(); i++) {
+                            grade_sum+=current_station.getGradelist().get(i).getStars();
+                        }
+                        grade= (grade_sum/(current_station.getGradelist().size()));
+                        }else{
+                        grade = 0;
+                        }
                         //TODO: create a good updating grade mechanisem relied upon database//
 //                        Double update_grade = curr_grade
-                        rate_of_station.setText(Double.toString(rating_bar.getRating()));
+                        rate_of_station.setText(Double.toString(grade));
                         dialog.dismiss();
                     }
                 });
