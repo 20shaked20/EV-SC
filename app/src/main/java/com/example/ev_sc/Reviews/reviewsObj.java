@@ -1,25 +1,28 @@
 package com.example.ev_sc.Reviews;
 
 public class reviewsObj {
-    private String UID;
+
    private String UID_user;
    private Double stars;
    private String review;
 
 
-   public reviewsObj( String uid , Double x , String review){
-       this.UID_user = uid;
+   public reviewsObj(String UID_user , Double x , String review){
+
+       this.UID_user = UID_user;
        this.stars=x;
        this.review=review;
    }
 
-    public reviewsObj( reviewsObj review){
+    public reviewsObj(reviewsObj review){
+
         this.UID_user = review.UID_user;
         this.stars= review.stars;
         this.review= review.review;
     }
 
-    public String getUID(){
+
+    public String getUID_user(){
      return this.UID_user;
     }
     public Double getStars(){
@@ -29,7 +32,8 @@ public class reviewsObj {
         return this.review;
     }
 
-    public void setUID(String uid){
+
+    public void setUID_user(String uid){
        this.UID_user = uid;
     }
     public void setStars(Double x){

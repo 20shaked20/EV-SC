@@ -24,7 +24,7 @@ public class reviewsDB {
         CollectionReference f = fStore.collection("stations").document(StationID)
                 .collection("reviews");
         Map<String, Object> review = new HashMap<>();
-        review.put("UID", curr_review.getUID());
+        review.put("UID_user", curr_review.getUID_user());
         review.put("Stars", curr_review.getStars());
         review.put("Review", curr_review.getReview());
 
@@ -42,14 +42,12 @@ public class reviewsDB {
     {
         //parser from firebase to object
         Double stars= doc.getDouble("Stars");
-        String UID = doc.getString("UID");
-        String Review = doc.getString("Review");
+        String UID_user = doc.getString("UID_user");
+        String review_ = doc.getString("Review");
 
-//
-//        assert c_stations != null;
-//        assert avg_rating!= null;
 
-        return new reviewsObj(UID, stars,Review);
+
+        return new reviewsObj(UID_user, stars,review_);
 
     }
 }

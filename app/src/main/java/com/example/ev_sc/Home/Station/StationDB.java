@@ -33,6 +33,8 @@ public class StationDB {
         station.put("Location",Station.getLocation());
         station.put("Name",Station.getStation_name());
         station.put("SID", Station.getID());
+        station.put("SumOf_reviews", Station.getSumOf_reviews());
+
 
         //Check//
         documentReference.set(station).addOnSuccessListener(unused -> Log.d(TAG, "Station Profile is created for " + Station.getID()));
@@ -53,11 +55,11 @@ public class StationDB {
         String s_address = doc.getString("Address");
         GeoPoint s_loc = doc.getGeoPoint("Location");
         String s_id = doc.getString("SID");
-
+        Double sumof_reviews = doc.getDouble("SumOf_reviews");
         assert c_stations != null;
         assert avg_rating!= null;
 
-        return new StationObj(avg_rating, s_address, c_stations.intValue(), s_name, s_loc,s_id);
+        return new StationObj(avg_rating, s_address, c_stations.intValue(), s_name, s_loc,s_id,sumof_reviews);
 
     }
 

@@ -61,6 +61,7 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.UUID;
 
 
 public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback {
@@ -442,25 +443,28 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
                 button_submit_rating.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+
+                        Double user_rating = Double.valueOf(rating_bar.getRating());
                         Double curr_grade = current_station.getAverageGrade();
-                        reviewsObj review = new reviewsObj(current_user.getID(), curr_grade, "");
-//                        current_station.getGradelist().add(review);
+                        Double SumOf_reviews = current_station.getSumOf_reviews();
+
+                        reviewsObj review = new reviewsObj(current_user.getID(), user_rating, "");
                         reviewsDB reviewsDB = new reviewsDB();
                         reviewsDB.AddReviewToDatabase(review, current_station.getID());
-                        double grade_sum = 0;
-                        double grade = 0;
-                        if (current_station.getGradelist().size() > 0) {
-                            for (int i = 0; i <= current_station.getGradelist().size(); i++) {
-                                grade_sum += current_station.getGradelist().get(i).getStars();
-                            }
-                            grade = (grade_sum / (current_station.getGradelist().size()));
-                        } else {
-                            grade = 0;
+                        double grade=0;
+                        if(SumOf_reviews==0){
+                         grade=user_rating;
+                        }else{
+                            grade = (SumOf_reviews*curr_grade + user_rating)/(SumOf_reviews+1);
                         }
+
                         Log.d(TAG, "Review ADDED? =??? "+ review.toString());
                         //TODO: create a good updating grade mechanisem relied upon database//
 //                        Double update_grade = curr_grade
                         rate_of_station.setText(Double.toString(grade));
+                        current_station.setAvgGrade(grade);
+                        SumOf_reviews+=1;
+                        current_station.setSumOf_reviews(SumOf_reviews);
                         dialog.dismiss();
                     }
                 });

@@ -10,9 +10,12 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.ev_sc.R;
+import com.example.ev_sc.Reviews.reviewsObj;
 import com.google.firebase.firestore.GeoPoint;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.UUID;
 
 public class AddStation extends Activity {
@@ -65,8 +68,9 @@ public class AddStation extends Activity {
             double station_grade = Double.parseDouble(station_average_grade);
 
             String s_id = UUID.randomUUID().toString();
-
-            StationObj station_to_add = new StationObj(station_grade, address, charging, name, station_coords,s_id);
+//            List<reviewsObj> gradeList = new ArrayList<reviewsObj>();
+            Double sumOf_reviews = Double.valueOf(0);
+            StationObj station_to_add = new StationObj(station_grade, address, charging, name, station_coords,s_id, sumOf_reviews);
             StationDB db = new StationDB();
             Log.d(TAG, "\n" + station_to_add.toString()); // logging station details for debugging
 

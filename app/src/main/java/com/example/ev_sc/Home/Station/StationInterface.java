@@ -5,7 +5,7 @@ public interface StationInterface {
     /**
      * @return Integer representing the Avg grade of the station.
      */
-    public double getGrade();
+//    public double getGrade();
 
     /**
      * @return String representing the Address of the station
@@ -27,7 +27,7 @@ public interface StationInterface {
      */
     //public String[] getReviews();
 
-    public void setGrade(double grade);
+//    public void setGrade(double grade);
 
     public void setStation_address(String station_address);
 
