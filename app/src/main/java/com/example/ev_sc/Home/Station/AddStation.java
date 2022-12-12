@@ -13,6 +13,7 @@ import com.example.ev_sc.R;
 import com.google.firebase.firestore.GeoPoint;
 
 import java.util.HashMap;
+import java.util.UUID;
 
 public class AddStation extends Activity {
 
@@ -31,7 +32,6 @@ public class AddStation extends Activity {
     String station_average_grade;
     String latitude;
     String longtitude;
-    HashMap<String, Double> grade_map;
 
     private static final String TAG = "Add Station"; // tag for logging
 
@@ -64,7 +64,9 @@ public class AddStation extends Activity {
             int charging = Integer.parseInt(charging_stations);
             double station_grade = Double.parseDouble(station_average_grade);
 
-            StationObj station_to_add = new StationObj(station_grade, address, charging, name, station_coords);
+            String s_id = UUID.randomUUID().toString();
+
+            StationObj station_to_add = new StationObj(station_grade, address, charging, name, station_coords,s_id);
             StationDB db = new StationDB();
             Log.d(TAG, "\n" + station_to_add.toString()); // logging station details for debugging
 

@@ -35,6 +35,7 @@ import com.example.ev_sc.Person.UserObj;
 import com.example.ev_sc.Profile.AdminProfileScreen;
 import com.example.ev_sc.Profile.UserProfileScreen;
 import com.example.ev_sc.R;
+import com.example.ev_sc.Reviews.reviewsDB;
 import com.example.ev_sc.Reviews.reviewsObj;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -165,9 +166,9 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
         switch (item.getItemId()) {
 
             case R.id.profile_menu:
-                if (current_user.getPermissions() == 1){
+                if (current_user.getPermissions() == 1) {
                     Intent home_to_admin_profile = new Intent(HomeScreen.this, AdminProfileScreen.class);
-                    home_to_admin_profile.putExtra("User",current_user);
+                    home_to_admin_profile.putExtra("User", current_user);
 
                     startActivity(home_to_admin_profile);
                     finish();
@@ -428,10 +429,11 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
         rate_station.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                View PopupRating = getLayoutInflater().inflate(R.layout.rating,null);
+                View PopupRating = getLayoutInflater().inflate(R.layout.rating, null);
                 dialogBuilder.setView(PopupRating);
                 dialog = dialogBuilder.create();
                 dialog.show();
+
 
                 //widgets//
                 Button button_submit_rating = (Button) PopupRating.findViewById(R.id.button_submit_rating);
@@ -441,18 +443,21 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
                     @Override
                     public void onClick(View v) {
                         Double curr_grade = current_station.getAverageGrade();
-                        reviewsObj review = new reviewsObj(current_user.getID(),curr_grade,"");
-                        current_station.getGradelist().add(review);
-                        double grade_sum=0;
-                        double grade=0;
-                        if(current_station.getGradelist().size()>0){
-                        for (int i=0; i<=current_station.getGradelist().size(); i++) {
-                            grade_sum+=current_station.getGradelist().get(i).getStars();
+                        reviewsObj review = new reviewsObj(current_user.getID(), curr_grade, "");
+//                        current_station.getGradelist().add(review);
+                        reviewsDB reviewsDB = new reviewsDB();
+                        reviewsDB.AddReviewToDatabase(review, current_station.getID());
+                        double grade_sum = 0;
+                        double grade = 0;
+                        if (current_station.getGradelist().size() > 0) {
+                            for (int i = 0; i <= current_station.getGradelist().size(); i++) {
+                                grade_sum += current_station.getGradelist().get(i).getStars();
+                            }
+                            grade = (grade_sum / (current_station.getGradelist().size()));
+                        } else {
+                            grade = 0;
                         }
-                        grade= (grade_sum/(current_station.getGradelist().size()));
-                        }else{
-                        grade = 0;
-                        }
+                        Log.d(TAG, "Review ADDED? =??? "+ review.toString());
                         //TODO: create a good updating grade mechanisem relied upon database//
 //                        Double update_grade = curr_grade
                         rate_of_station.setText(Double.toString(grade));
@@ -471,7 +476,7 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
                 String longitude = Double.toString(current_station.getLocation().getLongitude());
                 try {
                     // Launch Waze to look for desired station:
-                    String url = "https://waze.com/ul?q=66%20Acacia%20Avenue&ll="+latitude+","+longitude+"&navigate=yes";
+                    String url = "https://waze.com/ul?q=66%20Acacia%20Avenue&ll=" + latitude + "," + longitude + "&navigate=yes";
                     Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
                     startActivity(intent);
                 } catch (ActivityNotFoundException ex) {

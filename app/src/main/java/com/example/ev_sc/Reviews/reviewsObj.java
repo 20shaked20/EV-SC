@@ -1,7 +1,7 @@
 package com.example.ev_sc.Reviews;
 
 public class reviewsObj {
-
+    private String UID;
    private String UID_user;
    private Double stars;
    private String review;

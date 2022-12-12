@@ -26,12 +26,12 @@ public class StationObj implements StationInterface, Parcelable {
     //private String[] reviews; // todo: this could probably better be represented as JSON or other data structure
     private String SID;
 
-    public StationObj(double grade, String station_address, int charging_stations, String station_name, GeoPoint location) {
+    public StationObj(double grade, String station_address, int charging_stations, String station_name, GeoPoint location, String s_id) {
         this.grade = grade;
         this.station_address = station_address;
         this.charging_stations = charging_stations;
         this.station_name = station_name;
-        this.SID = UUID.randomUUID().toString();
+        this.SID = s_id;
         this.location = location;
 //        this.gradeMap=map;
         //todo: for loop to fit the reviews in the object
