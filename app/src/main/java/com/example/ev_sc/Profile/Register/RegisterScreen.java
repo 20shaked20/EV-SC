@@ -1,4 +1,4 @@
-package com.example.ev_sc.Register;
+package com.example.ev_sc.Profile.Register;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -15,14 +15,12 @@ import androidx.annotation.NonNull;
 
 import com.example.ev_sc.Login.LoginScreen;
 import com.example.ev_sc.Person.DataBases.UserDB;
-import com.example.ev_sc.Person.PersonObj;
 import com.example.ev_sc.Person.UserObj;
 import com.example.ev_sc.R;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.auth.User;
 
 public class RegisterScreen extends Activity {
 

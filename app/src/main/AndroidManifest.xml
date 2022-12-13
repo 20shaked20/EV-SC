@@ -38,7 +38,7 @@
                 android:value="" />
         </activity>
 
-        <activity android:name=".Register.RegisterScreen" />
+        <activity android:name=".Profile.Register.RegisterScreen" />
 
         <activity android:name=".Home.HomeScreen" />
         <activity android:name=".Home.Station.AddStation"/>

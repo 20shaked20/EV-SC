@@ -28,7 +28,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
-import com.example.ev_sc.Home.Station.StationDB;
 import com.example.ev_sc.Home.Station.StationObj;
 import com.example.ev_sc.Person.DataBases.UserDB;
 import com.example.ev_sc.Person.UserObj;
@@ -54,14 +53,6 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.GeoPoint;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
-
-import java.io.BufferedInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.UUID;
 
 
 public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback {
@@ -426,6 +417,7 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
         dialog = dialogBuilder.create();
         dialog.show();
 
+
         // invokes the rating of the station popup window //
         rate_station.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -457,15 +449,18 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
                         }else{
                             grade = (SumOf_reviews*curr_grade + user_rating)/(SumOf_reviews+1);
                         }
-
                         Log.d(TAG, "Review ADDED? =??? "+ review.toString());
                         //TODO: create a good updating grade mechanisem relied upon database//
-//                        Double update_grade = curr_grade
+
                         rate_of_station.setText(Double.toString(grade));
                         current_station.setAvgGrade(grade);
                         SumOf_reviews+=1;
                         current_station.setSumOf_reviews(SumOf_reviews);
+                        StationDB.updateStationToDatabase(current_station);
+
                         dialog.dismiss();
+
+
                     }
                 });
             }
