@@ -96,6 +96,7 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
     /*widgets*/
     private EditText search_bar;
 
+
     /*popup station*/
     private AlertDialog.Builder dialogBuilder;
     private AlertDialog dialog;
@@ -104,7 +105,6 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
     private TextView the_num_of_chargers;
     private TextView address_of_station;
     private FloatingActionButton rate_station;
-
     private ImageView return_map_station_widget;
 
     private StationObj current_station; // this is a ref to the station we are currently looking at //
@@ -395,7 +395,6 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
     @SuppressLint({"SetTextI18n", "CutPasteId"})
     // ignores cases where numbers are turned to strings.
     public void createNewStationPopup() {
-
         dialogBuilder = new AlertDialog.Builder(this);
         final View PopupStation = getLayoutInflater().inflate(R.layout.station, null);
 
@@ -412,6 +411,7 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
         address_of_station.setText(current_station.getStation_address());
         the_num_of_chargers.setText(Integer.toString(current_station.getCharging_stations()));
         rate_of_station.setText(Double.toString(current_station.getAverageGrade()));
+
 
         dialogBuilder.setView(PopupStation);
         dialog = dialogBuilder.create();
@@ -431,17 +431,20 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
                 //widgets//
                 Button button_submit_rating = (Button) PopupRating.findViewById(R.id.button_submit_rating);
                 RatingBar rating_bar = (RatingBar) PopupRating.findViewById(R.id.rating_bar);
+                EditText review_line= (EditText) PopupRating.findViewById(R.id.review_line);
 
                 button_submit_rating.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-
                         Double user_rating = Double.valueOf(rating_bar.getRating());
                         Double curr_grade = current_station.getAverageGrade();
                         Double SumOf_reviews = current_station.getSumOf_reviews();
+                        String curr_review =  review_line.getText().toString().trim();
 
-                        reviewsObj review = new reviewsObj(current_user.getID(), user_rating, "");
+                        reviewsObj review = new reviewsObj(current_user.getID(), user_rating, curr_review);
                         reviewsDB reviewsDB = new reviewsDB();
+                        Log.d(TAG, "Review??????????????????? "+ review.toString());
+
                         reviewsDB.AddReviewToDatabase(review, current_station.getID());
                         double grade=0;
                         if(SumOf_reviews==0){
