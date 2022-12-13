@@ -107,13 +107,13 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
     /*popup station*/
     private AlertDialog.Builder dialogBuilder;
     private AlertDialog dialog;
-    private TextView name_of_station;
-    private TextView rate_of_station;
-    private TextView the_num_of_chargers;
-    private TextView address_of_station;
-    private FloatingActionButton rate_station;
-
-    private ImageView return_map_station_widget;
+//    private TextView name_of_station;
+//    private TextView rate_of_station;
+//    private TextView the_num_of_chargers;
+//    private TextView address_of_station;
+//    private FloatingActionButton rate_station;
+//
+//    private ImageView return_map_station_widget;
 
     private StationObj current_station; // this is a ref to the station we are currently looking at //
 
@@ -139,8 +139,6 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
         getLocationPermission();
         load_stations_data();
         load_user_data();
-
-        //TODO: LoadStations(); ( Better for searching )
 
     }
 
@@ -206,12 +204,13 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
                                 all_stations.put(document.getId(), tmp_station);
 
                                 //init map markers on the map//
-                                createMarker(tmp_station.getLatLng());
+                                createMarker(tmp_station.getLatLng(),tmp_station.getStation_name());
 
                             }
                         } else {
                             Log.e(TAG, "geoLocate: Error getting documents: ", task.getException());
                         }
+                        BuildAllPopUpStationWindows();
                     }
                 });
     }
@@ -272,46 +271,11 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
                 Log.d(TAG, "STATION LOCATION =>" + current_station.getLatLng());
 
                 moveCamera(current_station.getLatLng());
-//                createMarker(current_station.getLatLng());
+
                 return;
             }
         }
         search_bar.setError("Station does not exist.");
-//
-//        fStore.collection("stations")
-//                .get()
-//                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-//                    @Override
-//                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-//                        if (task.isSuccessful()) {
-//                            for (QueryDocumentSnapshot document : task.getResult()) {
-//                                // find the relevant document regarding the search string //
-//                                if (document.get("Name").equals(searchString)) {
-//
-//                                    //parsing the station document from the database//
-//                                    StationDB s_DB = new StationDB();
-//                                    current_station = s_DB.GetStationFromDatabase(document);
-//                                    Log.d(TAG, "geoLocate: Station is => " + current_station.toString());
-//
-//                                    // get the latlng//
-//                                    GeoPoint geoPoint = current_station.getLocation();
-//                                    double lat = geoPoint.getLatitude();
-//                                    double lng = geoPoint.getLongitude();
-//                                    LatLng latLng = new LatLng(lat, lng);
-//
-//                                    moveCamera(latLng, true);
-//
-//                                    return;
-//                                }
-//                            }
-//                            search_bar.setError("Station does not exist.");
-//
-//                        } else {
-//                            Log.e(TAG, "geoLocate: Error getting documents: ", task.getException());
-//
-//                        }
-//                    }
-//                });
     }
 
     /**
@@ -361,22 +325,37 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
     /**
      * this method is responsible for creating a station marker on the map.
      *
-     * @param latLng
+     * @param latLng a position we currently creating the marker for.
      */
-    private void createMarker(LatLng latLng) {
+    private void createMarker(LatLng latLng, String s_name) {
         MarkerOptions options = new MarkerOptions()
                 .position(latLng)
-                .title("");
+                .title(s_name); //TODO: consider using a unique title for markerListener//
         mMap.addMarker(options);
 
-        // TODO: make this display the relevant data//
+        MarkerListener();
+    }
+
+    private void MarkerListener() {
         mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
             public boolean onMarkerClick(@NonNull Marker marker) {
-                createNewStationPopup();
+                View v = StationPopUps.get(marker.getTitle());
+                StartDialogStation(v);
                 return true;
             }
         });
+    }
+
+    private void BuildAllPopUpStationWindows()
+    {
+        Log.d(TAG, "BuildAllPopUpStationsWindows...... " + this.all_stations.toString());
+
+        for (Map.Entry<String, StationObj> station : this.all_stations.entrySet()) {
+            Log.d(TAG, "Creating STation Window for STATION : => "+ station.getValue());
+            createNewStationPopup(station.getValue());
+
+        }
     }
 
     /**
@@ -440,40 +419,38 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
         }
     }
 
+    HashMap<String,View> StationPopUps = new HashMap<String, View>();
+
     /**
      * This is an outsource method, it creates the poppable station widget
      * it invokes the moment we click on a marker omn the map and shows the details of the station
      */
     @SuppressLint({"SetTextI18n", "CutPasteId"})
     // ignores cases where numbers are turned to strings.
-    public void createNewStationPopup() {
+    public void createNewStationPopup(StationObj station) {
 
         dialogBuilder = new AlertDialog.Builder(this);
         final View PopupStation = getLayoutInflater().inflate(R.layout.station, null);
 
         /*widgets*/
-        name_of_station = (TextView) PopupStation.findViewById(R.id.name_of_station);
-        rate_of_station = (TextView) PopupStation.findViewById(R.id.rate_of_station);
-        the_num_of_chargers = (TextView) PopupStation.findViewById(R.id.the_num_of_chargers);
-        address_of_station = (TextView) PopupStation.findViewById(R.id.address_of_station);
-        return_map_station_widget = (ImageView) PopupStation.findViewById(R.id.return_map_station_widget);
-        rate_station = (FloatingActionButton) PopupStation.findViewById(R.id.rate_station_button);
+        TextView name_of_station = (TextView) PopupStation.findViewById(R.id.name_of_station);
+        TextView rate_of_station = (TextView) PopupStation.findViewById(R.id.rate_of_station);
+        TextView the_num_of_chargers = (TextView) PopupStation.findViewById(R.id.the_num_of_chargers);
+        TextView address_of_station = (TextView) PopupStation.findViewById(R.id.address_of_station);
+        ImageView return_map_station_widget = (ImageView) PopupStation.findViewById(R.id.return_map_station_widget);
+        FloatingActionButton rate_station = (FloatingActionButton) PopupStation.findViewById(R.id.rate_station_button);
 
 
-        name_of_station.setText(current_station.getStation_name());
-        address_of_station.setText(current_station.getStation_address());
-        the_num_of_chargers.setText(Integer.toString(current_station.getCharging_stations()));
-        rate_of_station.setText(Double.toString(current_station.getAverageGrade()));
-
-        dialogBuilder.setView(PopupStation);
-        dialog = dialogBuilder.create();
-        dialog.show();
+        name_of_station.setText(station.getStation_name());
+        address_of_station.setText(station.getStation_address());
+        the_num_of_chargers.setText(Integer.toString(station.getCharging_stations()));
+        rate_of_station.setText(Double.toString(station.getAverageGrade()));
 
         // invokes the rating of the station popup window //
         rate_station.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                View PopupRating = getLayoutInflater().inflate(R.layout.rating, null);
+                final View PopupRating = getLayoutInflater().inflate(R.layout.rating, null);
                 dialogBuilder.setView(PopupRating);
                 dialog = dialogBuilder.create();
                 dialog.show();
@@ -485,7 +462,7 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
                 button_submit_rating.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Double curr_grade = current_station.getAverageGrade();
+                        Double curr_grade = station.getAverageGrade();
                         //TODO: create a good updating grade mechanisem relied upon database//
 //                        Double update_grade = curr_grade
                         rate_of_station.setText(Double.toString(rating_bar.getRating()));
@@ -500,8 +477,8 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
         waze_nav.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String latitude = Double.toString(current_station.getLocation().getLatitude());
-                String longitude = Double.toString(current_station.getLocation().getLongitude());
+                String latitude = Double.toString(station.getLocation().getLatitude());
+                String longitude = Double.toString(station.getLocation().getLongitude());
                 try {
                     // Launch Waze to look for desired station:
                     String url = "https://waze.com/ul?q=66%20Acacia%20Avenue&ll=" + latitude + "," + longitude + "&navigate=yes";
@@ -523,6 +500,15 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
             }
         });
 
+        //adding the new popup to the hashmap//
+        StationPopUps.put(station.getStation_name(), PopupStation);
+
+    }
+
+    public void StartDialogStation(View PopupStation) {
+        dialogBuilder.setView(PopupStation);
+        dialog = dialogBuilder.create();
+        dialog.show();
     }
 
 
