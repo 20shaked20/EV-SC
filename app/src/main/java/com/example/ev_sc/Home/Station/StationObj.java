@@ -15,7 +15,6 @@ import java.util.UUID;
 
 public class StationObj implements StationInterface, Parcelable {
 
-//    private double grade;
     private Double sumOf_reviews;
     private double avg_grade;
     private String station_address;
@@ -37,7 +36,6 @@ public class StationObj implements StationInterface, Parcelable {
     }
 
     public StationObj(StationObj station) {
-//        this.grade = station.getGrade();
         this.avg_grade = station.getAverageGrade();
         this.station_address = station.getStation_address();
         this.location = station.getLocation();
@@ -51,14 +49,9 @@ public class StationObj implements StationInterface, Parcelable {
         return SID;
     }
 
-
     public Double getSumOf_reviews() {
     return sumOf_reviews;
 }
-
-//    public double getGrade() {
-//        return grade;
-//    }
 
     public double getAverageGrade() {
         return avg_grade;
@@ -81,9 +74,6 @@ public class StationObj implements StationInterface, Parcelable {
         return location;
     }
 
-//    public void setGrade(double grade) {
-//        this.grade = grade;
-//    }
 
     public void setStation_address(String station_address) {
         this.station_address = station_address;
@@ -145,7 +135,6 @@ public class StationObj implements StationInterface, Parcelable {
 
     @Override
     public void writeToParcel(@NonNull Parcel dest, int flags) {
-//        dest.writeDouble(grade);
         dest.writeDouble(avg_grade);
         dest.writeString(station_address);
         dest.writeDouble(location.getLatitude());
@@ -158,7 +147,6 @@ public class StationObj implements StationInterface, Parcelable {
 
     private void readFromParcel(Parcel in) {
 
-//        grade = in.readInt();
         avg_grade = in.readDouble();
         station_address = in.readString();
         Double lat = location.getLatitude();

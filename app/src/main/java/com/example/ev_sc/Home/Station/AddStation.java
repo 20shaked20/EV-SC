@@ -68,7 +68,6 @@ public class AddStation extends Activity {
             double station_grade = Double.parseDouble(station_average_grade);
 
             String s_id = UUID.randomUUID().toString();
-//            List<reviewsObj> gradeList = new ArrayList<reviewsObj>();
             Double sumOf_reviews = Double.valueOf(0);
             StationObj station_to_add = new StationObj(station_grade, address, charging, name, station_coords,s_id, sumOf_reviews);
             StationDB db = new StationDB();
