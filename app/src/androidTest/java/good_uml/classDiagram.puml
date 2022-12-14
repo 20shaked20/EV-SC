@@ -12,12 +12,11 @@ interface personInterface{
 
 }
 interface stationInterface{
-+double getGrade();
++ double getAverageGrade()
 +String getStation_address();
 +int getCharging_stations();
 +String getStation_name();
-+String[] getReviews();
-+void setGrade(double grade);
++void setAverageGrade(double grade);
 +void setStation_address(String station_address);
 +void setCharging_stations(int charging_stations);
 +void setStation_name(String station_name);
@@ -63,26 +62,53 @@ class User {
 
 
 class Station {
-- double grade;
 -double avg_grade;
 -String station_address;
 -GeoPoint location;
 -int charging_stations;
 -String station_name;
+-Double sumOf_reviews;
+-String SID;
+
++ Double getSumOf_reviews()
 + String getID()
-+ double getGrade()
 + double getAverageGrade()
 + String getStation_address()
 + int getCharging_stations()
 + String getStation_name()
 + GeoPoint getLocation()
-+ public void setGrade(double grade)
-+ public void setStation_address(String station_address)
-+ public void setCharging_stations(int charging_stations)
-+ public void setLocation(GeoPoint new_location)
-+ public void setStation_name(String station_name)
-+ public void setAvgGrade(double avgGrade)
++ void SumOf_reviews(double SumOf_reviews)
++  void setGrade(double grade)
++  void setStation_address(String station_address)
++  void setCharging_stations(int charging_stations)
++  void setLocation(GeoPoint new_location)
++  void setStation_name(String station_name)
++  void setAvgGrade(double avgGrade)
 
 }
 
+
+interface reviewsInterface{
++String getUID_user()
++ Double getStars()
++ String getReview()
++ void setUID_user(String uid)
++ void setStars(Double x)
++ void setReview(String s)
+}
+
+class Reviews {
+ - String UID_user;
+   - Double stars;
+   - String review;
+
++ String getUID_user()
++ Double getStars()
++ String getReview()
++ void setUID_user(String uid)
++ void setStars(Double x)
++ void setReview(String s)
+}
+
+reviewsInterface <|-- Reviews
 @enduml

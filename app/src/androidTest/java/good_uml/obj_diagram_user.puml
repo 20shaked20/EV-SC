@@ -32,7 +32,7 @@ class registerScreen {
 class homeScreen {
 }
 
-class surch_station {
+class search_station {
 }
 class profileScreen {
 }
@@ -65,17 +65,28 @@ class station {
 }
 
 class reviews {
+ - String UID_user;
+   - Double stars;
+   - String review;
+
++ String getUID_user()
++ Double getStars()
++ String getReview()
++ void setUID_user(String uid)
++ void setStars(Double x)
++ void setReview(String s)
+
 }
 
 loginScreen <|-- User
 registerScreen <|-- User
 homeScreen <|-- loginScreen
 homeScreen <|-- registerScreen
-surch_station <|-- homeScreen
+search_station <|-- homeScreen
 profileScreen <|-- homeScreen
 edit_profile <|-- profileScreen
 favorites <|-- profileScreen
-station <|-- surch_station
+station <|-- search_station
 reviews <|-- station
 
 @enduml
