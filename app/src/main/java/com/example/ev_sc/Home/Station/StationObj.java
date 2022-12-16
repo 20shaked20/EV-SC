@@ -5,15 +5,20 @@ import android.os.Parcelable;
 
 import androidx.annotation.NonNull;
 
+
 import com.example.ev_sc.Person.UserObj;
 import com.google.android.gms.maps.model.LatLng;
+import com.example.ev_sc.Reviews.reviewsObj;
 import com.google.firebase.firestore.GeoPoint;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.UUID;
 
 public class StationObj implements StationInterface, Parcelable {
 
-    private double grade;
+    private Double sumOf_reviews;
     private double avg_grade;
     private String station_address;
     private GeoPoint location; // https://firebase.google.com/docs/reference/kotlin/com/google/firebase/firestore/GeoPoint
@@ -22,33 +27,34 @@ public class StationObj implements StationInterface, Parcelable {
     //private String[] reviews; // todo: this could probably better be represented as JSON or other data structure
     private String SID;
 
-    public StationObj(double grade, String station_address, int charging_stations, String station_name, GeoPoint location) {
-        this.grade = grade;
+    public StationObj(double grade, String station_address, int charging_stations, String station_name, GeoPoint location, String s_id,Double sumOf_reviews) {
+        this.avg_grade = grade;
         this.station_address = station_address;
         this.charging_stations = charging_stations;
         this.station_name = station_name;
-        this.SID = UUID.randomUUID().toString();
+        this.SID = s_id;
         this.location = location;
+        this.sumOf_reviews=sumOf_reviews;
         //todo: for loop to fit the reviews in the object
     }
 
     public StationObj(StationObj station) {
-        this.grade = station.getGrade();
         this.avg_grade = station.getAverageGrade();
         this.station_address = station.getStation_address();
         this.location = station.getLocation();
         this.charging_stations = station.getCharging_stations();
         this.station_name = station.getStation_name();
         this.SID = station.getID();
+        this.sumOf_reviews= station.getSumOf_reviews();
     }
 
     public String getID() {
         return SID;
     }
 
-    public double getGrade() {
-        return grade;
-    }
+    public Double getSumOf_reviews() {
+    return sumOf_reviews;
+}
 
     public double getAverageGrade() {
         return avg_grade;
@@ -71,9 +77,6 @@ public class StationObj implements StationInterface, Parcelable {
         return location;
     }
 
-    public void setGrade(double grade) {
-        this.grade = grade;
-    }
 
     public void setStation_address(String station_address) {
         this.station_address = station_address;
@@ -83,6 +86,7 @@ public class StationObj implements StationInterface, Parcelable {
         this.charging_stations = charging_stations;
     }
 
+
     /**
      * this method returns a latlng object from the location of the station.
      * @return LatLng object.
@@ -90,6 +94,7 @@ public class StationObj implements StationInterface, Parcelable {
     public LatLng getLatLng() {
         return new LatLng(this.location.getLatitude(), this.location.getLongitude());
     }
+    public void setSumOf_reviews(Double num_of_reviews){this.sumOf_reviews=num_of_reviews;}
 
     public void setLocation(GeoPoint new_location) {
         this.location = new_location;
@@ -107,7 +112,7 @@ public class StationObj implements StationInterface, Parcelable {
     @NonNull
     public String toString() { // override toString method to better represent station data (logging etc.)
         return "Station Name: " + this.getStation_name() + "\n" +
-                "Station Grade: " + this.getGrade() + "\n" +
+                "Station Average Grade: " + this.getAverageGrade() + "\n" +
                 "Station Location: " + this.getLocation().toString() + "\n" +
                 "Charging Stations: " + this.getCharging_stations() + "\n" +
                 "Station Address: " + this.getStation_address() + "\n" +
@@ -141,7 +146,6 @@ public class StationObj implements StationInterface, Parcelable {
 
     @Override
     public void writeToParcel(@NonNull Parcel dest, int flags) {
-        dest.writeDouble(grade);
         dest.writeDouble(avg_grade);
         dest.writeString(station_address);
         dest.writeDouble(location.getLatitude());
@@ -154,7 +158,6 @@ public class StationObj implements StationInterface, Parcelable {
 
     private void readFromParcel(Parcel in) {
 
-        grade = in.readInt();
         avg_grade = in.readDouble();
         station_address = in.readString();
         Double lat = location.getLatitude();

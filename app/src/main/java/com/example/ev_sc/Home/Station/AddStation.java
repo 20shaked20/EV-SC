@@ -4,13 +4,15 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.example.ev_sc.Home.StationDB;
 import com.example.ev_sc.R;
 import com.google.firebase.firestore.GeoPoint;
+
+import java.util.UUID;
 
 public class AddStation extends Activity {
 
@@ -61,7 +63,9 @@ public class AddStation extends Activity {
             int charging = Integer.parseInt(charging_stations);
             double station_grade = Double.parseDouble(station_average_grade);
 
-            StationObj station_to_add = new StationObj(station_grade, address, charging, name, station_coords);
+            String s_id = UUID.randomUUID().toString();
+            Double sumOf_reviews = Double.valueOf(0);
+            StationObj station_to_add = new StationObj(station_grade, address, charging, name, station_coords,s_id, sumOf_reviews);
             StationDB db = new StationDB();
             Log.d(TAG, "\n" + station_to_add.toString()); // logging station details for debugging
 

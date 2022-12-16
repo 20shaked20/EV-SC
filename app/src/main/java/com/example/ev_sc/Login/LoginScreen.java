@@ -4,22 +4,19 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
 import com.example.ev_sc.Home.HomeScreen;
-import com.example.ev_sc.Home.Station.AddStation;
 import com.example.ev_sc.R;
 
-import com.example.ev_sc.Register.RegisterScreen;
+import com.example.ev_sc.Profile.Register.RegisterScreen;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;

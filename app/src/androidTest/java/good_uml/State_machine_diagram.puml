@@ -1,0 +1,31 @@
+@startuml
+'https://plantuml.com/state-diagram
+
+scale 350 width
+[*] --> NewReviewProcess
+
+
+
+state NewReviewProcess {
+  [*] --> user
+  user --> NewReview : Writing a new Review
+  NewReview -> Calculate_new_avg_for_the_station
+
+
+state NewReview {
+state starRating
+}
+}
+
+
+state Station {
+state avg_grade
+Calculate_new_avg_for_the_station --> avg_grade
+avg_grade -> Calculate_new_avg_for_the_station
+avg_grade->StationDB_Update
+}
+note right of NewReviewProcess : How does a new Review affect the station's data and station database update
+note right of avg_grade : Gives the values for the calculation
+note right of Calculate_new_avg_for_the_station : Returns a new value that causes the average update and update the database
+note right of StationDB_Update:After the new value is updated, the database is updated
+@enduml

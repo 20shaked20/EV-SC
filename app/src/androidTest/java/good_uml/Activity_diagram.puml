@@ -19,5 +19,7 @@ else (Unregistered)
 endif
 :home;
 :Using the app;
+:search station ;
+:Navigate with Waze ;
 
 @enduml

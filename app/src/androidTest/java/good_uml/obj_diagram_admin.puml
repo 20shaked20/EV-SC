@@ -1,0 +1,80 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+class Admin {
+-First_name;
+-String Last_name;
+-int Permissions;
+-String UID;
++ String getFirst_name()
++ String getLast_name()
++ String getID()
++ int getPermissions()
++void setFirst_name(String first_name)
++void setLast_name(String last_name)
+}
+
+class loginScreen {
+}
+
+class homeScreen {
+}
+
+class profileScreen {
+}
+
+
+class edit_station_screen {
+}
+
+class add_station_screen {
+}
+
+class search_station {
+}
+class station {
+- double grade;
+-double avg_grade;
+-String station_address;
+-GeoPoint location;
+-int charging_stations;
+-String station_name;
++ String getID()
++ double getGrade()
++ double getAverageGrade()
++ String getStation_address()
++ int getCharging_stations()
++ String getStation_name()
++ GeoPoint getLocation()
++ public void setGrade(double grade)
++ public void setStation_address(String station_address)
++ public void setCharging_stations(int charging_stations)
++ public void setLocation(GeoPoint new_location)
++ public void setStation_name(String station_name)
++ public void setAvgGrade(double avgGrade)
+
+}
+
+class reviews {
+ - String UID_user;
+   - Double stars;
+   - String review;
+
++ String getUID_user()
++ Double getStars()
++ String getReview()
++ void setUID_user(String uid)
++ void setStars(Double x)
++ void setReview(String s)
+
+}
+
+loginScreen <|-- Admin
+homeScreen <|-- loginScreen
+profileScreen <|-- homeScreen
+search_station <|-- homeScreen
+station <|-- search_station
+reviews <|-- station
+add_station_screen <|-- profileScreen
+edit_station_screen <|-- profileScreen
+@enduml

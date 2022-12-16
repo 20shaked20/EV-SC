@@ -13,12 +13,15 @@
 (edit profile) as (edit profile)
 (profile admin) as (profile2)
 (search station) as (search station)
-(station) as (station)
+(station data) as (station)
+(search station) as (search station2)
+(station data) as (station2)
 (add station) as (add station)
 (edit station) as (edit station)
-(favorites) as (favorites)
-(reviews) as (reviews)
-(new reviews) as (new reviews)
+(Information of favorites stations and my reviews) as (favorites)
+(Navigate with Waze) as (Navigate with Waze)
+(Navigate with Waze) as (Navigate with Waze2)
+
 
 User --> (Use1)
 (Use1) --> (register)
@@ -30,26 +33,27 @@ User --> (Use1)
 (profile1)-->(favorites)
 (home1)-->(search station)
 (search station)--> (station)
-(station)--> (reviews)
+(station)--> (Navigate with Waze)
 (station)..->(home1)
-(reviews)..->(home1)
 (favorites)..->(home1)
 (edit profile)..->(home1)
-note right of User : The order of screens for user
+note right of User : User's processes
 
 ''''''''''''''''''''''''''''
 Admin ---> (Use2)
 (Use2) --> (login2)
 (login2) --> (home2)
 (home2)-->(profile2)
+(home2)-->(search station2)
+(search station2)-->(station2)
+(station2)-->(Navigate with Waze2)
 (profile2)..->(home2)
 (add station)..->(home2)
 (edit station)..->(home2)
 (profile2) --> (add station)
 (profile2) --> (edit station)
-(home2)-->(new reviews)
-(new reviews)..->(home2)
-note right of Admin : The order of screens for admin
+(station2)..> (home2)
+note right of Admin : Admin's processes
 
 
 

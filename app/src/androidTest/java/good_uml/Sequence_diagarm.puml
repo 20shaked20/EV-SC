@@ -1,0 +1,11 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+autonumber
+
+Alice -> station: Alice Writing a new review
+station --> Bob: A new station review that Bob can read
+Bob -> station: Bob Writing a new review
+Alice <-- station: A new station review that Alice can read
+
+@enduml

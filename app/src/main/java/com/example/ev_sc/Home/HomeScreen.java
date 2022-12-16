@@ -28,13 +28,14 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
-import com.example.ev_sc.Home.Station.StationDB;
 import com.example.ev_sc.Home.Station.StationObj;
 import com.example.ev_sc.Person.DataBases.UserDB;
 import com.example.ev_sc.Person.UserObj;
 import com.example.ev_sc.Profile.AdminProfileScreen;
 import com.example.ev_sc.Profile.UserProfileScreen;
 import com.example.ev_sc.R;
+import com.example.ev_sc.Reviews.reviewsDB;
+import com.example.ev_sc.Reviews.reviewsObj;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -103,6 +104,7 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
 
     /*widgets*/
     private EditText search_bar;
+
 
     /*popup station*/
     private AlertDialog.Builder dialogBuilder;
@@ -463,18 +465,44 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
                 dialog = dialogBuilder.create();
                 dialog.show();
 
+
                 //widgets//
                 Button button_submit_rating = (Button) PopupRating.findViewById(R.id.button_submit_rating);
                 RatingBar rating_bar = (RatingBar) PopupRating.findViewById(R.id.rating_bar);
+                EditText review_line= (EditText) PopupRating.findViewById(R.id.review_line);
 
                 button_submit_rating.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Double curr_grade = station.getAverageGrade();
+
+                        Double user_rating = Double.valueOf(rating_bar.getRating());
+                        Double curr_grade = current_station.getAverageGrade();
+                        Double SumOf_reviews = current_station.getSumOf_reviews();
+                        String curr_review =  review_line.getText().toString().trim();
+
+                        reviewsObj review = new reviewsObj(current_user.getID(), user_rating, curr_review);
+                        reviewsDB reviewsDB = new reviewsDB();
+                        Log.d(TAG, "Review??????????????????? "+ review.toString());
+
+                        reviewsDB.AddReviewToDatabase(review, current_station.getID());
+                        double grade=0;
+                        if(SumOf_reviews==0){
+                         grade=user_rating;
+                        }else{
+                            grade = (SumOf_reviews*curr_grade + user_rating)/(SumOf_reviews+1);
+                        }
+                        Log.d(TAG, "Review ADDED? =??? "+ review.toString());
                         //TODO: create a good updating grade mechanisem relied upon database//
-//                        Double update_grade = curr_grade
-                        rate_of_station.setText(Double.toString(rating_bar.getRating()));
+
+                        rate_of_station.setText(Double.toString(grade));
+                        current_station.setAvgGrade(grade);
+                        SumOf_reviews+=1;
+                        current_station.setSumOf_reviews(SumOf_reviews);
+                        StationDB.updateStationToDatabase(current_station);
+
                         dialog.dismiss();
+
+
                     }
                 });
             }
