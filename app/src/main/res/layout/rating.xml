@@ -13,31 +13,47 @@
         app:cardCornerRadius="16dp">
 
         <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
+            android:layout_width="351dp"
+            android:layout_height="399dp"
             android:gravity="center"
+            android:orientation="vertical"
             android:padding="20dp">
 
             <TextView
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="43dp"
                 android:text="Rate Station"
                 android:textSize="24sp"
-                android:textStyle="bold"/>
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/add_review"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="16sp"
+                android:text="Add Rreview:" />
+
+            <EditText
+                android:id="@+id/review_line"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:inputType="textPersonName"
+                android:text="" />
+
 
             <RatingBar
+                android:id="@+id/rating_bar"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/rating_bar"
-                android:stepSize="0.5"
+                android:layout_marginTop="16dp"
                 android:numStars="5"
-                android:layout_marginTop="16dp"/>
+                android:stepSize="0.5" />
 
             <Button
+                android:id="@+id/button_submit_rating"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/button_submit_rating"
                 android:text="Submit" />
 
         </LinearLayout>

@@ -28,13 +28,14 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
-import com.example.ev_sc.Home.Station.StationDB;
 import com.example.ev_sc.Home.Station.StationObj;
 import com.example.ev_sc.Person.DataBases.UserDB;
 import com.example.ev_sc.Person.UserObj;
 import com.example.ev_sc.Profile.AdminProfileScreen;
 import com.example.ev_sc.Profile.UserProfileScreen;
 import com.example.ev_sc.R;
+import com.example.ev_sc.Reviews.reviewsDB;
+import com.example.ev_sc.Reviews.reviewsObj;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -52,13 +53,6 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.GeoPoint;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
-
-import java.io.BufferedInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
 
 
 public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback {
@@ -102,6 +96,7 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
     /*widgets*/
     private EditText search_bar;
 
+
     /*popup station*/
     private AlertDialog.Builder dialogBuilder;
     private AlertDialog dialog;
@@ -110,7 +105,6 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
     private TextView the_num_of_chargers;
     private TextView address_of_station;
     private FloatingActionButton rate_station;
-
     private ImageView return_map_station_widget;
 
     private StationObj current_station; // this is a ref to the station we are currently looking at //
@@ -164,9 +158,9 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
         switch (item.getItemId()) {
 
             case R.id.profile_menu:
-                if (current_user.getPermissions() == 1){
+                if (current_user.getPermissions() == 1) {
                     Intent home_to_admin_profile = new Intent(HomeScreen.this, AdminProfileScreen.class);
-                    home_to_admin_profile.putExtra("User",current_user);
+                    home_to_admin_profile.putExtra("User", current_user);
 
                     startActivity(home_to_admin_profile);
                     finish();
@@ -401,7 +395,6 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
     @SuppressLint({"SetTextI18n", "CutPasteId"})
     // ignores cases where numbers are turned to strings.
     public void createNewStationPopup() {
-
         dialogBuilder = new AlertDialog.Builder(this);
         final View PopupStation = getLayoutInflater().inflate(R.layout.station, null);
 
@@ -419,31 +412,58 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
         the_num_of_chargers.setText(Integer.toString(current_station.getCharging_stations()));
         rate_of_station.setText(Double.toString(current_station.getAverageGrade()));
 
+
         dialogBuilder.setView(PopupStation);
         dialog = dialogBuilder.create();
         dialog.show();
+
 
         // invokes the rating of the station popup window //
         rate_station.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                View PopupRating = getLayoutInflater().inflate(R.layout.rating,null);
+                View PopupRating = getLayoutInflater().inflate(R.layout.rating, null);
                 dialogBuilder.setView(PopupRating);
                 dialog = dialogBuilder.create();
                 dialog.show();
 
+
                 //widgets//
                 Button button_submit_rating = (Button) PopupRating.findViewById(R.id.button_submit_rating);
                 RatingBar rating_bar = (RatingBar) PopupRating.findViewById(R.id.rating_bar);
+                EditText review_line= (EditText) PopupRating.findViewById(R.id.review_line);
 
                 button_submit_rating.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+                        Double user_rating = Double.valueOf(rating_bar.getRating());
                         Double curr_grade = current_station.getAverageGrade();
+                        Double SumOf_reviews = current_station.getSumOf_reviews();
+                        String curr_review =  review_line.getText().toString().trim();
+
+                        reviewsObj review = new reviewsObj(current_user.getID(), user_rating, curr_review);
+                        reviewsDB reviewsDB = new reviewsDB();
+                        Log.d(TAG, "Review??????????????????? "+ review.toString());
+
+                        reviewsDB.AddReviewToDatabase(review, current_station.getID());
+                        double grade=0;
+                        if(SumOf_reviews==0){
+                         grade=user_rating;
+                        }else{
+                            grade = (SumOf_reviews*curr_grade + user_rating)/(SumOf_reviews+1);
+                        }
+                        Log.d(TAG, "Review ADDED? =??? "+ review.toString());
                         //TODO: create a good updating grade mechanisem relied upon database//
-//                        Double update_grade = curr_grade
-                        rate_of_station.setText(Double.toString(rating_bar.getRating()));
+
+                        rate_of_station.setText(Double.toString(grade));
+                        current_station.setAvgGrade(grade);
+                        SumOf_reviews+=1;
+                        current_station.setSumOf_reviews(SumOf_reviews);
+                        StationDB.updateStationToDatabase(current_station);
+
                         dialog.dismiss();
+
+
                     }
                 });
             }
@@ -458,7 +478,7 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
                 String longitude = Double.toString(current_station.getLocation().getLongitude());
                 try {
                     // Launch Waze to look for desired station:
-                    String url = "https://waze.com/ul?q=66%20Acacia%20Avenue&ll="+latitude+","+longitude+"&navigate=yes";
+                    String url = "https://waze.com/ul?q=66%20Acacia%20Avenue&ll=" + latitude + "," + longitude + "&navigate=yes";
                     Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
                     startActivity(intent);
                 } catch (ActivityNotFoundException ex) {

@@ -1,0 +1,42 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+
+class User {
+First_name
+Last_name
+username
+Permissions
+phone_number
+UID
+}
+
+class review {
+reviews_id
+review_msg
+}
+class Users_review{
+users_uid
+reviews_id
+}
+
+review <|-- Users_review
+Users_review <|-- User
+
+class stations {
+ avg_grade
+ station_address
+ location
+ charging_stations
+ station_name
+ sumOf_reviews
+ SID
+}
+class Users_favorite_stations{
+users_uid
+station_id
+}
+
+stations <|-- Users_favorite_stations
+Users_favorite_stations <|-- User
+@enduml

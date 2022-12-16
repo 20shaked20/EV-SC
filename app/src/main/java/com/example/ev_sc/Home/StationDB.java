@@ -1,4 +1,4 @@
-package com.example.ev_sc.Home.Station;
+package com.example.ev_sc.Home;
 import static android.content.ContentValues.TAG;
 
 import android.util.Log;
@@ -15,7 +15,7 @@ import java.util.Map;
 
 public class StationDB {
 
-    FirebaseFirestore fStore = FirebaseFirestore.getInstance();
+    static FirebaseFirestore fStore = FirebaseFirestore.getInstance();
 
     final private String TAG = "StationDB";
 
@@ -32,6 +32,9 @@ public class StationDB {
         station.put("Charging Stations",Station.getCharging_stations());
         station.put("Location",Station.getLocation());
         station.put("Name",Station.getStation_name());
+        station.put("SID", Station.getID());
+        station.put("SumOf_reviews", Station.getSumOf_reviews());
+
 
         //Check//
         documentReference.set(station).addOnSuccessListener(unused -> Log.d(TAG, "Station Profile is created for " + Station.getID()));
@@ -51,12 +54,30 @@ public class StationDB {
         String s_name = doc.getString("Name");
         String s_address = doc.getString("Address");
         GeoPoint s_loc = doc.getGeoPoint("Location");
-
+        String s_id = doc.getString("SID");
+        Double sumof_reviews = doc.getDouble("SumOf_reviews");
         assert c_stations != null;
         assert avg_rating!= null;
 
-        return new StationObj(avg_rating, s_address, c_stations.intValue(), s_name, s_loc);
+        return new StationObj(avg_rating, s_address, c_stations.intValue(), s_name, s_loc,s_id,sumof_reviews);
 
+    }
+
+    public static void updateStationToDatabase(StationObj Station) {
+        DocumentReference documentReference = fStore.collection("stations").document(Station.getID());
+        Map<String, Object> station = new HashMap<>();
+
+        station.put("Address", Station.getStation_address());
+        station.put("Average Rating", Station.getAverageGrade());
+        station.put("Charging Stations", Station.getCharging_stations());
+        station.put("Location", Station.getLocation());
+        station.put("Name", Station.getStation_name());
+        station.put("SID", Station.getID());
+        station.put("SumOf_reviews", Station.getSumOf_reviews());
+
+
+        //Check//
+        documentReference.set(station);
     }
 
 }
