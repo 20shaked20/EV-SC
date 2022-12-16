@@ -54,6 +54,15 @@ import com.google.firebase.firestore.GeoPoint;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.io.BufferedInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
+
 
 public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback {
 
@@ -100,24 +109,21 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
     /*popup station*/
     private AlertDialog.Builder dialogBuilder;
     private AlertDialog dialog;
-    private TextView name_of_station;
-    private TextView rate_of_station;
-    private TextView the_num_of_chargers;
-    private TextView address_of_station;
-    private FloatingActionButton rate_station;
-    private ImageView return_map_station_widget;
-
-    private StationObj current_station; // this is a ref to the station we are currently looking at //
 
     /*vars*/
     private Boolean mLocationPermissionGranted = false;
     private GoogleMap mMap;
     private FusedLocationProviderClient mFusedLocationProviderClient;
 
+    /*maps*/
+    private final HashMap<String, View> StationPopUps = new HashMap<String, View>(); //this map is used to map each station to its poppable window//
+    private final HashMap<String, StationObj> all_stations = new HashMap<String, StationObj>(); // this is used to map all the stations upon login //
+
+    /*firebase*/
     FirebaseFirestore fStore = FirebaseFirestore.getInstance();
 
     /*user profile handle*/
-    private FirebaseAuth fAuth = FirebaseAuth.getInstance();
+    private final FirebaseAuth fAuth = FirebaseAuth.getInstance();
     private UserObj current_user;
 
     @Override
@@ -128,10 +134,8 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
         search_bar = findViewById(R.id.search_bar);
 
         getLocationPermission();
+        load_stations_data();
         load_user_data();
-
-        //TODO: LoadStations(); ( Better for searching )
-
     }
 
     /**
@@ -152,6 +156,7 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
      * @param item menu bar item
      * @return true on success
      */
+    @SuppressLint("NonConstantResourceId")
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
@@ -181,10 +186,41 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
     }
 
     /**
+     * This method is responsible for loading all the data from the firestore database,
+     * it loads it to a HashMap we then use.
+     */
+    private void load_stations_data() {
+        Log.d(TAG, "loading_stations_data: loading Stations data from database to object");
+
+        fStore.collection("stations")
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            StationDB s_DB = new StationDB();
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                // load all stations data from database to the hashmap with unique key of doc id//
+                                StationObj tmp_station = s_DB.GetStationFromDatabase(document);
+                                all_stations.put(document.getId(), tmp_station);
+
+                                //init map markers on the map//
+                                createMarker(tmp_station.getLatLng(), tmp_station.getStation_name());
+
+                            }
+                        } else {
+                            Log.e(TAG, "geoLocate: Error getting documents: ", task.getException());
+                        }
+                        BuildAllPopUpStationWindows();
+                    }
+                });
+    }
+
+    /**
      * this method loads the current user data,
      * using that data we transfer it via the intent to the user profile (onOptionItemSelected)
      */
-    public void load_user_data() {
+    private void load_user_data() {
         Log.d(TAG, "load_user_data: loading User data from database");
         String Client_UID = fAuth.getCurrentUser().getUid();
 
@@ -203,6 +239,7 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
      */
     private void init() {
         Log.d(TAG, "init: initializing");
+
         //TODO: avoid free text upon pressing ENTER
         search_bar.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
@@ -226,43 +263,21 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
         Log.d(TAG, "geoLocate: geolocationg");
 
         String searchString = search_bar.getText().toString().trim();
-
+        StationObj current_station;
         //TODO: consider moving some of the code to StationDB//
 
-        fStore.collection("stations")
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-                            for (QueryDocumentSnapshot document : task.getResult()) {
-                                // find the relevant document regarding the search string //
-                                if (document.get("Name").equals(searchString)) {
+        for (Map.Entry<String, StationObj> station : this.all_stations.entrySet()) {
+            if (station.getValue().getStation_name().equals(searchString)) {
+                // get the latlng//
+                current_station = station.getValue(); //updating the current station//
+                Log.d(TAG, "STATION LOCATION =>" + current_station.getLatLng());
 
-                                    //parsing the station document from the database//
-                                    StationDB s_DB = new StationDB();
-                                    current_station = s_DB.GetStationFromDatabase(document);
-                                    Log.d(TAG, "geoLocate: Station is => " + current_station.toString());
+                moveCamera(current_station.getLatLng());
 
-                                    // get the latlng//
-                                    GeoPoint geoPoint = current_station.getLocation();
-                                    double lat = geoPoint.getLatitude();
-                                    double lng = geoPoint.getLongitude();
-                                    LatLng latLng = new LatLng(lat, lng);
-
-                                    moveCamera(latLng, true);
-
-                                    return;
-                                }
-                            }
-                            search_bar.setError("Station does not exist.");
-
-                        } else {
-                            Log.e(TAG, "geoLocate: Error getting documents: ", task.getException());
-
-                        }
-                    }
-                });
+                return;
+            }
+        }
+        search_bar.setError("Station does not exist.");
     }
 
     /**
@@ -285,7 +300,7 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
                             Location currentLocation = (Location) task.getResult();
 
                             //move camera to the current location of the user//
-                            moveCamera(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()), false);
+                            moveCamera(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()));
 
                         } else {
                             Log.d(TAG, "onComplete getDeviceLocation: current location is null");
@@ -303,27 +318,54 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
      * this method moves the current camera to a new location on the map
      *
      * @param latLng coordinates of the location (latitude,longitude)
-     * @param marker true = create a marker, false = dont create marker.
      */
-    private void moveCamera(LatLng latLng, boolean marker) {
+    private void moveCamera(LatLng latLng) {
         Log.d(TAG, "moveCamera: Moving the camera to: (lat: " + latLng.latitude + ", lng: " + latLng.longitude + " )");
+
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, HomeScreen.DEFAULT_ZOOM));
+    }
 
-        //create a marker on map//
-        if (marker) {
-            MarkerOptions options = new MarkerOptions()
-                    .position(latLng)
-                    .title("Test");
-            mMap.addMarker(options);
+    /**
+     * this method is responsible for creating a station marker on the map.
+     *
+     * @param latLng a position we currently creating the marker for.
+     */
+    private void createMarker(LatLng latLng, String s_name) {
+        Log.d(TAG, "CreateMarker: Creating markers for station: =>" + s_name);
 
-            // TODO: make this display the relevant data//
-            mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
-                @Override
-                public boolean onMarkerClick(@NonNull Marker marker) {
-                    createNewStationPopup();
-                    return true;
-                }
-            });
+        MarkerOptions options = new MarkerOptions()
+                .position(latLng)
+                .title(s_name); //TODO: consider using a unique title for markerListener//
+        mMap.addMarker(options);
+
+        MarkerListener();
+    }
+
+    /**
+     * This method is responsible for setting a listener on the Marker in the map,
+     * the listener opens a new poppable station window.
+     */
+    private void MarkerListener() {
+        Log.d(TAG, "MarkerListener: Setting marker listener");
+        mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+            @Override
+            public boolean onMarkerClick(@NonNull Marker marker) {
+                View v = StationPopUps.get(marker.getTitle());
+                StartDialogStation(v);
+                return true;
+            }
+        });
+    }
+
+    /**
+     * This private method is responsible for building all the station pop up windows.
+     */
+    private void BuildAllPopUpStationWindows() {
+        Log.d(TAG, "BuildAllPopUpStationsWindows: building all the stations windows " + this.all_stations.toString());
+
+        for (Map.Entry<String, StationObj> station : this.all_stations.entrySet()) {
+//            Log.d(TAG, "Creating STation Window for STATION : => "+ station.getValue());
+            createNewStationPopup(station.getValue());
         }
     }
 
@@ -332,8 +374,8 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
      */
     private void initMap() {
         Log.d(TAG, "initMap: initializing map...");
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map_home_screen);
 
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map_home_screen);
         assert mapFragment != null;
         mapFragment.getMapAsync(HomeScreen.this);
     }
@@ -394,35 +436,31 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
      */
     @SuppressLint({"SetTextI18n", "CutPasteId"})
     // ignores cases where numbers are turned to strings.
-    public void createNewStationPopup() {
+    public void createNewStationPopup(StationObj station) {
+        Log.d(TAG, "createNewStationPopup: creating new popup window for station => " + station.getStation_name());
+
         dialogBuilder = new AlertDialog.Builder(this);
         final View PopupStation = getLayoutInflater().inflate(R.layout.station, null);
 
         /*widgets*/
-        name_of_station = (TextView) PopupStation.findViewById(R.id.name_of_station);
-        rate_of_station = (TextView) PopupStation.findViewById(R.id.rate_of_station);
-        the_num_of_chargers = (TextView) PopupStation.findViewById(R.id.the_num_of_chargers);
-        address_of_station = (TextView) PopupStation.findViewById(R.id.address_of_station);
-        return_map_station_widget = (ImageView) PopupStation.findViewById(R.id.return_map_station_widget);
-        rate_station = (FloatingActionButton) PopupStation.findViewById(R.id.rate_station_button);
+        TextView name_of_station = (TextView) PopupStation.findViewById(R.id.name_of_station);
+        TextView rate_of_station = (TextView) PopupStation.findViewById(R.id.rate_of_station);
+        TextView the_num_of_chargers = (TextView) PopupStation.findViewById(R.id.the_num_of_chargers);
+        TextView address_of_station = (TextView) PopupStation.findViewById(R.id.address_of_station);
+        ImageView return_map_station_widget = (ImageView) PopupStation.findViewById(R.id.return_map_station_widget);
+        FloatingActionButton rate_station = (FloatingActionButton) PopupStation.findViewById(R.id.rate_station_button);
 
 
-        name_of_station.setText(current_station.getStation_name());
-        address_of_station.setText(current_station.getStation_address());
-        the_num_of_chargers.setText(Integer.toString(current_station.getCharging_stations()));
-        rate_of_station.setText(Double.toString(current_station.getAverageGrade()));
-
-
-        dialogBuilder.setView(PopupStation);
-        dialog = dialogBuilder.create();
-        dialog.show();
-
+        name_of_station.setText(station.getStation_name());
+        address_of_station.setText(station.getStation_address());
+        the_num_of_chargers.setText(Integer.toString(station.getCharging_stations()));
+        rate_of_station.setText(Double.toString(station.getAverageGrade()));
 
         // invokes the rating of the station popup window //
         rate_station.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                View PopupRating = getLayoutInflater().inflate(R.layout.rating, null);
+                final View PopupRating = getLayoutInflater().inflate(R.layout.rating, null);
                 dialogBuilder.setView(PopupRating);
                 dialog = dialogBuilder.create();
                 dialog.show();
@@ -436,6 +474,7 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
                 button_submit_rating.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+
                         Double user_rating = Double.valueOf(rating_bar.getRating());
                         Double curr_grade = current_station.getAverageGrade();
                         Double SumOf_reviews = current_station.getSumOf_reviews();
@@ -474,8 +513,8 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
         waze_nav.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String latitude = Double.toString(current_station.getLocation().getLatitude());
-                String longitude = Double.toString(current_station.getLocation().getLongitude());
+                String latitude = Double.toString(station.getLocation().getLatitude());
+                String longitude = Double.toString(station.getLocation().getLongitude());
                 try {
                     // Launch Waze to look for desired station:
                     String url = "https://waze.com/ul?q=66%20Acacia%20Avenue&ll=" + latitude + "," + longitude + "&navigate=yes";
@@ -497,6 +536,20 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
             }
         });
 
+        //adding the new popup to the hashmap//
+        StationPopUps.put(station.getStation_name(), PopupStation);
+
+    }
+
+    /**
+     * This method gets a popup window and starts it on a dialog builder.
+     *
+     * @param PopupStation represents a View window of a given station.
+     */
+    public void StartDialogStation(View PopupStation) {
+        dialogBuilder.setView(PopupStation);
+        dialog = dialogBuilder.create();
+        dialog.show();
     }
 
 

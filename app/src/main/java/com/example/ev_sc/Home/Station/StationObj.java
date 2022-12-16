@@ -5,6 +5,9 @@ import android.os.Parcelable;
 
 import androidx.annotation.NonNull;
 
+
+import com.example.ev_sc.Person.UserObj;
+import com.google.android.gms.maps.model.LatLng;
 import com.example.ev_sc.Reviews.reviewsObj;
 import com.google.firebase.firestore.GeoPoint;
 
@@ -83,6 +86,14 @@ public class StationObj implements StationInterface, Parcelable {
         this.charging_stations = charging_stations;
     }
 
+
+    /**
+     * this method returns a latlng object from the location of the station.
+     * @return LatLng object.
+     */
+    public LatLng getLatLng() {
+        return new LatLng(this.location.getLatitude(), this.location.getLongitude());
+    }
     public void setSumOf_reviews(Double num_of_reviews){this.sumOf_reviews=num_of_reviews;}
 
     public void setLocation(GeoPoint new_location) {
