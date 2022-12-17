@@ -39,7 +39,10 @@
             android:textColor="#000"
             android:id="@+id/search_bar"
             android:background="@null"
-            android:hint="Enter Address, City or Zip Code"
+            android:maxLines="1"
+            android:lines="1"
+            android:singleLine="true"
+            android:hint="Enter Location"
             android:imeOptions="actionSearch"/>
 
 
