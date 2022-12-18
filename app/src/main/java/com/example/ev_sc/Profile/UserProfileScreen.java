@@ -16,6 +16,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.ev_sc.Home.HomeScreen;
+import com.example.ev_sc.Login.LoginScreen;
 import com.example.ev_sc.Person.UserObj;
 import com.example.ev_sc.R;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -87,9 +88,21 @@ public class UserProfileScreen extends AppCompatActivity {
         switch (item.getItemId()) {
 
             case R.id.map_menu: {
+                Log.d(TAG, "Selected: Move from Profile to map");
+
                 startActivity(new Intent(UserProfileScreen.this, HomeScreen.class));
                 finish();
                 return true;
+            }
+
+            case R.id.logut_menu: {
+                Log.d(TAG, "Selected: Logout");
+
+                fAuth.signOut();
+                startActivity(new Intent(UserProfileScreen.this, LoginScreen.class));
+                finish();
+                return true;
+
             }
             default:
                 return super.onOptionsItemSelected(item);

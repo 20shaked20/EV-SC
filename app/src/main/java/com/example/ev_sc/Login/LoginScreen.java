@@ -100,8 +100,7 @@ public class LoginScreen extends Activity {
                 /*TODO: add more exceptions*/
 
                 //authenticate the user
-                System.out.println("Email:" + email+ "Pass: "+ password);
-                startActivity(new Intent(getApplicationContext(), HomeScreen.class));
+//                System.out.println("Email:" + email+ "Pass: "+ password);
 
                 fAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
@@ -110,6 +109,7 @@ public class LoginScreen extends Activity {
                             //successfully login.
                             Toast.makeText(LoginScreen.this, "Logged in Successfully", Toast.LENGTH_SHORT).show();
                             startActivity(new Intent(getApplicationContext(), HomeScreen.class));
+                            finish();
                         } else {
                             // email or password incorrect or user does not exist
                             Toast.makeText(LoginScreen.this, "Email Or Password Incorrect " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
