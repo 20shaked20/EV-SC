@@ -17,6 +17,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.ev_sc.Home.HomeScreen;
 import com.example.ev_sc.Home.Station.AddStation;
+import com.example.ev_sc.Login.LoginScreen;
 import com.example.ev_sc.Person.UserObj;
 import com.example.ev_sc.R;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -93,6 +94,15 @@ public class AdminProfileScreen extends AppCompatActivity {
                 startActivity(new Intent(AdminProfileScreen.this, HomeScreen.class));
                 finish();
                 return true;
+            }
+            case R.id.logut_menu: {
+                Log.d(TAG, "Selected: Logout");
+
+                fAuth.signOut();
+                startActivity(new Intent(AdminProfileScreen.this, LoginScreen.class));
+                finish();
+                return true;
+
             }
             default:
                 return super.onOptionsItemSelected(item);
