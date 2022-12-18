@@ -1,9 +1,0 @@
-<changelist name="Uncommitted_changes_before_Update_at_11_12_2022_11_36_[Changes]" date="1670751418242" recycled="true" deleted="true">
-  <option name="PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_11_12_2022_11_36_[Changes]/shelved.patch" />
-  <option name="DESCRIPTION" value="Uncommitted changes before Update at 11/12/2022 11:36 [Changes]" />
-  <binary>
-    <option name="BEFORE_PATH" />
-    <option name="AFTER_PATH" value="app/src/main/res/drawable-v24/waze.jpg" />
-    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_11_12_2022_11_36_[Changes]/waze.jpg" />
-  </binary>
-</changelist>

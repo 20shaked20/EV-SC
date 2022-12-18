@@ -1,7 +1,7 @@
 @startuml
 'https://plantuml.com/use-case-diagram
 
-:Main Admin: as Admin
+: Admin: as Admin
 (Use the application- user) as (Use1)
 (Use the application-admin) as (Use2)
 (login)as (login1)
