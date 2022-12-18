@@ -4,22 +4,13 @@
 
 
 class User {
--String First_name;
--String Last_name;
--String username;
--int Permissions;
--String phone_number;
--String UID;
-+ String getFirst_name()
-+ String getLast_name()
-+ String getID()
-+ int getPermissions()
-+ void setFirst_name(String first_name)
-+ void setLast_name(String last_name)
-+ String getPhone_number()
-+ String getUsername()
-+ void setUsername(String username)
-+ void setPhone_number(String phone_number)
+-String First_name : shaked
+-String Last_name: Levi
+-String username :20shaked20
+-int Permissions: 0
+-String phone_number: 052-5381648
+-String UID: 56788594
+
 }
 
 
@@ -42,39 +33,21 @@ class favorites {
 class edit_profile {
 }
 class station {
-- double grade;
--double avg_grade;
--String station_address;
--GeoPoint location;
--int charging_stations;
--String station_name;
-+ String getID()
-+ double getGrade()
-+ double getAverageGrade()
-+ String getStation_address()
-+ int getCharging_stations()
-+ String getStation_name()
-+ GeoPoint getLocation()
-+ public void setGrade(double grade)
-+ public void setStation_address(String station_address)
-+ public void setCharging_stations(int charging_stations)
-+ public void setLocation(GeoPoint new_location)
-+ public void setStation_name(String station_name)
-+ public void setAvgGrade(double avgGrade)
+-double avg_grade: 4
+-String station_address : Ariel Junction
+-GeoPoint location : 32.10839 , 35.16396
+-int charging_stations : 5
+-String station_name : Sonol Ariel
+
 
 }
 
 class reviews {
- - String UID_user;
-   - Double stars;
-   - String review;
+ - String UID_user : 56788594
+   - Double stars : 4
+   - String review : Very good station
 
-+ String getUID_user()
-+ Double getStars()
-+ String getReview()
-+ void setUID_user(String uid)
-+ void setStars(Double x)
-+ void setReview(String s)
+
 
 }
 
