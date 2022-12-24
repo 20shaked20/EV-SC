@@ -9,7 +9,9 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
@@ -32,6 +34,7 @@ public class UserProfileScreen extends AppCompatActivity {
     private TextView profile_username;
     private ImageView profile_picture;
     private ImageView edit_profile;
+    private ListView favorite_stations;
 
     //vars//
     final private String TAG = "UserProfile";
@@ -119,6 +122,7 @@ public class UserProfileScreen extends AppCompatActivity {
         profile_username = (TextView) findViewById(R.id.profile_username_user);
         profile_picture = (ImageView) findViewById(R.id.profile_pic_user);
         edit_profile = (ImageView) findViewById(R.id.edit_profile_user);
+        favorite_stations = (ListView) findViewById(R.id.favorite_list_view);
 
         // click on profile picture to change it //
         edit_profile.setOnClickListener(new View.OnClickListener() {
@@ -178,5 +182,11 @@ public class UserProfileScreen extends AppCompatActivity {
 
         this.profile_username.setText(curr.getUsername());
         //below should be the entire code for the user profile..//
+        String[] stations = {"Sonol Ariel", "Kfar Saba G MAll", "Eilat Mall, Dead Sea"};
+
+        ArrayAdapter<String> station_adapter = new ArrayAdapter<String>(this, com.google.android.material.R.layout.support_simple_spinner_dropdown_item, stations);
+        this.favorite_stations.setAdapter(station_adapter);
     }
 }
+
+
