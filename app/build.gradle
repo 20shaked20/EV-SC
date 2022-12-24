@@ -72,6 +72,8 @@ dependencies {
     implementation 'com.google.firebase:firebase-storage:20.1.0'
 
     implementation 'com.squareup.picasso:picasso:2.71828' /* added to get uri from image in firestore */
+
+    implementation 'me.xdrop:fuzzywuzzy:1.4.0' // https://nanonets.com/blog/fuzzy-matching-fuzzy-logic/ (Free under GPL 2.0)
 /* added to support location services */
 
     testImplementation 'junit:junit:4.13.2'

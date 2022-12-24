@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -61,8 +62,13 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.sql.Array;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+
+import me.xdrop.fuzzywuzzy.FuzzySearch;
 
 
 public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback {
@@ -126,6 +132,9 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
     /*user profile handle*/
     private final FirebaseAuth fAuth = FirebaseAuth.getInstance();
     private UserObj current_user;
+    private Location currentLocation;
+
+    private final int EARTH_RADIUS = 6371; // for Haversine formula, value in kilometers
 
     @Override
     public void onCreate(Bundle Instance) {
@@ -266,21 +275,55 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
 
         String searchString = search_bar.getText().toString().trim();
         StationObj current_station;
-        //TODO: consider moving some of the code to StationDB//
 
-        for (Map.Entry<String, StationObj> station : this.all_stations.entrySet()) {
-            if (station.getValue().getStation_name().equals(searchString)) {
-                // get the latlng//
-                current_station = station.getValue(); //updating the current station//
-                Log.d(TAG, "STATION LOCATION =>" + current_station.getLatLng());
+        List<StationObj> foundStations = new ArrayList<>();
+        for(Map.Entry<String, StationObj> station: this.all_stations.entrySet()){
+            current_station = station.getValue();
 
-                moveCamera(current_station.getLatLng());
-
-                search_bar.setText("");
-                return;
+            if(current_station.getStation_name().contains(searchString) ||
+                    current_station.getStation_address().contains(searchString) ||
+                    FuzzySearch.ratio(searchString, current_station.getStation_name()) > 70 ||
+                    FuzzySearch.ratio(searchString, current_station.getStation_address()) > 50) {
+                foundStations.add(current_station);
             }
         }
-        search_bar.setError("Station does not exist.");
+
+        if(foundStations.size() == 0){
+            search_bar.setError("No stations found matching your search");
+        } else {
+            // sort the list by distance
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                foundStations.sort((s1, s2) -> {
+                    int distDiff = distUserToStation(s1) - distUserToStation(s2);
+                        return distDiff;
+                });
+            }
+            search_bar.setText("");
+            Log.d(TAG, foundStations.toString());
+        }
+    }
+
+    /**
+     * Calculate distance from user to given station using Haversine formula to calculate distance
+     * between two points on a sphere, result is accurate up to two numbers after the decimal
+     * point
+     */
+    private int distUserToStation(StationObj station){
+        LatLng stationCoords = station.getLatLng();
+        double distance = calcDist(currentLocation.getLatitude(), currentLocation.getLongitude(),
+                stationCoords.latitude,stationCoords.longitude);
+        return (int) distance;
+    }
+
+    // Haversine formula to calculate distance between two points on a sphere
+    private double calcDist(double lat1, double lon1, double lat2, double lon2) {
+        double latDistance = Math.toRadians(lat1 - lat2);
+        double lonDistance = Math.toRadians(lon1 - lon2);
+        double a = Math.sin(latDistance / 2) * Math.sin(latDistance / 2)
+                + Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2))
+                * Math.sin(lonDistance / 2) * Math.sin(lonDistance / 2);
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        return EARTH_RADIUS * c;
     }
 
     /**
@@ -301,7 +344,7 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
                         if (task.isSuccessful()) {
                             Log.d(TAG, "onComplete getDeviceLocation: found location!");
 
-                            Location currentLocation = (Location) task.getResult();
+                            currentLocation = (Location) task.getResult();
 
                             //we're putting sleep because it takes time for the emulator to locate the location of the user//
                             try {
