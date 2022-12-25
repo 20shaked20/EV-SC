@@ -3,18 +3,14 @@ package com.example.ev_sc.Home;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.ActivityNotFoundException;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -22,13 +18,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.ListView;
-import android.widget.PopupWindow;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -62,17 +55,9 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.GeoPoint;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
-import java.io.BufferedInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.sql.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -144,7 +129,7 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
     private UserObj current_user;
     private Location currentLocation;
 
-    private final int EARTH_RADIUS = 6371; // for Haversine formula, value in kilometers
+    private final int EARTH_RADIUS = 6371000; // for Haversine formula, value in meters
 
     @Override
     public void onCreate(Bundle Instance) {
@@ -666,16 +651,22 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
         @Override
         public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
             StationObj station = foundStations.get(position);
+            // Calculate the distance to the station
             int distance = distUserToStation(station);
-            holder.stationName.setText(station.getStation_name());
+            // Set the station name and distance in the TextView
+            if (distance > 1000) {
+                holder.stationName.setText(station.getStation_name() + " (" + distance/1000 + " km)");
+            } else {
+                holder.stationName.setText(station.getStation_name() + " (" + distance + " m)");
+            }
             holder.itemView.setOnClickListener(view -> {
                 moveCamera(station.getLatLng());
-                Dialog dialog = (Dialog) view.getTag(); // TODO: why is this null?
-                Log.d(TAG, "View tag: " + view.getTag());
                 if (dialog != null) {
                     dialog.dismiss();
                 }
             });
+            // Assign the Dialog object to the tag of the View
+            holder.itemView.setTag(dialog);
         }
 
         @Override
