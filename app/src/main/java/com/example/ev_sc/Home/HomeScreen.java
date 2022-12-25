@@ -8,9 +8,11 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -28,6 +30,8 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.ev_sc.Home.Station.StationObj;
 import com.example.ev_sc.Person.DataBases.UserDB;
@@ -51,18 +55,15 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.GeoPoint;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
-import java.io.BufferedInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+
+import me.xdrop.fuzzywuzzy.FuzzySearch;
 
 
 public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback {
@@ -126,6 +127,9 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
     /*user profile handle*/
     private final FirebaseAuth fAuth = FirebaseAuth.getInstance();
     private UserObj current_user;
+    private Location currentLocation;
+
+    private final int EARTH_RADIUS = 6371000; // for Haversine formula, value in meters
 
     @Override
     public void onCreate(Bundle Instance) {
@@ -262,25 +266,64 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
      */
     @SuppressLint("SetTextI18n")
     private void geoLocate() {
-        Log.d(TAG, "geoLocate: geolocationg");
+        Log.d(TAG, "geoLocate: Locating station location");
 
         String searchString = search_bar.getText().toString().trim();
+        Log.d(TAG,"Search string is:" + searchString);
         StationObj current_station;
-        //TODO: consider moving some of the code to StationDB//
 
-        for (Map.Entry<String, StationObj> station : this.all_stations.entrySet()) {
-            if (station.getValue().getStation_name().equals(searchString)) {
-                // get the latlng//
-                current_station = station.getValue(); //updating the current station//
-                Log.d(TAG, "STATION LOCATION =>" + current_station.getLatLng());
+        List<StationObj> foundStations = new ArrayList<>();
+        for(Map.Entry<String, StationObj> station: this.all_stations.entrySet()){
+            current_station = station.getValue();
 
-                moveCamera(current_station.getLatLng());
-
-                search_bar.setText("");
-                return;
+            if(current_station.getStation_name().contains(searchString) ||
+                    current_station.getStation_address().contains(searchString) ||
+                    FuzzySearch.ratio(searchString, current_station.getStation_name()) > 70 ||
+                    FuzzySearch.ratio(searchString, current_station.getStation_address()) > 50) {
+                foundStations.add(current_station);
             }
         }
-        search_bar.setError("Station does not exist.");
+
+        if(foundStations.size() == 0){
+            search_bar.setError("No stations found matching your search");
+            Log.d(TAG, "Search found no station results");
+        } else {
+            // sort the list by distance
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                foundStations.sort((s1, s2) -> {
+                    int distDiff = distUserToStation(s1) - distUserToStation(s2);
+                        return distDiff;
+                });
+            }
+            search_bar.setText("");
+            Log.d(TAG, "Found stations: " + "\n" + foundStations);
+            // TODO: implement this below
+            showSearchResult(foundStations);
+        }
+    }
+
+    /**
+     * Calculate distance from user to given station using Haversine formula to calculate distance
+     * between two points on a sphere, result is accurate up to two numbers after the decimal
+     * point
+     */
+    private int distUserToStation(StationObj station){
+        LatLng stationCoords = station.getLatLng();
+        double distance = calcDist(currentLocation.getLatitude(), currentLocation.getLongitude(),
+                stationCoords.latitude,stationCoords.longitude);
+        Log.d(TAG, "distance to user from " + station.getStation_name() + "is " + distance);
+        return (int) distance;
+    }
+
+    // Haversine formula to calculate distance between two points on a sphere
+    private double calcDist(double lat1, double lon1, double lat2, double lon2) {
+        double latDistance = Math.toRadians(lat1 - lat2);
+        double lonDistance = Math.toRadians(lon1 - lon2);
+        double a = Math.sin(latDistance / 2) * Math.sin(latDistance / 2)
+                + Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2))
+                * Math.sin(lonDistance / 2) * Math.sin(lonDistance / 2);
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        return EARTH_RADIUS * c;
     }
 
     /**
@@ -301,7 +344,7 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
                         if (task.isSuccessful()) {
                             Log.d(TAG, "onComplete getDeviceLocation: found location!");
 
-                            Location currentLocation = (Location) task.getResult();
+                            currentLocation = (Location) task.getResult();
 
                             //we're putting sleep because it takes time for the emulator to locate the location of the user//
                             try {
@@ -566,5 +609,79 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
         dialog.show();
     }
 
+    private void showSearchResult(List<StationObj> foundStations) {
+        // Create a DialogBuilder object
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        // Set the title of the dialog
+        builder.setTitle("Search Results");
+
+        // Create a RecyclerView object to display the list of found stations
+        RecyclerView recyclerView = new RecyclerView(this);
+        // Set the layout manager for the RecyclerView
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        // Create an adapter for the RecyclerView
+        SearchResultAdapter adapter = new SearchResultAdapter(foundStations);
+        // Set the adapter for the RecyclerView
+        recyclerView.setAdapter(adapter);
+
+        // Add the RecyclerView to the DialogBuilder
+        builder.setView(recyclerView);
+
+        // Create and show the dialog
+        AlertDialog dialog = builder.create();
+        recyclerView.setTag(dialog);
+        Log.d(TAG, "View tag is " + recyclerView.getTag());
+        dialog.show();
+    }
+
+    private class SearchResultAdapter extends RecyclerView.Adapter<SearchResultAdapter.ViewHolder> {
+        private List<StationObj> foundStations;
+
+        public SearchResultAdapter(List<StationObj> foundStations) {
+            this.foundStations = foundStations;
+        }
+
+        @NonNull
+        @Override
+        public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.search_result_item, parent, false);
+            return new ViewHolder(view);
+        }
+
+        @Override
+        public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+            StationObj station = foundStations.get(position);
+            // Calculate the distance to the station
+            int distance = distUserToStation(station);
+            // Set the station name and distance in the TextView
+            if (distance > 1000) {
+                holder.stationName.setText(station.getStation_name() + " (" + distance/1000 + " km)");
+            } else {
+                holder.stationName.setText(station.getStation_name() + " (" + distance + " m)");
+            }
+            holder.itemView.setOnClickListener(view -> {
+                moveCamera(station.getLatLng());
+                if (dialog != null) {
+                    dialog.dismiss();
+                }
+            });
+            // Assign the Dialog object to the tag of the View
+            holder.itemView.setTag(dialog);
+        }
+
+        @Override
+        public int getItemCount() {
+            return foundStations.size();
+        }
+
+        public class ViewHolder extends RecyclerView.ViewHolder {
+            TextView stationName;
+
+            public ViewHolder(View itemView) {
+                super(itemView);
+                stationName = itemView.findViewById(R.id.station_name);
+            }
+        }
+    }
 
 }
