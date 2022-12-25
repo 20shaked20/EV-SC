@@ -3,24 +3,32 @@ package com.example.ev_sc.Home;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.ActivityNotFoundException;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.ListView;
+import android.widget.PopupWindow;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -29,6 +37,8 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.ev_sc.Home.Station.StationObj;
 import com.example.ev_sc.Person.DataBases.UserDB;
@@ -271,9 +281,10 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
      */
     @SuppressLint("SetTextI18n")
     private void geoLocate() {
-        Log.d(TAG, "geoLocate: geolocationg");
+        Log.d(TAG, "geoLocate: Locating station location");
 
         String searchString = search_bar.getText().toString().trim();
+        Log.d(TAG,"Search string is:" + searchString);
         StationObj current_station;
 
         List<StationObj> foundStations = new ArrayList<>();
@@ -290,6 +301,7 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
 
         if(foundStations.size() == 0){
             search_bar.setError("No stations found matching your search");
+            Log.d(TAG, "Search found no station results");
         } else {
             // sort the list by distance
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
@@ -299,7 +311,9 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
                 });
             }
             search_bar.setText("");
-            Log.d(TAG, foundStations.toString());
+            Log.d(TAG, "Found stations: " + "\n" + foundStations);
+            // TODO: implement this below
+            showSearchResult(foundStations);
         }
     }
 
@@ -312,6 +326,7 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
         LatLng stationCoords = station.getLatLng();
         double distance = calcDist(currentLocation.getLatitude(), currentLocation.getLongitude(),
                 stationCoords.latitude,stationCoords.longitude);
+        Log.d(TAG, "distance to user from " + station.getStation_name() + "is " + distance);
         return (int) distance;
     }
 
@@ -609,5 +624,73 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
         dialog.show();
     }
 
+    private void showSearchResult(List<StationObj> foundStations) {
+        // Create a DialogBuilder object
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        // Set the title of the dialog
+        builder.setTitle("Search Results");
+
+        // Create a RecyclerView object to display the list of found stations
+        RecyclerView recyclerView = new RecyclerView(this);
+        // Set the layout manager for the RecyclerView
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        // Create an adapter for the RecyclerView
+        SearchResultAdapter adapter = new SearchResultAdapter(foundStations);
+        // Set the adapter for the RecyclerView
+        recyclerView.setAdapter(adapter);
+
+        // Add the RecyclerView to the DialogBuilder
+        builder.setView(recyclerView);
+
+        // Create and show the dialog
+        AlertDialog dialog = builder.create();
+        recyclerView.setTag(dialog);
+        Log.d(TAG, "View tag is " + recyclerView.getTag());
+        dialog.show();
+    }
+
+    private class SearchResultAdapter extends RecyclerView.Adapter<SearchResultAdapter.ViewHolder> {
+        private List<StationObj> foundStations;
+
+        public SearchResultAdapter(List<StationObj> foundStations) {
+            this.foundStations = foundStations;
+        }
+
+        @NonNull
+        @Override
+        public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.search_result_item, parent, false);
+            return new ViewHolder(view);
+        }
+
+        @Override
+        public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+            StationObj station = foundStations.get(position);
+            int distance = distUserToStation(station);
+            holder.stationName.setText(station.getStation_name());
+            holder.itemView.setOnClickListener(view -> {
+                moveCamera(station.getLatLng());
+                Dialog dialog = (Dialog) view.getTag(); // TODO: why is this null?
+                Log.d(TAG, "View tag: " + view.getTag());
+                if (dialog != null) {
+                    dialog.dismiss();
+                }
+            });
+        }
+
+        @Override
+        public int getItemCount() {
+            return foundStations.size();
+        }
+
+        public class ViewHolder extends RecyclerView.ViewHolder {
+            TextView stationName;
+
+            public ViewHolder(View itemView) {
+                super(itemView);
+                stationName = itemView.findViewById(R.id.station_name);
+            }
+        }
+    }
 
 }
