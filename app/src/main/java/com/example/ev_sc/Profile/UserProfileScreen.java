@@ -9,24 +9,37 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.ev_sc.Home.HomeScreen;
+
 import com.example.ev_sc.Login.LoginScreen;
 import com.example.ev_sc.Person.UserObj;
+import com.example.ev_sc.Profile.Favorites.FavoriteObj;
+import com.example.ev_sc.Profile.Favorites.FavoritesDB;
 import com.example.ev_sc.R;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.google.android.gms.maps.model.LatLng;
 import com.squareup.picasso.Picasso;
+
+import java.util.HashMap;
 
 public class UserProfileScreen extends AppCompatActivity {
 
@@ -35,12 +48,15 @@ public class UserProfileScreen extends AppCompatActivity {
     private ImageView profile_picture;
     private ImageView edit_profile;
     private ListView favorite_stations;
+    private UserObj curr_user;
 
     //vars//
     final private String TAG = "UserProfile";
     private String username;
+    HashMap<String, LatLng> favorite_station_map;
 
     FirebaseAuth fAuth = FirebaseAuth.getInstance();
+    FirebaseFirestore fStore = FirebaseFirestore.getInstance();
     StorageReference fStorage = FirebaseStorage.getInstance().getReference();
 
 
@@ -51,10 +67,12 @@ public class UserProfileScreen extends AppCompatActivity {
 
         super.onCreate(Instance);
         setContentView(R.layout.user_profile);
+        favorite_station_map = new HashMap<>();
 
-        UserObj curr = getExtras();
-        init_widgets();
-        set_user_data_in_layout(curr);
+        curr_user = getExtras();
+//        init_widgets();
+//        set_user_data_in_layout();
+        fetch_data();
 
     }
 
@@ -169,7 +187,7 @@ public class UserProfileScreen extends AppCompatActivity {
     /**
      * This method is responsible for updating the user profile via the current user login details.
      */
-    private void set_user_data_in_layout(UserObj curr) {
+    private void set_user_data_in_layout() {
         Log.d(TAG, "set_user_data_in_profile: Updating User Profile");
 
         StorageReference profileRef = this.fStorage.child("users/" + fAuth.getCurrentUser().getUid() + "profile_pic.png");
@@ -180,12 +198,56 @@ public class UserProfileScreen extends AppCompatActivity {
             }
         });
 
-        this.profile_username.setText(curr.getUsername());
+        this.profile_username.setText(this.curr_user.getUsername());
         //below should be the entire code for the user profile..//
-        String[] stations = {"Sonol Ariel", "Kfar Saba G MAll", "Eilat Mall, Dead Sea"};
+        String[] stations = favorite_station_map.keySet().toArray(new String[0]);
+        Log.d(TAG, "FAVORITE STATIONS: => " + stations.toString());
 
         ArrayAdapter<String> station_adapter = new ArrayAdapter<String>(this, com.google.android.material.R.layout.support_simple_spinner_dropdown_item, stations);
         this.favorite_stations.setAdapter(station_adapter);
+        this.favorite_stations.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                String chosen_station = (String)favorite_stations.getItemAtPosition(position);
+                LatLng loc = favorite_station_map.get(chosen_station);
+
+                Log.d(TAG,"LOCATION IS : => " + loc);
+
+                Intent profile_screen_to_home = new Intent(UserProfileScreen.this, HomeScreen.class);
+                profile_screen_to_home.putExtra("Lat", loc.latitude);
+                profile_screen_to_home.putExtra("Lng", loc.longitude);
+                startActivity(profile_screen_to_home);
+                finish();
+
+            }
+        });
+    }
+
+    private void fetch_data() {
+        fStore.collection("users").document(this.curr_user.getID())
+                .collection("favorites").get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            FavoritesDB db = new FavoritesDB();
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                // load all stations data from database to the hashmap with unique key of doc id//
+                                FavoriteObj tmp_favorite = db.GetFavoriteStationFromDB(document);
+                                favorite_station_map.put(tmp_favorite.getStation_name(),
+                                        tmp_favorite.getStation_LatLng());
+                            }
+                        } else {
+                            Log.e(TAG, "fetch_data: Error getting documents: ", task.getException());
+                        }
+                        //after we got the data from db, set it in the layout//
+                        init_widgets();
+                        set_user_data_in_layout();
+                    }
+                });
+
+
     }
 }
 
