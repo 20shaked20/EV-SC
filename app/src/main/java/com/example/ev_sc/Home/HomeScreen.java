@@ -37,6 +37,8 @@ import com.example.ev_sc.Home.Station.StationObj;
 import com.example.ev_sc.Person.DataBases.UserDB;
 import com.example.ev_sc.Person.UserObj;
 import com.example.ev_sc.Profile.AdminProfileScreen;
+import com.example.ev_sc.Profile.Favorites.FavoriteObj;
+import com.example.ev_sc.Profile.Favorites.FavoritesDB;
 import com.example.ev_sc.Profile.UserProfileScreen;
 import com.example.ev_sc.R;
 import com.example.ev_sc.Reviews.reviewsDB;
@@ -131,6 +133,9 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
 
     private final int EARTH_RADIUS = 6371000; // for Haversine formula, value in meters
 
+    //tmp//
+    LatLng fav_loc;
+
     @Override
     public void onCreate(Bundle Instance) {
         super.onCreate(Instance);
@@ -141,6 +146,13 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
         getLocationPermission();
         load_stations_data();
         load_user_data();
+
+        // TODO: tmp for favorite locating after moving from profile to home//
+        Bundle extras = getIntent().getExtras();
+        if (extras != null) {
+            Log.d(TAG, "LATLANG OF THIS BITCH => " + extras.get("Lat") + " , " + extras.get("Lng"));
+            this.fav_loc = new LatLng((Double) extras.get("Lat"), (Double) extras.get("Lng"));
+        }
     }
 
     /**
@@ -245,7 +257,6 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
     private void init() {
         Log.d(TAG, "init: initializing");
 
-        //TODO: avoid newline upon pressing ENTER
         search_bar.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent keyEvent) {
@@ -376,7 +387,10 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
     private void moveCamera(LatLng latLng) {
         Log.d(TAG, "moveCamera: Moving the camera to: (lat: " + latLng.latitude + ", lng: " + latLng.longitude + " )");
 
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, HomeScreen.DEFAULT_ZOOM));
+        if (fav_loc != null)
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(fav_loc, HomeScreen.DEFAULT_ZOOM));
+        else
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, HomeScreen.DEFAULT_ZOOM));
     }
 
     /**
@@ -503,6 +517,7 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
         TextView address_of_station = (TextView) PopupStation.findViewById(R.id.address_of_station);
         ImageView return_map_station_widget = (ImageView) PopupStation.findViewById(R.id.return_map_station_widget);
         FloatingActionButton rate_station = (FloatingActionButton) PopupStation.findViewById(R.id.rate_station_button);
+        FloatingActionButton favorite_station = (FloatingActionButton) PopupStation.findViewById(R.id.favorite_station_button);
 
 
         name_of_station.setText(station.getStation_name());
@@ -558,6 +573,15 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
 
                     }
                 });
+            }
+        });
+        //button handler to add station to the favorites //
+        favorite_station.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FavoritesDB db = new FavoritesDB();
+                FavoriteObj favoriteObj = new FavoriteObj(station.getID(), station.getStation_name(), station.getLocation());
+                db.AddFavoriteStationToDB(favoriteObj, current_user.getID());
             }
         });
 
