@@ -112,7 +112,8 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
 
     /*popup station*/
     private AlertDialog.Builder dialogBuilder;
-    private AlertDialog dialog;
+    private AlertDialog dialog_popup_station;
+    AlertDialog dialog_search_station;
 
     /*vars*/
     private Boolean mLocationPermissionGranted = false;
@@ -280,14 +281,14 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
         Log.d(TAG, "geoLocate: Locating station location");
 
         String searchString = search_bar.getText().toString().trim();
-        Log.d(TAG,"Search string is:" + searchString);
+        Log.d(TAG, "Search string is:" + searchString);
         StationObj current_station;
 
         List<StationObj> foundStations = new ArrayList<>();
-        for(Map.Entry<String, StationObj> station: this.all_stations.entrySet()){
+        for (Map.Entry<String, StationObj> station : this.all_stations.entrySet()) {
             current_station = station.getValue();
 
-            if(current_station.getStation_name().contains(searchString) ||
+            if (current_station.getStation_name().contains(searchString) ||
                     current_station.getStation_address().contains(searchString) ||
                     FuzzySearch.ratio(searchString, current_station.getStation_name()) > 70 ||
                     FuzzySearch.ratio(searchString, current_station.getStation_address()) > 50) {
@@ -295,7 +296,7 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
             }
         }
 
-        if(foundStations.size() == 0){
+        if (foundStations.size() == 0) {
             search_bar.setError("No stations found matching your search");
             Log.d(TAG, "Search found no station results");
         } else {
@@ -303,7 +304,7 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                 foundStations.sort((s1, s2) -> {
                     int distDiff = distUserToStation(s1) - distUserToStation(s2);
-                        return distDiff;
+                    return distDiff;
                 });
             }
             search_bar.setText("");
@@ -318,10 +319,10 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
      * between two points on a sphere, result is accurate up to two numbers after the decimal
      * point
      */
-    private int distUserToStation(StationObj station){
+    private int distUserToStation(StationObj station) {
         LatLng stationCoords = station.getLatLng();
         double distance = calcDist(currentLocation.getLatitude(), currentLocation.getLongitude(),
-                stationCoords.latitude,stationCoords.longitude);
+                stationCoords.latitude, stationCoords.longitude);
         Log.d(TAG, "distance to user from " + station.getStation_name() + "is " + distance);
         return (int) distance;
     }
@@ -387,9 +388,10 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
     private void moveCamera(LatLng latLng) {
         Log.d(TAG, "moveCamera: Moving the camera to: (lat: " + latLng.latitude + ", lng: " + latLng.longitude + " )");
 
-        if (fav_loc != null)
+        if (fav_loc != null) {
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(fav_loc, HomeScreen.DEFAULT_ZOOM));
-        else
+            fav_loc = null;
+        } else
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, HomeScreen.DEFAULT_ZOOM));
     }
 
@@ -609,7 +611,7 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
         return_map_station_widget.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                dialog.dismiss();
+                dialog_popup_station.dismiss();
             }
         });
 
@@ -625,12 +627,12 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
      */
     public void StartDialogStation(View PopupStation) {
         dialogBuilder.setView(PopupStation);
-        dialog = dialogBuilder.create();
+        dialog_popup_station = dialogBuilder.create();
 
         if (PopupStation.getParent() != null)
             ((ViewGroup) PopupStation.getParent()).removeView(PopupStation); //is used to delete last view if existent to avoid breakage//
 
-        dialog.show();
+        dialog_popup_station.show();
     }
 
     private void showSearchResult(List<StationObj> foundStations) {
@@ -652,10 +654,10 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
         builder.setView(recyclerView);
 
         // Create and show the dialog
-        AlertDialog dialog = builder.create();
-        recyclerView.setTag(dialog);
+        dialog_search_station = builder.create();
+        recyclerView.setTag(dialog_search_station);
         Log.d(TAG, "View tag is " + recyclerView.getTag());
-        dialog.show();
+        dialog_search_station.show();
     }
 
     private class SearchResultAdapter extends RecyclerView.Adapter<SearchResultAdapter.ViewHolder> {
@@ -679,18 +681,18 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
             int distance = distUserToStation(station);
             // Set the station name and distance in the TextView
             if (distance > 1000) {
-                holder.stationName.setText(station.getStation_name() + " (" + distance/1000 + " km)");
+                holder.stationName.setText(station.getStation_name() + " (" + distance / 1000 + " km)");
             } else {
                 holder.stationName.setText(station.getStation_name() + " (" + distance + " m)");
             }
             holder.itemView.setOnClickListener(view -> {
                 moveCamera(station.getLatLng());
-                if (dialog != null) {
-                    dialog.dismiss();
+                if (dialog_search_station != null) {
+                    dialog_search_station.dismiss();
                 }
             });
             // Assign the Dialog object to the tag of the View
-            holder.itemView.setTag(dialog);
+            holder.itemView.setTag(dialog_search_station);
         }
 
         @Override
