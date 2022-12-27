@@ -19,6 +19,7 @@ import com.example.ev_sc.Home.HomeScreen;
 import com.example.ev_sc.Home.Station.AddStation;
 import com.example.ev_sc.Login.LoginScreen;
 import com.example.ev_sc.Person.UserObj;
+import com.example.ev_sc.Profile.EditStation.EditStationScreen;
 import com.example.ev_sc.R;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -56,6 +57,7 @@ public class AdminProfileScreen extends AppCompatActivity {
 
         // Listeners
         OnClickAddStationButton();
+        OnClickEditStationButton();
 
     }
 
@@ -155,11 +157,16 @@ public class AdminProfileScreen extends AppCompatActivity {
     }
 
     private void OnClickAddStationButton() {
-        add_station_button.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View view) {
-                Intent login_to_add_station = new Intent(view.getContext(), AddStation.class);
-                startActivityForResult(login_to_add_station, 0);
-            }
+        add_station_button.setOnClickListener(view -> {
+            Intent login_to_add_station = new Intent(view.getContext(), AddStation.class);
+            startActivityForResult(login_to_add_station, 0);
+        });
+    }
+
+    private void OnClickEditStationButton(){
+        edit_station_button.setOnClickListener(view -> {
+            Intent admin_to_edit_station = new Intent(view.getContext(), EditStationScreen.class);
+            startActivity(admin_to_edit_station);
         });
     }
 
