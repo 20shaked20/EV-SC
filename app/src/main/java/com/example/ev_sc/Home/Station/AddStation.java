@@ -8,7 +8,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.example.ev_sc.Home.StationDB;
 import com.example.ev_sc.R;
 import com.google.firebase.firestore.GeoPoint;
 
@@ -66,7 +65,7 @@ public class AddStation extends Activity {
             String s_id = UUID.randomUUID().toString();
             Double sumOf_reviews = Double.valueOf(0);
             StationObj station_to_add = new StationObj(station_grade, address, charging, name, station_coords,s_id, sumOf_reviews);
-            StationDB db = new StationDB();
+            StationObj.StationDB db = new StationObj.StationDB();
             Log.d(TAG, "\n" + station_to_add.toString()); // logging station details for debugging
 
             // adding station to database

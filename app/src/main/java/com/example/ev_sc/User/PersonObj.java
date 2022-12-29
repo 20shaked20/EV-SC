@@ -1,4 +1,4 @@
-package com.example.ev_sc.Person;
+package com.example.ev_sc.User;
 
 public interface PersonObj {
 

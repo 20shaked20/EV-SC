@@ -1,11 +1,9 @@
-package com.example.ev_sc.Person;
+package com.example.ev_sc.User;
 
 import android.os.Parcel;
 import android.os.Parcelable;
 
 import androidx.annotation.NonNull;
-
-import java.util.UUID;
 
 public class UserObj implements PersonObj, Parcelable {
     private String First_name;

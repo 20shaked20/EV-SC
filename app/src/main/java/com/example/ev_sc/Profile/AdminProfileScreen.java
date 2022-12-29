@@ -18,7 +18,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.ev_sc.Home.HomeScreen;
 import com.example.ev_sc.Home.Station.AddStation;
 import com.example.ev_sc.Login.LoginScreen;
-import com.example.ev_sc.Person.UserObj;
+import com.example.ev_sc.User.UserObj;
 import com.example.ev_sc.R;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;

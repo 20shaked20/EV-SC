@@ -34,8 +34,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.ev_sc.Home.Station.StationObj;
-import com.example.ev_sc.Person.DataBases.UserDB;
-import com.example.ev_sc.Person.UserObj;
+import com.example.ev_sc.User.UserDB;
+import com.example.ev_sc.User.UserObj;
 import com.example.ev_sc.Profile.AdminProfileScreen;
 import com.example.ev_sc.Profile.Favorites.FavoriteObj;
 import com.example.ev_sc.Profile.Favorites.FavoritesDB;
@@ -70,34 +70,6 @@ import me.xdrop.fuzzywuzzy.FuzzySearch;
 
 public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback {
 
-    /**
-     * method to set the map.
-     *
-     * @param googleMap google map object
-     */
-    @Override
-    public void onMapReady(@NonNull GoogleMap googleMap) {
-        Toast.makeText(this, "Map is ready", Toast.LENGTH_SHORT).show();
-        Log.d(TAG, "Map is ready");
-        mMap = googleMap;
-
-        if (mLocationPermissionGranted) {
-            getDeviceLocation();
-
-            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
-                    != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this,
-                    Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                return;
-            }
-
-            // shows the blue dot on the map //
-            mMap.setMyLocationEnabled(true);
-            // pinpoint to the current location with a button, is set to false because we'll add on later //
-            mMap.getUiSettings().setMyLocationButtonEnabled(false);
-
-            init();
-        }
-    }
 
     private static final String TAG = "MapHome";
 
@@ -109,7 +81,6 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
     /*widgets*/
     private EditText search_bar;
 
-
     /*popup station*/
     private AlertDialog.Builder dialogBuilder;
     private AlertDialog dialog_popup_station;
@@ -118,11 +89,10 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
     /*vars*/
     private Boolean mLocationPermissionGranted = false;
     private GoogleMap mMap;
-    private FusedLocationProviderClient mFusedLocationProviderClient;
 
     /*maps*/
-    private final HashMap<String, View> StationPopUps = new HashMap<String, View>(); //this map is used to map each station to its poppable window//
-    private final HashMap<String, StationObj> all_stations = new HashMap<String, StationObj>(); // this is used to map all the stations upon login //
+    HashMap<String, View> StationPopUps = new HashMap<String, View>(); //this map is used to map each station to its poppable window//
+    private HashMap<String, StationObj> all_stations = new HashMap<String, StationObj>(); // this is used to map all the stations upon login //
 
     /*firebase*/
     FirebaseFirestore fStore = FirebaseFirestore.getInstance();
@@ -132,7 +102,7 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
     private UserObj current_user;
     private Location currentLocation;
 
-    private final int EARTH_RADIUS = 6371000; // for Haversine formula, value in meters
+    private HomeScreenLogics HSL;
 
     //tmp//
     LatLng fav_loc;
@@ -143,6 +113,7 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
         setContentView(R.layout.home);
 
         search_bar = findViewById(R.id.search_bar);
+        HSL = new HomeScreenLogics();
 
         getLocationPermission();
         load_stations_data();
@@ -151,7 +122,6 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
         // TODO: tmp for favorite locating after moving from profile to home//
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
-            Log.d(TAG, "LATLANG OF THIS BITCH => " + extras.get("Lat") + " , " + extras.get("Lng"));
             this.fav_loc = new LatLng((Double) extras.get("Lat"), (Double) extras.get("Lng"));
         }
     }
@@ -216,7 +186,7 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
-                            StationDB s_DB = new StationDB();
+                            StationObj.StationDB s_DB = new StationObj.StationDB();
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 // load all stations data from database to the hashmap with unique key of doc id//
                                 StationObj tmp_station = s_DB.GetStationFromDatabase(document);
@@ -252,6 +222,35 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
     }
 
     /**
+     * method to set the map.
+     *
+     * @param googleMap google map object
+     */
+    @Override
+    public void onMapReady(@NonNull GoogleMap googleMap) {
+        Toast.makeText(this, "Map is ready", Toast.LENGTH_SHORT).show();
+        Log.d(TAG, "Map is ready");
+        mMap = googleMap;
+
+        if (mLocationPermissionGranted) {
+            getDeviceLocation();
+
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                    != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this,
+                    Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                return;
+            }
+
+            // shows the blue dot on the map //
+            mMap.setMyLocationEnabled(true);
+            // pinpoint to the current location with a button, is set to false because we'll add on later //
+            mMap.getUiSettings().setMyLocationButtonEnabled(false);
+
+            init();
+        }
+    }
+
+    /**
      * this method allows for overriding buttons in the keyboard ( enter .. )
      * and calls for geoLocate to locate the required place
      */
@@ -271,6 +270,17 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
                 return false;
             }
         });
+    }
+
+    /**
+     * Method to initialize the map on the screen
+     */
+    private void initMap() {
+        Log.d(TAG, "initMap: initializing map...");
+
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map_home_screen);
+        assert mapFragment != null;
+        mapFragment.getMapAsync(HomeScreen.this);
     }
 
     /**
@@ -321,21 +331,10 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
      */
     private int distUserToStation(StationObj station) {
         LatLng stationCoords = station.getLatLng();
-        double distance = calcDist(currentLocation.getLatitude(), currentLocation.getLongitude(),
+        double distance = this.HSL.calcDist(currentLocation.getLatitude(), currentLocation.getLongitude(),
                 stationCoords.latitude, stationCoords.longitude);
         Log.d(TAG, "distance to user from " + station.getStation_name() + "is " + distance);
         return (int) distance;
-    }
-
-    // Haversine formula to calculate distance between two points on a sphere
-    private double calcDist(double lat1, double lon1, double lat2, double lon2) {
-        double latDistance = Math.toRadians(lat1 - lat2);
-        double lonDistance = Math.toRadians(lon1 - lon2);
-        double a = Math.sin(latDistance / 2) * Math.sin(latDistance / 2)
-                + Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2))
-                * Math.sin(lonDistance / 2) * Math.sin(lonDistance / 2);
-        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-        return EARTH_RADIUS * c;
     }
 
     /**
@@ -344,7 +343,7 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
     private void getDeviceLocation() {
         Log.d(TAG, "getDeviceLocation: getting the device current location.");
 
-        mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
+        FusedLocationProviderClient mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
 
         try {
             if (mLocationPermissionGranted) {
@@ -377,6 +376,56 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
             }
         } catch (SecurityException e) {
             Log.e(TAG, "getDeviceLocation: Security Exception: " + e.getMessage());
+        }
+    }
+
+    /**
+     * This method gets the permissions for the location of the user.
+     */
+    private void getLocationPermission() {
+        Log.d(TAG, "getLocationPermission: getting location...");
+        String[] permissions = {Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.ACCESS_COARSE_LOCATION};
+
+        if (ContextCompat.checkSelfPermission(this.getApplicationContext(), FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            if (ContextCompat.checkSelfPermission(this.getApplicationContext(), COURSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                mLocationPermissionGranted = true;
+                initMap();
+            } else {
+                ActivityCompat.requestPermissions(this, permissions, LOCATION_PERMISSION_REQUEST_CODE);
+            }
+        } else {
+            ActivityCompat.requestPermissions(this, permissions, LOCATION_PERMISSION_REQUEST_CODE);
+        }
+    }
+
+    /**
+     * this method supposed to check permission for loading the map.
+     */
+    @SuppressLint("MissingSuperCall")
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        Log.d(TAG, "onRequestPermissionResult: Called.");
+        mLocationPermissionGranted = false;
+
+        switch (requestCode) {
+            case LOCATION_PERMISSION_REQUEST_CODE: {
+                if (grantResults.length > 0) {
+                    // check case if all permissions are granted //
+                    for (int grantResult : grantResults) {
+                        if (grantResult != PackageManager.PERMISSION_GRANTED) {
+                            mLocationPermissionGranted = false;
+                            Log.d(TAG, "onRequestPermissionResult: Permission failed..");
+                            return;
+                        }
+                    }
+                    Log.d(TAG, "onRequestPermissionResult: Permission granted..");
+
+                    mLocationPermissionGranted = true;
+                    //init map//
+                    initMap();
+                }
+            }
         }
     }
 
@@ -434,69 +483,9 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
         Log.d(TAG, "BuildAllPopUpStationsWindows: building all the stations windows " + this.all_stations.toString());
 
         for (Map.Entry<String, StationObj> station : this.all_stations.entrySet()) {
-//            Log.d(TAG, "Creating STation Window for STATION : => "+ station.getValue());
+            Log.d(TAG, "Creating STation Window for STATION : => " + station.getValue());
+            createMarker(station.getValue().getLatLng(), station.getValue().getStation_name());
             createNewStationPopup(station.getValue());
-        }
-    }
-
-    /**
-     * Method to initialize the map on the screen
-     */
-    private void initMap() {
-        Log.d(TAG, "initMap: initializing map...");
-
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map_home_screen);
-        assert mapFragment != null;
-        mapFragment.getMapAsync(HomeScreen.this);
-    }
-
-    /**
-     * This method gets the permissions for the location of the user.
-     */
-    private void getLocationPermission() {
-        Log.d(TAG, "getLocationPermission: getting location...");
-        String[] permissions = {Manifest.permission.ACCESS_FINE_LOCATION,
-                Manifest.permission.ACCESS_COARSE_LOCATION};
-
-        if (ContextCompat.checkSelfPermission(this.getApplicationContext(), FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-            if (ContextCompat.checkSelfPermission(this.getApplicationContext(), COURSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-                mLocationPermissionGranted = true;
-                initMap();
-            } else {
-                ActivityCompat.requestPermissions(this, permissions, LOCATION_PERMISSION_REQUEST_CODE);
-            }
-        } else {
-            ActivityCompat.requestPermissions(this, permissions, LOCATION_PERMISSION_REQUEST_CODE);
-        }
-    }
-
-    /**
-     * this method supposed to check permission for loading the map.
-     */
-    @SuppressLint("MissingSuperCall")
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        Log.d(TAG, "onRequestPermissionResult: Called.");
-        mLocationPermissionGranted = false;
-
-        switch (requestCode) {
-            case LOCATION_PERMISSION_REQUEST_CODE: {
-                if (grantResults.length > 0) {
-                    // check case if all permissions are granted //
-                    for (int grantResult : grantResults) {
-                        if (grantResult != PackageManager.PERMISSION_GRANTED) {
-                            mLocationPermissionGranted = false;
-                            Log.d(TAG, "onRequestPermissionResult: Permission failed..");
-                            return;
-                        }
-                    }
-                    Log.d(TAG, "onRequestPermissionResult: Permission granted..");
-
-                    mLocationPermissionGranted = true;
-                    //init map//
-                    initMap();
-                }
-            }
         }
     }
 
@@ -505,7 +494,7 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
      * it invokes the moment we click on a marker omn the map and shows the details of the station
      */
     @SuppressLint({"SetTextI18n", "CutPasteId"})
-    // ignores cases where numbers are turned to strings.
+//     ignores cases where numbers are turned to strings.
     public void createNewStationPopup(StationObj station) {
         Log.d(TAG, "createNewStationPopup: creating new popup window for station => " + station.getStation_name());
 
@@ -569,7 +558,7 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
                         station.setAvgGrade(grade);
                         SumOf_reviews += 1;
                         station.setSumOf_reviews(SumOf_reviews);
-                        StationDB.updateStationToDatabase(station);
+                        StationObj.StationDB.updateStationToDatabase(station);
 
                         rating_dialog.dismiss();
 
@@ -635,6 +624,11 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
         dialog_popup_station.show();
     }
 
+    /**
+     * this method is responsible for inflating a search results recycler view.
+     *
+     * @param foundStations list of the stations found in the search
+     */
     private void showSearchResult(List<StationObj> foundStations) {
         // Create a DialogBuilder object
         AlertDialog.Builder builder = new AlertDialog.Builder(this);

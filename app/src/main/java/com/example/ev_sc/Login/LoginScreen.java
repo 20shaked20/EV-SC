@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 
 import android.widget.Button;
@@ -23,6 +24,12 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.ProtocolException;
+import java.net.URL;
+
 public class LoginScreen extends Activity {
 
     Button login_button;
@@ -35,7 +42,7 @@ public class LoginScreen extends Activity {
     TextView username_view_login;
     TextView password_view_login;
 
-
+    final String TAG = "Login Screen";
 
     FirebaseAuth fAuth;
 
@@ -59,13 +66,10 @@ public class LoginScreen extends Activity {
         password_view_login = (TextView) (findViewById(R.id.password_view_login));
 
 
-
         // init listeners //
         OnClickRegisterButton();
 
         OnClickLoginButton();
-
-
     }
 
     /**
@@ -87,6 +91,8 @@ public class LoginScreen extends Activity {
         login_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Log.d(TAG, "PRESSED LOGIN");
+
                 String email = username_enter_login.getText().toString().trim();
                 String password = password_enter_login.getText().toString().trim();
 
@@ -120,5 +126,4 @@ public class LoginScreen extends Activity {
             }
         });
     }
-
 }

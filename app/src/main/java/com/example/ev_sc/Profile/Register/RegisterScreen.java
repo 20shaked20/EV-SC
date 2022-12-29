@@ -14,8 +14,8 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 
 import com.example.ev_sc.Login.LoginScreen;
-import com.example.ev_sc.Person.DataBases.UserDB;
-import com.example.ev_sc.Person.UserObj;
+import com.example.ev_sc.User.UserDB;
+import com.example.ev_sc.User.UserObj;
 import com.example.ev_sc.R;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;

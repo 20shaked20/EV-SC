@@ -1,8 +1,7 @@
-package com.example.ev_sc.Person.DataBases;
+package com.example.ev_sc.User;
 
 import android.util.Log;
 
-import com.example.ev_sc.Person.UserObj;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
