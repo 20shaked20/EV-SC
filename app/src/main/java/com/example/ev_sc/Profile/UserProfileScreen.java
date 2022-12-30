@@ -52,7 +52,6 @@ public class UserProfileScreen extends AppCompatActivity {
 
     //vars//
     final private String TAG = "UserProfile";
-    private String username;
     HashMap<String, LatLng> favorite_station_map;
 
     FirebaseAuth fAuth = FirebaseAuth.getInstance();
@@ -209,10 +208,10 @@ public class UserProfileScreen extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-                String chosen_station = (String)favorite_stations.getItemAtPosition(position);
+                String chosen_station = (String) favorite_stations.getItemAtPosition(position);
                 LatLng loc = favorite_station_map.get(chosen_station);
 
-                Log.d(TAG,"LOCATION IS : => " + loc);
+                Log.d(TAG, "LOCATION IS : => " + loc);
 
                 Intent profile_screen_to_home = new Intent(UserProfileScreen.this, HomeScreen.class);
                 profile_screen_to_home.putExtra("Lat", loc.latitude);

@@ -24,71 +24,40 @@ import com.google.firebase.auth.FirebaseAuth;
 
 public class RegisterScreen extends Activity {
 
-    TextView title_register;
-
-    TextView First_name_register;
     EditText line_first_name_register;
-
-    TextView last_name_register;
     EditText line_last_name_register;
-
-    TextView email_register;
     EditText line_email_register;
-
-    TextView username_register;
     EditText line_username_register;
-
-    TextView enter_password_register;
     EditText line_enter_password_register;
-
-    TextView confirm_password_register_;
     EditText line_confirm_password_register;
 
     Button register_button;
 
-    FirebaseAuth fAuth;
+    FirebaseAuth fAuth = FirebaseAuth.getInstance();
+
 
     @Override
     protected void onCreate(Bundle Instance) {
         super.onCreate(Instance);
         setContentView(R.layout.register);
 
-        fAuth = FirebaseAuth.getInstance();
-
         // init widgets //
-        title_register = (TextView) (findViewById(R.id.title_register));
-
-        First_name_register = (TextView) (findViewById(R.id.First_name_register));
-        line_first_name_register = (EditText) (findViewById(R.id.line_first_name_register));
-
-        last_name_register = (TextView) (findViewById(R.id.last_name_register));
-        line_last_name_register = (EditText) (findViewById(R.id.line_last_name_register));
-
-        email_register = (TextView) (findViewById(R.id.email_register));
-        line_email_register = (EditText) (findViewById(R.id.line_email_register));
-
-        username_register = (TextView) (findViewById(R.id.username_register));
-        line_username_register = (EditText) (findViewById(R.id.line_uasername_register));
-
-        enter_password_register = (TextView) (findViewById(R.id.enter_password_register));
-        line_enter_password_register = (EditText) (findViewById(R.id.line_enter_password_register));
-
-        confirm_password_register_ = (TextView) (findViewById(R.id.confirm_password_register_));
-        line_confirm_password_register = (EditText) (findViewById(R.id.line_confirm_password_register));
-
-        register_button = (Button) findViewById(R.id.register_button);
-
-
-//        if(fAuth.getCurrentUser() != null)
-//        {
-//            startActivity(new Intent(getApplicationContext(),LoginScreen.class));
-//            finish();
-//        }
-
+        init_widgets();
         // init listeners //
         OnClickRegisterButton();
+    }
 
-
+    /**
+     * init widgets method
+     */
+    private void init_widgets() {
+        line_first_name_register = (EditText) (findViewById(R.id.line_first_name_register));
+        line_last_name_register = (EditText) (findViewById(R.id.line_last_name_register));
+        line_email_register = (EditText) (findViewById(R.id.line_email_register));
+        line_username_register = (EditText) (findViewById(R.id.line_uasername_register));
+        line_enter_password_register = (EditText) (findViewById(R.id.line_enter_password_register));
+        line_confirm_password_register = (EditText) (findViewById(R.id.line_confirm_password_register));
+        register_button = (Button) findViewById(R.id.register_button);
     }
 
     /**
@@ -133,7 +102,7 @@ public class RegisterScreen extends Activity {
                             Toast.makeText(RegisterScreen.this, "User Created.", Toast.LENGTH_SHORT).show();
 
                             //extract data and add it to database//
-                            UserObj newUser = new UserObj(first_name, last_name, username, "0", fAuth.getCurrentUser().getUid(),0);
+                            UserObj newUser = new UserObj(first_name, last_name, username, "0", fAuth.getCurrentUser().getUid(), 0);
                             UserDB newUserDB = new UserDB();
                             newUserDB.AddUserToDatabase(newUser);
 
