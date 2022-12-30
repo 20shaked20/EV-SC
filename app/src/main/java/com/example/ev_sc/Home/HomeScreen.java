@@ -551,8 +551,6 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
                         } else {
                             grade = (SumOf_reviews * curr_grade + user_rating) / (SumOf_reviews + 1);
                         }
-                        Log.d(TAG, "Review ADDED? =??? " + review.toString());
-                        //TODO: create a good updating grade mechanisem relied upon database//
 
                         rate_of_station.setText(Double.toString(grade));
                         station.setAvgGrade(grade);
