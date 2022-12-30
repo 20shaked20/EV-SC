@@ -8,4 +8,10 @@
     <string name="average_grade">Average Grade</string>
     <string name="latitude">Latitude</string>
     <string name="longtitude">Longtitude</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="ev_sc">EV-SC</string>
+    <string name="forgot_password">Forgot Password</string>
+    <string name="login">LOGIN</string>
+    <string name="new_user_register">new user? Register</string>
 </resources>
