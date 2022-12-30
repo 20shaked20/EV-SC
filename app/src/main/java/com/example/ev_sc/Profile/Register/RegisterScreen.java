@@ -24,7 +24,6 @@ import com.google.firebase.auth.FirebaseAuth;
 
 public class RegisterScreen extends Activity {
 
-    TextView title_register;
     EditText line_first_name_register;
     EditText line_last_name_register;
     EditText line_email_register;
@@ -34,43 +33,31 @@ public class RegisterScreen extends Activity {
 
     Button register_button;
 
-    FirebaseAuth fAuth;
+    FirebaseAuth fAuth = FirebaseAuth.getInstance();
+
 
     @Override
     protected void onCreate(Bundle Instance) {
         super.onCreate(Instance);
         setContentView(R.layout.register);
 
-        fAuth = FirebaseAuth.getInstance();
-
         // init widgets //
-        title_register = (TextView) (findViewById(R.id.title_register));
-
-        line_first_name_register = (EditText) (findViewById(R.id.line_first_name_register));
-
-        line_last_name_register = (EditText) (findViewById(R.id.line_last_name_register));
-
-        line_email_register = (EditText) (findViewById(R.id.line_email_register));
-
-        line_username_register = (EditText) (findViewById(R.id.line_uasername_register));
-
-        line_enter_password_register = (EditText) (findViewById(R.id.line_enter_password_register));
-
-        line_confirm_password_register = (EditText) (findViewById(R.id.line_confirm_password_register));
-
-        register_button = (Button) findViewById(R.id.register_button);
-
-
-//        if(fAuth.getCurrentUser() != null)
-//        {
-//            startActivity(new Intent(getApplicationContext(),LoginScreen.class));
-//            finish();
-//        }
-
+        init_widgets();
         // init listeners //
         OnClickRegisterButton();
+    }
 
-
+    /**
+     * init widgets method
+     */
+    private void init_widgets() {
+        line_first_name_register = (EditText) (findViewById(R.id.line_first_name_register));
+        line_last_name_register = (EditText) (findViewById(R.id.line_last_name_register));
+        line_email_register = (EditText) (findViewById(R.id.line_email_register));
+        line_username_register = (EditText) (findViewById(R.id.line_uasername_register));
+        line_enter_password_register = (EditText) (findViewById(R.id.line_enter_password_register));
+        line_confirm_password_register = (EditText) (findViewById(R.id.line_confirm_password_register));
+        register_button = (Button) findViewById(R.id.register_button);
     }
 
     /**

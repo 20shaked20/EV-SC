@@ -38,31 +38,30 @@ public class LoginScreen extends Activity {
     EditText username_enter_login;
     EditText password_enter_login;
 
-    TextView title_login;
-    TextView username_view_login;
-    TextView password_view_login;
-
     final String TAG = "Login Screen";
 
-    FirebaseAuth fAuth;
+    FirebaseAuth fAuth = FirebaseAuth.getInstance();
+
 
     @Override
     protected void onCreate(Bundle Instance) {
         super.onCreate(Instance);
         setContentView(R.layout.login);
 
-        fAuth = FirebaseAuth.getInstance();
+        init_widgets();
+        // init listeners //
+        OnClickRegisterButton();
+        OnClickLoginButton();
+    }
 
-        // init widgets //
+    /**
+     * Init widgets method
+     */
+    private void init_widgets() {
         login_button = (Button) findViewById(R.id.login_button);
         register_button_login = (Button) findViewById(R.id.register_button_login);
         username_enter_login = (EditText) (findViewById(R.id.username_enter_login));
         password_enter_login = (EditText) (findViewById(R.id.password_enter_login));
-
-        // init listeners //
-        OnClickRegisterButton();
-
-        OnClickLoginButton();
     }
 
     /**

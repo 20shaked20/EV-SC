@@ -20,4 +20,7 @@
     <string name="username">Username</string>
     <string name="confirm_password">Confirm Password</string>
     <string name="create_account">Create Account</string>
+    <string name="favorites">Favorites:</string>
+    <string name="reviews">Reviews:</string>
+    <string name="my_reviews">My reviews:</string>
 </resources>
