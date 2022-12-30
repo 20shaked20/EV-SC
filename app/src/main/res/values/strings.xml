@@ -23,4 +23,5 @@
     <string name="favorites">Favorites:</string>
     <string name="reviews">Reviews:</string>
     <string name="my_reviews">My reviews:</string>
+    <string name="edit_station">edit station</string>
 </resources>
