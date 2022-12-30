@@ -5,45 +5,40 @@
 
     <fragment xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/map_home_screen"
+        android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/map_home_screen"
-        tools:context= ".Home.HomeScreen"
-        android:name="com.google.android.gms.maps.SupportMapFragment"
-        />
+        tools:context=".Home.HomeScreen" />
 
     <RelativeLayout
+        android:id="@+id/relLayout1"
         android:layout_width="match_parent"
         android:layout_height="50dp"
+        android:layout_marginLeft="10dp"
         android:layout_marginTop="10dp"
         android:layout_marginRight="10dp"
-        android:layout_marginLeft="10dp"
-        android:elevation="10dp"
         android:background="@drawable/white_border"
-        android:id="@+id/relLayout1">
-
-        <ImageView
-            android:layout_width="15dp"
-            android:layout_height="15dp"
-            android:id="@+id/ic_magnify"
-            android:layout_centerVertical="true"
-            android:layout_marginLeft="10dp"
-            />
+        android:elevation="10dp">
 
         <EditText
+            android:id="@+id/search_bar"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_toRightOf="@+id/ic_magnify"
             android:layout_centerVertical="true"
-            android:textSize="15sp"
-            android:textColor="#000"
-            android:id="@+id/search_bar"
             android:background="@null"
-            android:maxLines="1"
+            android:drawableLeft="@android:drawable/ic_menu_search"
+            android:drawablePadding="10dp"
+            android:hint="@string/enter_location"
+            android:imeOptions="actionSearch"
+            android:inputType="text"
             android:lines="1"
+            android:maxLines="1"
+            android:paddingStart="20dip"
+            android:paddingEnd="10dp"
             android:singleLine="true"
-            android:hint="Enter Location"
-            android:imeOptions="actionSearch"/>
+            android:textColor="#000"
+            android:textSize="15sp" />
 
 
     </RelativeLayout>

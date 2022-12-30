@@ -24,4 +24,6 @@
     <string name="reviews">Reviews:</string>
     <string name="my_reviews">My reviews:</string>
     <string name="edit_station">edit station</string>
+    <string name="enter_location">Enter Location</string>
+    <string name="rate">Rate:</string>
 </resources>
