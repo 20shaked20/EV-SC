@@ -14,4 +14,10 @@
     <string name="forgot_password">Forgot Password</string>
     <string name="login">LOGIN</string>
     <string name="new_user_register">new user? Register</string>
+    <string name="first_name">First Name</string>
+    <string name="last_name">Last Name</string>
+    <string name="register">Register</string>
+    <string name="username">Username</string>
+    <string name="confirm_password">Confirm Password</string>
+    <string name="create_account">Create Account</string>
 </resources>
