@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -8,19 +7,18 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        >
+        android:layout_height="match_parent">
 
         <TextView
             android:id="@+id/title_login"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center_horizontal"
+            android:padding="100dp"
             android:text="@string/ev_sc"
             android:textColor="@color/black"
             android:textSize="40sp"
             android:textStyle="bold"
-            android:padding="100dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="1.0"
@@ -33,12 +31,12 @@
             android:id="@+id/username_enter_login"
             android:layout_width="300dp"
             android:layout_height="50dp"
-            android:ems="10"
-            android:inputType="text"
-            android:hint="@string/email"
             android:background="@drawable/rounded_edittext"
             android:drawableStart="@drawable/ic_far_user"
             android:drawablePadding="15dp"
+            android:ems="10"
+            android:hint="@string/email"
+            android:inputType="text"
             android:paddingStart="20dip"
             android:paddingEnd="10dp"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -49,17 +47,16 @@
             app:layout_constraintVertical_bias="0.3" />
 
 
-
         <EditText
             android:id="@+id/password_enter_login"
             android:layout_width="300dp"
             android:layout_height="50dp"
-            android:ems="10"
-            android:inputType="textPassword"
             android:background="@drawable/rounded_edittext"
-            android:hint="@string/password"
             android:drawableStart="@drawable/ic_fas_lock"
             android:drawablePadding="15dp"
+            android:ems="10"
+            android:hint="@string/password"
+            android:inputType="textPassword"
             android:paddingStart="20dip"
             android:paddingEnd="10dp"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -75,11 +72,11 @@
             style="@android:style/Widget.DeviceDefault.Button.Inset"
             android:layout_width="300dp"
             android:layout_height="45dp"
+            android:background="@drawable/rounded_button"
             android:text="@string/login"
             android:textAllCaps="false"
-            android:textSize="16sp"
             android:textColor="@color/white"
-            android:background="@drawable/rounded_edittext"
+            android:textSize="16sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
@@ -91,30 +88,30 @@
             android:id="@+id/forgot_password_login"
             android:layout_width="275dp"
             android:layout_height="45dp"
-            android:text="@string/forgot_password"
-            android:textAllCaps="false"
-            android:textSize="16sp"
-            android:textColor="@color/black"
+            android:drawableLeft="@drawable/ic_fas_question"
             android:gravity="center"
-            android:textStyle="bold"
             android:paddingStart="60dp"
             android:paddingEnd="50dp"
+            android:text="@string/forgot_password"
+            android:textAllCaps="false"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.56"
-            app:drawableLeftCompat="@drawable/ic_fas_question" />
+            app:layout_constraintVertical_bias="0.56" />
 
         <Button
             android:id="@+id/register_button_login"
             style="@android:style/Widget.DeviceDefault.Button.Inset"
             android:layout_width="300dp"
             android:layout_height="45dp"
-            android:textColor="@color/white"
-            android:background="@drawable/rounded_edittext"
+            android:background="@drawable/rounded_button"
             android:text="@string/new_user_register"
+            android:textColor="@color/white"
             android:textSize="16sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -145,8 +142,7 @@
             app:layout_constraintHorizontal_bias="0.036"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="1.0"
-            />
+            app:layout_constraintVertical_bias="1.0" />
 
         <ImageView
             android:id="@+id/imageView3"
@@ -158,8 +154,7 @@
             app:layout_constraintHorizontal_bias="0.094"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="1.0"
-            />
+            app:layout_constraintVertical_bias="1.0" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </LinearLayout>

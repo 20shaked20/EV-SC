@@ -54,17 +54,10 @@ public class LoginScreen extends Activity {
         fAuth = FirebaseAuth.getInstance();
 
         // init widgets //
-
         login_button = (Button) findViewById(R.id.login_button);
         register_button_login = (Button) findViewById(R.id.register_button_login);
-
         username_enter_login = (EditText) (findViewById(R.id.username_enter_login));
         password_enter_login = (EditText) (findViewById(R.id.password_enter_login));
-
-        title_login = (TextView) (findViewById(R.id.title_login));
-        username_view_login = (TextView) (findViewById(R.id.username_view_login));
-        password_view_login = (TextView) (findViewById(R.id.password_view_login));
-
 
         // init listeners //
         OnClickRegisterButton();
