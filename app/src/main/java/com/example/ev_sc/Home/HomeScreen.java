@@ -53,6 +53,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
@@ -348,31 +349,34 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
         try {
             if (mLocationPermissionGranted) {
 
-                final Task<Location> location = mFusedLocationProviderClient.getLastLocation();
-                location.addOnCompleteListener(new OnCompleteListener() {
-                    @Override
-                    public void onComplete(@NonNull Task task) {
-                        if (task.isSuccessful()) {
-                            Log.d(TAG, "onComplete getDeviceLocation: found location!");
+                mFusedLocationProviderClient.getLastLocation()
+                        .addOnSuccessListener(new OnSuccessListener<Location>() {
+                            @Override
+                            public void onSuccess(@NonNull Location location) {
+                                Log.d(TAG, "onComplete getDeviceLocation: found location!");
+                                Log.d(TAG, "LOCATION OF THE USER:=>" + location);
 
-                            currentLocation = (Location) task.getResult();
+                                //this if handles cases where the location is null in the phone, it can happen sometimes due to unprovided location/gps problems.
+                                if (location != null)
+                                    currentLocation = location;
+                                else {
+                                    currentLocation = new Location("");
+                                    currentLocation.setLatitude(32.046878537246435);
+                                    currentLocation.setLongitude(34.86588824882881);
+                                }
 
-                            //we're putting sleep because it takes time for the emulator to locate the location of the user//
-                            try {
-                                Thread.sleep(1000);
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
+                                //we're putting sleep because it takes time for the emulator to locate the location of the user//
+                                try {
+                                    Thread.sleep(1500);
+                                } catch (InterruptedException e) {
+                                    e.printStackTrace();
+                                }
+
+                                //move camera to the current location of the user//
+                                moveCamera(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()));
+
                             }
-
-                            //move camera to the current location of the user//
-                            moveCamera(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()));
-
-                        } else {
-                            Log.d(TAG, "onComplete getDeviceLocation: current location is null");
-                            Toast.makeText(HomeScreen.this, "unable to get current location", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                });
+                        });
             }
         } catch (SecurityException e) {
             Log.e(TAG, "getDeviceLocation: Security Exception: " + e.getMessage());

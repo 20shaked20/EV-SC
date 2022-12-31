@@ -9,28 +9,29 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+
         <TextView
             android:id="@+id/title_login"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:gravity="center_horizontal"
-            android:padding="100dp"
             android:text="@string/ev_sc"
             android:textColor="@color/black"
             android:textSize="40sp"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.081" />
+            app:layout_constraintVertical_bias="0.15" />
 
 
         <EditText
             android:id="@+id/username_enter_login"
             android:layout_width="300dp"
             android:layout_height="50dp"
+            android:autofillHints=""
             android:background="@drawable/rounded_edittext"
             android:drawableStart="@drawable/ic_far_user"
             android:drawablePadding="15dp"
@@ -39,18 +40,18 @@
             android:inputType="text"
             android:paddingStart="20dip"
             android:paddingEnd="10dp"
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/password_enter_login"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintHorizontal_bias="0.504"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.3" />
-
+            app:layout_constraintTop_toBottomOf="@+id/title_login"
+            app:layout_constraintVertical_bias="0.776" />
 
         <EditText
             android:id="@+id/password_enter_login"
             android:layout_width="300dp"
             android:layout_height="50dp"
+            android:autofillHints=""
             android:background="@drawable/rounded_edittext"
             android:drawableStart="@drawable/ic_fas_lock"
             android:drawablePadding="15dp"
@@ -59,19 +60,18 @@
             android:inputType="textPassword"
             android:paddingStart="20dip"
             android:paddingEnd="10dp"
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/login_button"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintHorizontal_bias="0.504"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.4" />
-
+            app:layout_constraintVertical_bias="0.936" />
 
         <Button
             android:id="@+id/login_button"
             style="@android:style/Widget.DeviceDefault.Button.Inset"
             android:layout_width="300dp"
-            android:layout_height="45dp"
+            android:layout_height="48dp"
             android:background="@drawable/rounded_button"
             android:text="@string/login"
             android:textAllCaps="false"
@@ -88,7 +88,6 @@
             android:id="@+id/forgot_password_login"
             android:layout_width="275dp"
             android:layout_height="45dp"
-            android:drawableLeft="@drawable/ic_fas_question"
             android:gravity="center"
             android:paddingStart="60dp"
             android:paddingEnd="50dp"
@@ -97,18 +96,18 @@
             android:textColor="@color/black"
             android:textSize="16sp"
             android:textStyle="bold"
-            app:layout_constraintBottom_toBottomOf="parent"
+            android:drawableLeft="@drawable/ic_fas_question"
+            app:layout_constraintBottom_toTopOf="@+id/register_button_login"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.56" />
+            app:layout_constraintTop_toBottomOf="@+id/login_button"
+            app:layout_constraintVertical_bias="0.25" />
 
         <Button
             android:id="@+id/register_button_login"
             style="@android:style/Widget.DeviceDefault.Button.Inset"
             android:layout_width="300dp"
-            android:layout_height="45dp"
+            android:layout_height="48dp"
             android:background="@drawable/rounded_button"
             android:text="@string/new_user_register"
             android:textColor="@color/white"
@@ -120,41 +119,41 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.675" />
 
-        <ImageView
-            android:id="@+id/imageView6"
-            android:layout_width="116dp"
-            android:layout_height="106dp"
-            android:src="@drawable/ic_register_hero"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.950"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.950" />
+<!--        <ImageView-->
+<!--            android:id="@+id/imageView6"-->
+<!--            android:layout_width="116dp"-->
+<!--            android:layout_height="106dp"-->
+<!--            android:src="@drawable/ic_register_hero"-->
+<!--            app:layout_constraintBottom_toBottomOf="parent"-->
+<!--            app:layout_constraintEnd_toEndOf="parent"-->
+<!--            app:layout_constraintHorizontal_bias="0.950"-->
+<!--            app:layout_constraintStart_toStartOf="parent"-->
+<!--            app:layout_constraintTop_toTopOf="parent"-->
+<!--            app:layout_constraintVertical_bias="0.950" />-->
 
-        <ImageView
-            android:id="@+id/imageView31"
-            android:layout_width="24dp"
-            android:layout_height="344dp"
-            android:src="@drawable/ic_side_bg"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.036"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="1.0" />
+<!--        <ImageView-->
+<!--            android:id="@+id/imageView31"-->
+<!--            android:layout_width="24dp"-->
+<!--            android:layout_height="344dp"-->
+<!--            android:src="@drawable/ic_side_bg"-->
+<!--            app:layout_constraintBottom_toBottomOf="parent"-->
+<!--            app:layout_constraintEnd_toEndOf="parent"-->
+<!--            app:layout_constraintHorizontal_bias="0.036"-->
+<!--            app:layout_constraintStart_toStartOf="parent"-->
+<!--            app:layout_constraintTop_toTopOf="parent"-->
+<!--            app:layout_constraintVertical_bias="1.0" />-->
 
-        <ImageView
-            android:id="@+id/imageView3"
-            android:layout_width="22dp"
-            android:layout_height="190dp"
-            android:src="@drawable/ic_side_bg"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.094"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="1.0" />
+<!--        <ImageView-->
+<!--            android:id="@+id/imageView3"-->
+<!--            android:layout_width="22dp"-->
+<!--            android:layout_height="190dp"-->
+<!--            android:src="@drawable/ic_side_bg"-->
+<!--            app:layout_constraintBottom_toBottomOf="parent"-->
+<!--            app:layout_constraintEnd_toEndOf="parent"-->
+<!--            app:layout_constraintHorizontal_bias="0.094"-->
+<!--            app:layout_constraintStart_toStartOf="parent"-->
+<!--            app:layout_constraintTop_toTopOf="parent"-->
+<!--            app:layout_constraintVertical_bias="1.0" />-->
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </LinearLayout>

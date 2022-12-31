@@ -1,15 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <fragment xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
+    <androidx.fragment.app.FragmentContainerView
         android:id="@+id/map_home_screen"
         android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".Home.HomeScreen" />
+        tools:context=".Home.HomeScreen"
+        tools:layout="@layout/map_fragment" />
 
     <RelativeLayout
         android:id="@+id/relLayout1"
@@ -26,8 +27,9 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_centerVertical="true"
+            android:autofillHints=""
             android:background="@null"
-            android:drawableLeft="@android:drawable/ic_menu_search"
+            android:drawableStart="@android:drawable/ic_menu_search"
             android:drawablePadding="10dp"
             android:hint="@string/enter_location"
             android:imeOptions="actionSearch"
@@ -38,6 +40,7 @@
             android:paddingEnd="10dp"
             android:singleLine="true"
             android:textColor="#000"
+            android:textColorHint="#757575"
             android:textSize="15sp" />
 
 
