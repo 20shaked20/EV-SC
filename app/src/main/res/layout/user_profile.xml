@@ -26,13 +26,13 @@
         android:id="@+id/edit_profile_user"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@android:drawable/ic_menu_edit"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.970"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.02" />
+        app:layout_constraintVertical_bias="0.02"
+        app:srcCompat="@android:drawable/ic_menu_edit"/>
 
     <TextView
         android:id="@+id/profile_username_user"
@@ -47,7 +47,7 @@
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.174" />
+        app:layout_constraintVertical_bias="0.209" />
 
     <TextView
         android:id="@+id/Favorite_stations_user"
@@ -63,34 +63,9 @@
         app:layout_constraintTop_toBottomOf="@+id/profile_username_user"
         app:layout_constraintVertical_bias="0.478" />
 
+
     <ListView
         android:id="@+id/favorite_list_view"
-        android:layout_width="wrap_content"
-        android:layout_height="200dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.35" />
-
-
-    <TextView
-        android:id="@+id/favorite_stations_user"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/reviews"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/reviews_list_view_profile"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.024"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/favorite_list_view"
-        app:layout_constraintVertical_bias="0.867" />
-
-    <ListView
-        android:id="@+id/reviews_list_view_profile"
         android:layout_width="wrap_content"
         android:layout_height="200dp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -98,7 +73,7 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.808" />
+        app:layout_constraintVertical_bias="0.424" />
 
     <ImageView
         android:id="@+id/imageView23"

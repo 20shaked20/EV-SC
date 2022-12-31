@@ -32,29 +32,28 @@
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.291"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.2" />
+        app:layout_constraintHorizontal_bias="0.2"
+        app:layout_constraintStart_toEndOf="@+id/imageView35"
+        app:layout_constraintTop_toBottomOf="@+id/titel_add_station"
+        app:layout_constraintVertical_bias="0.1" />
 
     <EditText
-        android:id="@+id/station_latitude"
-        android:layout_width="115dp"
-        android:layout_height="47dp"
-        android:autofillHints=""
+        android:id="@+id/station_address"
+        android:layout_width="wrap_content"
+        android:layout_height="35dp"
         android:background="@drawable/rounded_edittext"
         android:ems="10"
         android:gravity="center"
-        android:hint="@string/latitude"
-        android:inputType="number|numberDecimal"
+        android:hint="@string/address"
+        android:inputType="textPersonName"
         android:textSize="20sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.172"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.6" />
+        app:layout_constraintHorizontal_bias="0.2"
+        app:layout_constraintStart_toEndOf="@+id/imageView35"
+        app:layout_constraintTop_toBottomOf="@+id/station_name"
+        app:layout_constraintVertical_bias="0.03" />
 
     <EditText
         android:id="@+id/station_charging"
@@ -70,10 +69,48 @@
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.291"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.4" />
+        app:layout_constraintHorizontal_bias="0.2"
+        app:layout_constraintStart_toEndOf="@+id/imageView35"
+        app:layout_constraintTop_toBottomOf="@+id/station_address"
+        app:layout_constraintVertical_bias="0.03" />
+
+    <EditText
+        android:id="@+id/station_avg_grade"
+        android:layout_width="wrap_content"
+        android:layout_height="35dp"
+        android:background="@drawable/rounded_edittext"
+        android:ems="10"
+        android:gravity="center"
+        android:hint="@string/average_grade"
+        android:inputType="number|numberDecimal"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.2"
+        app:layout_constraintStart_toEndOf="@+id/imageView35"
+        app:layout_constraintTop_toBottomOf="@+id/station_charging"
+        app:layout_constraintVertical_bias="0.03" />
+
+
+    <EditText
+        android:id="@+id/station_latitude"
+        android:layout_width="115dp"
+        android:layout_height="45dp"
+        android:autofillHints=""
+        android:background="@drawable/rounded_edittext"
+        android:ems="10"
+        android:gravity="center"
+        android:hint="@string/latitude"
+        android:inputType="number|numberDecimal"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/station_longtitude"
+        app:layout_constraintHorizontal_bias="0.8"
+        app:layout_constraintStart_toEndOf="@+id/imageView35"
+        app:layout_constraintTop_toBottomOf="@+id/station_avg_grade"
+        app:layout_constraintVertical_bias="0.05" />
 
     <EditText
         android:id="@+id/station_longtitude"
@@ -89,84 +126,48 @@
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.587"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.6" />
-
-    <EditText
-        android:id="@+id/station_avg_grade"
-        android:layout_width="wrap_content"
-        android:layout_height="35dp"
-        android:background="@drawable/rounded_edittext"
-        android:ems="10"
-        android:gravity="center"
-        android:hint="@string/average_grade"
-        android:inputType="number|numberDecimal"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.291"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <EditText
-        android:id="@+id/station_address"
-        android:layout_width="wrap_content"
-        android:layout_height="35dp"
-        android:background="@drawable/rounded_edittext"
-        android:ems="10"
-        android:gravity="center"
-        android:hint="@string/address"
-        android:inputType="textPersonName"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.291"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.3" />
-
+        app:layout_constraintHorizontal_bias="0.6"
+        app:layout_constraintStart_toEndOf="@+id/imageView35"
+        app:layout_constraintTop_toBottomOf="@+id/station_avg_grade"
+        app:layout_constraintVertical_bias="0.05" />
 
     <Button
         android:id="@+id/add_station_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@color/teal_700"
+        android:background="@drawable/rounded_button"
         android:text="@string/add_station"
         android:textColor="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.95"
+        app:layout_constraintHorizontal_bias="0.909"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.75" />
+        app:layout_constraintTop_toBottomOf="@+id/station_longtitude"
+        app:layout_constraintVertical_bias="0.207" />
 
     <ImageView
         android:id="@+id/imageView23"
         android:layout_width="133dp"
         android:layout_height="117dp"
-        android:src="@drawable/ic_login_hero"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.95"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.98" />
+        app:layout_constraintVertical_bias="0.98"
+        app:srcCompat="@drawable/ic_login_hero" />
 
     <ImageView
         android:id="@+id/imageView35"
         android:layout_width="24dp"
         android:layout_height="344dp"
-        android:src="@drawable/ic_side_bg"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.036"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="1.0" />
+        app:layout_constraintVertical_bias="1.0"
+        app:srcCompat="@drawable/ic_side_bg" />
 
     <ImageView
         android:id="@+id/imageView36"
@@ -178,7 +179,8 @@
         app:layout_constraintHorizontal_bias="0.094"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="1.0" />
+        app:layout_constraintVertical_bias="1.0"
+        app:srcCompat="@drawable/ic_side_bg" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
