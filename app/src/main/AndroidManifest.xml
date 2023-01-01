@@ -47,6 +47,7 @@
         <activity android:name=".Home.Station.AddStation"/>
         <activity android:name=".Profile.UserProfileScreen"/>
         <activity android:name=".Profile.AdminProfileScreen"/>
+        <activity android:name=".Profile.EditStation.EditStationScreen"/>
 
 
     </application>

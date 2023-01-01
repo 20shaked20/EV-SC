@@ -96,7 +96,12 @@ public class StationDB {
 
 
         //Check//
-        documentReference.set(station);
+        documentReference.set(station).addOnSuccessListener(unused -> Log.d("StationDB", "Station updated success!"));
+    }
+
+    public void deleteStationFromDatabase(StationObj Station){
+        DocumentReference documentReference = fStore.collection("stations").document(Station.getID());
+        documentReference.delete().addOnSuccessListener(unused -> Log.d(TAG, "Station deleted"));
     }
 
 }
