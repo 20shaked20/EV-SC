@@ -91,8 +91,9 @@ public class RegisterScreen extends Activity {
                     line_confirm_password_register.setError("Passwords are not identical");
                     return;
                 }
-                /*TODO: add more exceptions*/
-
+                if (TextUtils.isEmpty(username)) {
+                    line_username_register.setError("Username is required");
+                }
 
                 // register user in firebase //
                 fAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
@@ -106,17 +107,15 @@ public class RegisterScreen extends Activity {
                             UserDB newUserDB = new UserDB();
                             newUserDB.AddUserToDatabase(newUser);
 
-                            startActivity(new Intent(getApplicationContext(), LoginScreen.class));
+                            Intent register_to_login = new Intent(view.getContext(), LoginScreen.class);
+                            startActivityForResult(register_to_login, 0);
+                            finish();
 
                         } else {
                             Toast.makeText(RegisterScreen.this, "Error ! " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
-
-                Intent register_to_login = new Intent(view.getContext(), LoginScreen.class);
-                startActivityForResult(register_to_login, 0);
-                finish();
             }
         });
     }
