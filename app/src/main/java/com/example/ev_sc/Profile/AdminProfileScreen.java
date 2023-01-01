@@ -35,7 +35,6 @@ public class AdminProfileScreen extends AppCompatActivity {
     private TextView admin_name;
     private ImageView admin_pic;
     private Button add_station_button;
-    private Button edit_station_button;
 
     // Vars
     final private String TAG = "AdminProfile";
@@ -57,8 +56,6 @@ public class AdminProfileScreen extends AppCompatActivity {
 
         // Listeners
         OnClickAddStationButton();
-        OnClickEditStationButton();
-
     }
 
     private UserObj getExtras() {
@@ -121,7 +118,6 @@ public class AdminProfileScreen extends AppCompatActivity {
         admin_name = findViewById(R.id.title_admin);
         admin_pic = findViewById(R.id.admin_profile_image);
         add_station_button = findViewById(R.id.admin_add_station_button);
-        edit_station_button = findViewById(R.id.admin_edit_station_button);
 
     }
 
@@ -160,13 +156,6 @@ public class AdminProfileScreen extends AppCompatActivity {
         add_station_button.setOnClickListener(view -> {
             Intent login_to_add_station = new Intent(view.getContext(), AddStation.class);
             startActivityForResult(login_to_add_station, 0);
-        });
-    }
-
-    private void OnClickEditStationButton(){
-        edit_station_button.setOnClickListener(view -> {
-            Intent admin_to_edit_station = new Intent(view.getContext(), EditStationScreen.class);
-            startActivity(admin_to_edit_station);
         });
     }
 

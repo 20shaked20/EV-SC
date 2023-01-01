@@ -37,6 +37,7 @@ import com.example.ev_sc.Home.Station.StationObj;
 import com.example.ev_sc.Person.DataBases.UserDB;
 import com.example.ev_sc.Person.UserObj;
 import com.example.ev_sc.Profile.AdminProfileScreen;
+import com.example.ev_sc.Profile.EditStation.EditStationScreen;
 import com.example.ev_sc.Profile.UserProfileScreen;
 import com.example.ev_sc.R;
 import com.example.ev_sc.Reviews.reviewsDB;
@@ -206,7 +207,7 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
                             StationDB s_DB = new StationDB();
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 // load all stations data from database to the hashmap with unique key of doc id//
-                                StationObj tmp_station = s_DB.GetStationFromDatabase(document);
+                                StationObj tmp_station = s_DB.getStationFromDatabase(document);
                                 all_stations.put(document.getId(), tmp_station);
 
                                 //init map markers on the map//
@@ -503,7 +504,21 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
         TextView address_of_station = (TextView) PopupStation.findViewById(R.id.address_of_station);
         ImageView return_map_station_widget = (ImageView) PopupStation.findViewById(R.id.return_map_station_widget);
         FloatingActionButton rate_station = (FloatingActionButton) PopupStation.findViewById(R.id.rate_station_button);
+        Button edit_station_button = (Button) PopupStation.findViewById(R.id.admin_edit_station_button_in_popup);
 
+
+        // If the user is an admin, build & show the edit station button
+        if (current_user.getPermissions() == 1){
+            edit_station_button.setVisibility(View.VISIBLE);
+            edit_station_button.setOnClickListener(view -> { // init a listener for the button
+                Intent station_popup_to_edit_station = new Intent(view.getContext(), EditStationScreen.class);
+                station_popup_to_edit_station.putExtra("Station", station);
+                startActivity(station_popup_to_edit_station);
+                finish();
+            });
+        } else {
+            edit_station_button.setVisibility(View.GONE);
+        }
 
         name_of_station.setText(station.getStation_name());
         address_of_station.setText(station.getStation_address());

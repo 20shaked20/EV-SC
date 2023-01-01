@@ -1,10 +1,8 @@
 package com.example.ev_sc.Home;
-import static android.content.ContentValues.TAG;
 
 import android.util.Log;
 
 import com.example.ev_sc.Home.Station.StationObj;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.GeoPoint;
@@ -46,7 +44,7 @@ public class StationDB {
      * @param doc Firebase Station Document
      * @return Object Of Station Type.
      */
-    public StationObj GetStationFromDatabase(QueryDocumentSnapshot doc)
+    public StationObj getStationFromDatabase(QueryDocumentSnapshot doc)
     {
         //parser from firebase to object
         Double avg_rating = doc.getDouble("Average Rating");
@@ -61,6 +59,27 @@ public class StationDB {
 
         return new StationObj(avg_rating, s_address, c_stations.intValue(), s_name, s_loc,s_id,sumof_reviews);
 
+    }
+
+    /**
+     * this method retrieves a station from the database by its ID and returns it as a StationObj.
+     * @param stationID the ID of the station to retrieve
+     * @return the retrieved station as a StationObj
+     */
+    public StationObj getStationFromDatabase(String stationID) {
+        DocumentReference documentReference = fStore.collection("stations").document(stationID);
+        final StationObj[] station = {null};
+        documentReference.get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                QueryDocumentSnapshot doc = (QueryDocumentSnapshot) task.getResult();
+                if (doc != null) {
+                    station[0] = getStationFromDatabase(doc);
+                }
+            } else {
+                Log.d(TAG, "Error getting document: ", task.getException());
+            }
+        });
+        return station[0];
     }
 
     public static void updateStationToDatabase(StationObj Station) {

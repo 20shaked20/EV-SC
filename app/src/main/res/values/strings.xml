@@ -8,4 +8,5 @@
     <string name="average_grade">Average Grade</string>
     <string name="latitude">Latitude</string>
     <string name="longtitude">Longtitude</string>
+    <string name="edit_station_dropdown">Choose station to edit</string>
 </resources>
