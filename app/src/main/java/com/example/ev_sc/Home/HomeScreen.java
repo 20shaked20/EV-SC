@@ -514,7 +514,6 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
                 Intent station_popup_to_edit_station = new Intent(view.getContext(), EditStationScreen.class);
                 station_popup_to_edit_station.putExtra("Station", station);
                 startActivity(station_popup_to_edit_station);
-                finish();
             });
         } else {
             edit_station_button.setVisibility(View.GONE);

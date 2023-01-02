@@ -72,11 +72,9 @@ public class LoginScreen extends Activity {
      * Adding the listener click to move from Login screen to Register screen Via REGISTER BUTTON.
      */
     private void OnClickRegisterButton() {
-        register_button_login.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View view) {
-                Intent login_to_register = new Intent(view.getContext(), RegisterScreen.class);
-                startActivityForResult(login_to_register, 0);
-            }
+        register_button_login.setOnClickListener(view -> {
+            Intent login_to_register = new Intent(view.getContext(), RegisterScreen.class);
+            startActivityForResult(login_to_register, 0);
         });
     }
 
@@ -84,40 +82,34 @@ public class LoginScreen extends Activity {
      * Adding the listener click to move from Login screen to Home screen Via LOGIN BUTTON
      */
     private void OnClickLoginButton() {
-        login_button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String email = username_enter_login.getText().toString().trim();
-                String password = password_enter_login.getText().toString().trim();
+        login_button.setOnClickListener(v -> {
+            String email = username_enter_login.getText().toString().trim();
+            String password = password_enter_login.getText().toString().trim();
 
-                if (TextUtils.isEmpty(email)) {
-                    username_enter_login.setError("Email Is Required");
-                    return;
-                }
-                if (TextUtils.isEmpty(password)) {
-                    password_enter_login.setError("Password Is Required");
-                }
-                /*TODO: add more exceptions*/
+            if (TextUtils.isEmpty(email)) {
+                username_enter_login.setError("Email Is Required");
+                return;
+            }
+            if (TextUtils.isEmpty(password)) {
+                password_enter_login.setError("Password Is Required");
+            }
+            /*TODO: add more exceptions*/
 
-                //authenticate the user
+            //authenticate the user
 //                System.out.println("Email:" + email+ "Pass: "+ password);
 
-                fAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            //successfully login.
-                            Toast.makeText(LoginScreen.this, "Logged in Successfully", Toast.LENGTH_SHORT).show();
-                            startActivity(new Intent(getApplicationContext(), HomeScreen.class));
-                            finish();
-                        } else {
-                            // email or password incorrect or user does not exist
-                            Toast.makeText(LoginScreen.this, "Email Or Password Incorrect " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                });
+            fAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(task -> {
+                if (task.isSuccessful()) {
+                    //successfully login.
+                    Toast.makeText(LoginScreen.this, "Logged in Successfully", Toast.LENGTH_SHORT).show();
+                    startActivity(new Intent(getApplicationContext(), HomeScreen.class));
+                    finish();
+                } else {
+                    // email or password incorrect or user does not exist
+                    Toast.makeText(LoginScreen.this, "Email Or Password Incorrect " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            });
 
-            }
         });
     }
 

@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ScrollView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -45,6 +46,8 @@ public class EditStationScreen extends AppCompatActivity {
         StationObj station = getExtras();
         set_station_data_in_layout(station);
 
+        Log.d(TAG,"Station details:" + "\n" + station);
+
         save_button.setOnClickListener(view -> {
             AlertDialog.Builder builder = new AlertDialog.Builder(EditStationScreen.this);
             builder.setTitle("Are you sure you want to update station details?");
@@ -53,12 +56,14 @@ public class EditStationScreen extends AppCompatActivity {
                 station.setStation_name(station_name.getText().toString());
                 station.setStation_address(station_address.getText().toString());
                 station.setCharging_stations(Integer.parseInt(station_charging.getText().toString()));
-               // GeoPoint updated_coords = new GeoPoint(Double.parseDouble(String.valueOf(station_lat)),Double.parseDouble(String.valueOf(station_lon)));
-               // station.setLocation(updated_coords);
+                GeoPoint updated_coords = new GeoPoint(Double.parseDouble(String.valueOf(station_lat)),Double.parseDouble(String.valueOf(station_lon)));
+                station.setLocation(updated_coords);
                 // add station reviews
 
                 StationDB.updateStationToDatabase(station);
 
+                Log.d(TAG,"Station edited, new station details:" + "\n" + station);
+                Toast.makeText(this,"Station Edited Successfully!",Toast.LENGTH_LONG);
                 finish();
             });
             builder.setNegativeButton("No", (dialog, which) -> {
@@ -75,6 +80,8 @@ public class EditStationScreen extends AppCompatActivity {
                 StationDB db = new StationDB();
                 db.deleteStationFromDatabase(station);
 
+                Log.d(TAG,"Station removed, new station details:" + "\n" + station);
+                Toast.makeText(this,"Station Deleted Successfully!",Toast.LENGTH_LONG);
                 finish();
             });
             builder.setNegativeButton("No", (dialog, which) -> {
@@ -113,9 +120,10 @@ public class EditStationScreen extends AppCompatActivity {
 
         this.station_name.setText(curr.getStation_name());
         this.station_address.setText(curr.getStation_address());
-        this.station_charging.setText(curr.getCharging_stations());
-        //this.station_lat.setText((int) curr.getLatLng().latitude);
-       // this.station_lon.setText((int) curr.getLatLng().longitude);
+        this.station_charging.setText(Integer.toString(curr.getCharging_stations()));
+        this.station_lat.setText(Double.toString(curr.getLocation().getLatitude()));
+        this.station_lon.setText(Double.toString(curr.getLocation().getLongitude()));
+
 
     }
 }
