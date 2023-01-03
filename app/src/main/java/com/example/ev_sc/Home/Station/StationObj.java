@@ -160,8 +160,8 @@ public class StationObj implements StationInterface, Parcelable {
 
         avg_grade = in.readDouble();
         station_address = in.readString();
-        Double lat = location.getLatitude();
-        Double lon = location.getLongitude();
+        Double lat = in.readDouble();
+        Double lon = in.readDouble();
         location = new GeoPoint(lat, lon);
         charging_stations = in.readInt();
         station_name = in.readString();

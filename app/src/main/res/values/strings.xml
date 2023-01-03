@@ -26,4 +26,5 @@
     <string name="edit_station">edit station</string>
     <string name="enter_location">Enter Location</string>
     <string name="rate">Rate:</string>
+    <string name="edit_station_dropdown">Choose station to edit</string>
 </resources>
