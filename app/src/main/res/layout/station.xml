@@ -192,25 +192,38 @@
             android:clickable="true"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.75"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintHorizontal_bias="0.255"
+            app:layout_constraintStart_toEndOf="@+id/admin_edit_station_button_in_popup"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.7"
             app:srcCompat="@drawable/ic_far_heart" />
 
-        <Button
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/admin_edit_station_button_in_popup"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@color/teal_700"
-            android:text="edit station"
-            android:textColor="@color/white"
+            android:clickable="true"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.505"
+            app:layout_constraintHorizontal_bias="0.467"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.818" />
+            app:layout_constraintVertical_bias="0.7"
+            app:srcCompat="@android:drawable/ic_menu_edit" />
+
+        <!--        <Button-->
+<!--            android:id="@+id/admin_edit_station_button_in_popup"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:background="@color/teal_700"-->
+<!--            android:text="edit station"-->
+<!--            android:textColor="@color/white"-->
+<!--            app:layout_constraintBottom_toTopOf="@+id/imageView43"-->
+<!--            app:layout_constraintEnd_toEndOf="parent"-->
+<!--            app:layout_constraintHorizontal_bias="0.355"-->
+<!--            app:layout_constraintStart_toStartOf="parent"-->
+<!--            app:layout_constraintTop_toBottomOf="@+id/rate_station_button"-->
+<!--            app:layout_constraintVertical_bias="0.404" />-->
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

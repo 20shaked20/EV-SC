@@ -1,11 +1,11 @@
 package com.example.ev_sc.Profile.EditStation;
 
 import android.app.AlertDialog;
-import android.content.DialogInterface;
-import android.net.Uri;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ScrollView;
@@ -13,16 +13,13 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.ev_sc.Home.HomeScreen;
 import com.example.ev_sc.Home.Station.StationObj;
 import com.example.ev_sc.Home.StationDB;
-import com.example.ev_sc.Person.UserObj;
+import com.example.ev_sc.Login.LoginScreen;
 import com.example.ev_sc.R;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.GeoPoint;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
-import com.squareup.picasso.Picasso;
 
 public class EditStationScreen extends AppCompatActivity {
 
@@ -36,6 +33,7 @@ public class EditStationScreen extends AppCompatActivity {
     private ScrollView station_reviews;
 
     private static final String TAG = "Edit Station";
+    FirebaseAuth fAuth = FirebaseAuth.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,7 +44,7 @@ public class EditStationScreen extends AppCompatActivity {
         StationObj station = getExtras();
         set_station_data_in_layout(station);
 
-        Log.d(TAG,"Station details:" + "\n" + station);
+        Log.d(TAG, "Station details:" + "\n" + station);
 
         save_button.setOnClickListener(view -> {
             AlertDialog.Builder builder = new AlertDialog.Builder(EditStationScreen.this);
@@ -56,14 +54,14 @@ public class EditStationScreen extends AppCompatActivity {
                 station.setStation_name(station_name.getText().toString());
                 station.setStation_address(station_address.getText().toString());
                 station.setCharging_stations(Integer.parseInt(station_charging.getText().toString()));
-                GeoPoint updated_coords = new GeoPoint(Double.parseDouble(String.valueOf(station_lat)),Double.parseDouble(String.valueOf(station_lon)));
+                GeoPoint updated_coords = new GeoPoint(Double.parseDouble(String.valueOf(station_lat)), Double.parseDouble(String.valueOf(station_lon)));
                 station.setLocation(updated_coords);
                 // add station reviews
 
                 StationDB.updateStationToDatabase(station);
 
-                Log.d(TAG,"Station edited, new station details:" + "\n" + station);
-                Toast.makeText(this,"Station Edited Successfully!",Toast.LENGTH_LONG);
+                Log.d(TAG, "Station edited, new station details:" + "\n" + station);
+                Toast.makeText(this, "Station Edited Successfully!", Toast.LENGTH_LONG);
                 finish();
             });
             builder.setNegativeButton("No", (dialog, which) -> {
@@ -80,8 +78,8 @@ public class EditStationScreen extends AppCompatActivity {
                 StationDB db = new StationDB();
                 db.deleteStationFromDatabase(station);
 
-                Log.d(TAG,"Station removed, new station details:" + "\n" + station);
-                Toast.makeText(this,"Station Deleted Successfully!",Toast.LENGTH_LONG);
+                Log.d(TAG, "Station removed, new station details:" + "\n" + station);
+                Toast.makeText(this, "Station Deleted Successfully!", Toast.LENGTH_LONG);
                 finish();
             });
             builder.setNegativeButton("No", (dialog, which) -> {
@@ -89,6 +87,46 @@ public class EditStationScreen extends AppCompatActivity {
             });
             builder.show();
         });
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.profile_appbar, menu);
+        return true;
+    }
+
+    /**
+     * this method is responsible for handling the listeners on the action bar items
+     *
+     * @param item menu bar item
+     * @return true on success
+     */
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        switch (item.getItemId()) {
+
+            case R.id.map_menu: {
+                Log.d(TAG, "Selected: Move from Profile to map");
+
+                startActivity(new Intent(EditStationScreen.this, HomeScreen.class));
+                finish();
+                return true;
+            }
+
+            case R.id.logut_menu: {
+                Log.d(TAG, "Selected: Logout");
+
+                fAuth.signOut();
+                startActivity(new Intent(EditStationScreen.this, LoginScreen.class));
+                finish();
+                return true;
+
+            }
+            default:
+                return super.onOptionsItemSelected(item);
+
+        }
     }
 
     /**

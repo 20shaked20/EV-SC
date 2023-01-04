@@ -32,20 +32,19 @@
         app:layout_constraintTop_toBottomOf="@+id/admin_profile_image"
         app:layout_constraintVertical_bias="0.02" />
 
+
     <Button
         android:id="@+id/admin_add_station_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@color/teal_700"
+        android:layout_marginTop="72dp"
+        android:background="@drawable/rounded_button"
         android:text="@string/add_station"
         android:textColor="@color/white"
-        app:layout_constraintBottom_toTopOf="@+id/admin_edit_station_button"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.048"
+        app:layout_constraintHorizontal_bias="0.043"
         app:layout_constraintStart_toEndOf="@+id/imageView"
-        app:layout_constraintTop_toBottomOf="@+id/title_admin"
-        app:layout_constraintVertical_bias="0.7" />
-
+        app:layout_constraintTop_toBottomOf="@+id/title_admin" />
 
     <ImageView
         android:id="@+id/imageView"
@@ -57,32 +56,6 @@
         app:layout_constraintStart_toEndOf="@+id/imageView35"
         app:layout_constraintTop_toBottomOf="@+id/title_admin"
         app:layout_constraintVertical_bias="0.14"
-        app:srcCompat="@android:drawable/ic_input_add" />
-
-    <Button
-        android:id="@+id/admin_edit_station_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@color/teal_700"
-        android:text="@string/edit_station"
-        android:textColor="@color/white"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.05"
-        app:layout_constraintStart_toEndOf="@+id/imageView10"
-        app:layout_constraintTop_toBottomOf="@+id/title_admin"
-        app:layout_constraintVertical_bias="0.27" />
-
-    <ImageView
-        android:id="@+id/imageView10"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toEndOf="@+id/imageView35"
-        app:layout_constraintTop_toBottomOf="@+id/title_admin"
-        app:layout_constraintVertical_bias="0.277"
         app:srcCompat="@android:drawable/ic_input_add" />
 
     <ImageView

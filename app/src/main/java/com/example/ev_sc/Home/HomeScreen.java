@@ -118,8 +118,8 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
         HSL = new HomeScreenLogics();
 
         getLocationPermission();
-        load_stations_data();
         load_user_data();
+        load_stations_data();
 
         // TODO: tmp for favorite locating after moving from profile to home//
         Bundle extras = getIntent().getExtras();
@@ -188,7 +188,7 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
-                            StationObj.StationDB s_DB = new StationObj.StationDB();
+                            StationDB s_DB = new StationDB();
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 // load all stations data from database to the hashmap with unique key of doc id//
                                 StationObj tmp_station = s_DB.getStationFromDatabase(document);
@@ -514,11 +514,11 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
         ImageView return_map_station_widget = (ImageView) PopupStation.findViewById(R.id.return_map_station_widget);
         FloatingActionButton rate_station = (FloatingActionButton) PopupStation.findViewById(R.id.rate_station_button);
         FloatingActionButton favorite_station = (FloatingActionButton) PopupStation.findViewById(R.id.favorite_station_button);
-        Button edit_station_button = (Button) PopupStation.findViewById(R.id.admin_edit_station_button_in_popup);
+        FloatingActionButton edit_station_button = (FloatingActionButton) PopupStation.findViewById(R.id.admin_edit_station_button_in_popup);
 
 
         // If the user is an admin, build & show the edit station button
-        if (current_user.getPermissions() == 1){
+        if (current_user.getPermissions() == 1) {
             edit_station_button.setVisibility(View.VISIBLE);
             edit_station_button.setOnClickListener(view -> { // init a listener for the button
                 Intent station_popup_to_edit_station = new Intent(view.getContext(), EditStationScreen.class);
