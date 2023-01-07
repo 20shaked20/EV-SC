@@ -6,29 +6,21 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
-
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
-
 import com.example.ev_sc.Home.HomeScreen;
-import com.example.ev_sc.R;
-
 import com.example.ev_sc.Profile.Register.RegisterScreen;
-
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
+import com.example.ev_sc.R;
 import com.google.firebase.auth.FirebaseAuth;
+import com.example.ev_sc.APIClient;
 
 import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.ProtocolException;
-import java.net.URL;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.Response;
 
 public class LoginScreen extends Activity {
 
@@ -39,8 +31,6 @@ public class LoginScreen extends Activity {
     EditText password_enter_login;
 
     final String TAG = "Login Screen";
-
-    FirebaseAuth fAuth = FirebaseAuth.getInstance();
 
 
     @Override
@@ -97,16 +87,19 @@ public class LoginScreen extends Activity {
 
                 //authenticate the user
 //                System.out.println("Email:" + email+ "Pass: "+ password);
+                APIClient client = new APIClient();
+                client.sendGetRequest("http://10.0.2.2:4242/user/auth/:" + email + "/:" + password, new Callback() {
+                    @Override
+                    public void onFailure(Call call, IOException e) {
+                        Log.d(TAG,e.getMessage());
+                    }
 
-                fAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        //successfully login.
-                        Toast.makeText(LoginScreen.this, "Logged in Successfully", Toast.LENGTH_SHORT).show();
-                        startActivity(new Intent(getApplicationContext(), HomeScreen.class));
-                        finish();
-                    } else {
-                        // email or password incorrect or user does not exist
-                        Toast.makeText(LoginScreen.this, "Email Or Password Incorrect " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                    @Override
+                    public void onResponse(Call call, Response response) throws IOException {
+                        if (response.equals("User Authenticated")){
+                            startActivity(new Intent(getApplicationContext(), HomeScreen.class));
+                            finish();
+                        }
                     }
                 });
             }

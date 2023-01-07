@@ -16,6 +16,7 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="false"
+        android:usesCleartextTraffic="true"
         tools:replace="android:supportsRtl"
         android:theme="@style/Theme.EVSC"
         tools:targetApi="tiramisu"
