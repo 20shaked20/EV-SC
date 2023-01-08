@@ -27,4 +27,6 @@
     <string name="enter_location">Enter Location</string>
     <string name="rate">Rate:</string>
     <string name="edit_station_dropdown">Choose station to edit</string>
+    <string name="enter_your_email_and_we_ll_send_you_a_link_to_reset_your_password">Enter your email and we\'ll send you a link to reset your password</string>
+    <string name="back_to_login"><![CDATA[< Back to Login]]></string>
 </resources>
