@@ -37,6 +37,7 @@ public class LoginScreen extends Activity {
 
     EditText username_enter_login;
     EditText password_enter_login;
+    TextView forgot_password_login;
 
     final String TAG = "Login Screen";
 
@@ -52,6 +53,7 @@ public class LoginScreen extends Activity {
         // init listeners //
         OnClickRegisterButton();
         OnClickLoginButton();
+        OnClickForgotPassword();
     }
 
     /**
@@ -62,6 +64,7 @@ public class LoginScreen extends Activity {
         register_button_login = (Button) findViewById(R.id.register_button_login);
         username_enter_login = (EditText) (findViewById(R.id.username_enter_login));
         password_enter_login = (EditText) (findViewById(R.id.password_enter_login));
+        forgot_password_login = (TextView) (findViewById(R.id.forgot_password_login));
     }
 
     /**
@@ -71,6 +74,18 @@ public class LoginScreen extends Activity {
         register_button_login.setOnClickListener(view -> {
             Intent login_to_register = new Intent(view.getContext(), RegisterScreen.class);
             startActivityForResult(login_to_register, 0);
+        });
+    }
+
+    /**
+     * Adding the listener click to move from Login screen to Forgot password screen
+     * Via Forgot Password TextView.
+     */
+    private void OnClickForgotPassword(){
+        forgot_password_login.setOnClickListener(view -> {
+            Intent login_to_forgot_password = new Intent(view.getContext(), ForgotPasswordScreen.class);
+            startActivityForResult(login_to_forgot_password, 0);
+            finish();
         });
     }
 
