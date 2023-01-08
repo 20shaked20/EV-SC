@@ -2,20 +2,24 @@ package com.example.ev_sc.Login;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.ev_sc.Home.HomeScreen;
 import com.example.ev_sc.R;
+import com.google.firebase.auth.FirebaseAuth;
 
 public class ForgotPasswordScreen extends AppCompatActivity {
 
     Button submit;
     TextView back_to_login;
     EditText email_address_text;
-
 
     @Override
     protected void onCreate(Bundle Instance) {
@@ -25,6 +29,7 @@ public class ForgotPasswordScreen extends AppCompatActivity {
         init_widgets();
         // init listeners //
         OnClickBackToLogin();
+        OnClickSubmit();
     }
 
     /**
@@ -47,5 +52,29 @@ public class ForgotPasswordScreen extends AppCompatActivity {
         });
     }
 
-    // TODO: add onclick handle for Submit!
+    private void OnClickSubmit() {
+        submit.setOnClickListener(view -> {
+            
+            //validation//
+            String email = email_address_text.getText().toString().trim();
+            if (TextUtils.isEmpty(email)) {
+                email_address_text.setError("Email Is Required");
+                return;
+            }
+
+            //reset//
+            FirebaseAuth.getInstance().sendPasswordResetEmail(email).addOnCompleteListener(task -> {
+                if (task.isSuccessful()) {
+                    startActivity(new Intent(getApplicationContext(), LoginScreen.class));
+                    Toast.makeText(ForgotPasswordScreen.this, "Password reset sent successfully, check your email", Toast.LENGTH_SHORT).show();
+                    finish();
+                } else {
+                    // email or password incorrect or user does not exist
+                    email_address_text.setError("Email Does Not Exist");
+                }
+            });
+
+        });
+
+    }
 }
