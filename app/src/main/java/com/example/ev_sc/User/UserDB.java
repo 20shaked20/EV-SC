@@ -23,11 +23,11 @@ public class UserDB {
         DocumentReference documentReference = fStore.collection("users").document(User.getID());
         Map<String, Object> user = new HashMap<>();
 
-        user.put("FirstName", User.getFirst_name());
-        user.put("LastName", User.getLast_name());
-        user.put("UserName", User.getUsername());
-        user.put("Phone", User.getPhone_number());
-        user.put("Permission", User.getPermissions());
+        user.put("FirstName", User.getFirstName());
+        user.put("LastName", User.getLastName());
+        user.put("UserName", User.getUserName());
+        user.put("Phone", User.getPhone());
+        user.put("Permission", User.getPermission());
 
         //Check//
         documentReference.set(user).addOnSuccessListener(unused -> Log.d(TAG, "user Profile is created for " + User.getID()));

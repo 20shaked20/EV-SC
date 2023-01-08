@@ -1,5 +1,7 @@
 package com.example.ev_sc;
 
+import android.util.Log;
+
 import java.io.IOException;
 import java.util.Map;
 
@@ -11,6 +13,9 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 public class APIClient {
+
+    final String TAG = "API";
+
     private OkHttpClient client = new OkHttpClient();
 
     public void sendGetRequest(String url, Callback callback) {
@@ -19,6 +24,7 @@ public class APIClient {
                 .build();
 
         client.newCall(request).enqueue(callback);
+        Log.d(TAG,"Sent GET request: " + request);
     }
 
     public void sendPostRequest(String url, Map<String, String> postData, Callback callback) {
@@ -33,6 +39,8 @@ public class APIClient {
                 .build();
 
         client.newCall(request).enqueue(callback);
+        Log.d(TAG,"Sent POST request: " + request);
+
     }
 }
 

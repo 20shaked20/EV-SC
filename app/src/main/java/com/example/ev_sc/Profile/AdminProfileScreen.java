@@ -172,7 +172,7 @@ public class AdminProfileScreen extends AppCompatActivity {
             }
         });
 
-        this.admin_name.setText(curr.getUsername());
+        this.admin_name.setText(curr.getUserName());
         //below should be the entire code for the user profile..//
     }
 

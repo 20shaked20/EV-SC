@@ -13,8 +13,12 @@ import android.widget.Toast;
 import com.example.ev_sc.Home.HomeScreen;
 import com.example.ev_sc.Profile.Register.RegisterScreen;
 import com.example.ev_sc.R;
+import com.example.ev_sc.User.UserObj;
 import com.google.firebase.auth.FirebaseAuth;
 import com.example.ev_sc.APIClient;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
 
 import java.io.IOException;
 
@@ -88,7 +92,8 @@ public class LoginScreen extends Activity {
                 //authenticate the user
 //                System.out.println("Email:" + email+ "Pass: "+ password);
                 APIClient client = new APIClient();
-                client.sendGetRequest("http://10.0.2.2:4242/user/auth/:" + email + "/:" + password, new Callback() {
+                Log.d(TAG,"Sending login request to server");
+                client.sendGetRequest("http://10.0.2.2:4242/api/user/auth/:" + email + "/:" + password, new Callback() {
                     @Override
                     public void onFailure(Call call, IOException e) {
                         Log.d(TAG,e.getMessage());
@@ -96,10 +101,14 @@ public class LoginScreen extends Activity {
 
                     @Override
                     public void onResponse(Call call, Response response) throws IOException {
-                        if (response.equals("User Authenticated")){
-                            startActivity(new Intent(getApplicationContext(), HomeScreen.class));
-                            finish();
-                        }
+                        String responseBody = response.body().string();
+                        Log.d(TAG, "Server response: " + responseBody);
+                        Gson gson = new Gson();
+                        UserObj user = gson.fromJson(responseBody, UserObj.class);
+                        Intent login_to_map = new Intent(getApplicationContext(), HomeScreen.class);
+                        login_to_map.putExtra("User",user);
+                        startActivity(login_to_map);
+                        finish();
                     }
                 });
             }

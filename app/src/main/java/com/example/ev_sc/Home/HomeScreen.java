@@ -122,10 +122,10 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
         load_stations_data();
 
         // TODO: tmp for favorite locating after moving from profile to home//
-        Bundle extras = getIntent().getExtras();
-        if (extras != null) {
-            this.fav_loc = new LatLng((Double) extras.get("Lat"), (Double) extras.get("Lng"));
-        }
+//        Bundle extras = getIntent().getExtras();
+//        if (extras != null) {
+//            this.fav_loc = new LatLng((Double) extras.get("Lat"), (Double) extras.get("Lng"));
+//        }
     }
 
     /**
@@ -153,7 +153,7 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
         switch (item.getItemId()) {
 
             case R.id.profile_menu:
-                if (current_user.getPermissions() == 1) {
+                if (current_user.getPermission() == 1) {
                     Intent home_to_admin_profile = new Intent(HomeScreen.this, AdminProfileScreen.class);
                     home_to_admin_profile.putExtra("User", current_user);
 
@@ -212,15 +212,9 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
      */
     private void load_user_data() {
         Log.d(TAG, "load_user_data: loading User data from database");
-        String Client_UID = fAuth.getCurrentUser().getUid();
+        current_user = getIntent().getParcelableExtra("User");
+        Log.d(TAG,"Client UID: " + current_user);
 
-        // this is parsing the data from firestore using the string UID of the current user logged in!//
-        fStore.collection("users").
-                document(Client_UID).get().addOnSuccessListener(documentSnapshot -> {
-                    UserDB db = new UserDB();
-                    current_user = db.GetUserFromDatabase(documentSnapshot);
-                    Log.d(TAG, "CURRENT USER: => \n" + current_user.toString());
-                });
     }
 
     /**
@@ -518,7 +512,7 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
 
 
         // If the user is an admin, build & show the edit station button
-        if (current_user.getPermissions() == 1) {
+        if (current_user.getPermission() == 1) {
             edit_station_button.setVisibility(View.VISIBLE);
             edit_station_button.setOnClickListener(view -> { // init a listener for the button
                 Intent station_popup_to_edit_station = new Intent(view.getContext(), EditStationScreen.class);

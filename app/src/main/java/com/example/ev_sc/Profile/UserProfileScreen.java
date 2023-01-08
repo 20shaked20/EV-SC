@@ -197,7 +197,7 @@ public class UserProfileScreen extends AppCompatActivity {
             }
         });
 
-        this.profile_username.setText(this.curr_user.getUsername());
+        this.profile_username.setText(this.curr_user.getUserName());
         //below should be the entire code for the user profile..//
         String[] stations = favorite_station_map.keySet().toArray(new String[0]);
         Log.d(TAG, "FAVORITE STATIONS: => " + stations.toString());
