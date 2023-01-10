@@ -1,5 +1,6 @@
 package com.example.ev_sc.Profile;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
@@ -19,9 +20,13 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.ev_sc.APIClient;
 import com.example.ev_sc.Home.HomeScreen;
 
+import com.example.ev_sc.Home.Station.StationObj;
+import com.example.ev_sc.Home.StationDB;
 import com.example.ev_sc.Login.LoginScreen;
+import com.example.ev_sc.ServerStrings;
 import com.example.ev_sc.User.UserObj;
 import com.example.ev_sc.Profile.Favorites.FavoriteObj;
 import com.example.ev_sc.Profile.Favorites.FavoritesDB;
@@ -37,9 +42,20 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonParser;
 import com.squareup.picasso.Picasso;
 
+import java.io.IOException;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
+import java.util.concurrent.CountDownLatch;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.Response;
 
 public class UserProfileScreen extends AppCompatActivity {
 
@@ -48,14 +64,15 @@ public class UserProfileScreen extends AppCompatActivity {
     private ImageView profile_picture;
     private ImageView edit_profile;
     private ListView favorite_stations;
-    private UserObj curr_user;
+    private UserObj current_user;
 
     //vars//
     final private String TAG = "UserProfile";
     HashMap<String, LatLng> favorite_station_map;
 
-    FirebaseAuth fAuth = FirebaseAuth.getInstance();
-    FirebaseFirestore fStore = FirebaseFirestore.getInstance();
+    //database//
+    APIClient client = new APIClient();
+    FavoritesDB Fdb = new FavoritesDB();
     StorageReference fStorage = FirebaseStorage.getInstance().getReference();
 
 
@@ -68,10 +85,8 @@ public class UserProfileScreen extends AppCompatActivity {
         setContentView(R.layout.user_profile);
         favorite_station_map = new HashMap<>();
 
-        curr_user = getExtras();
-//        init_widgets();
-//        set_user_data_in_layout();
-        fetch_data();
+        current_user = getExtras();
+        load_user_profile();
 
     }
 
@@ -102,6 +117,7 @@ public class UserProfileScreen extends AppCompatActivity {
      * @param item menu bar item
      * @return true on success
      */
+    @SuppressLint("NonConstantResourceId")
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
@@ -109,20 +125,34 @@ public class UserProfileScreen extends AppCompatActivity {
 
             case R.id.map_menu: {
                 Log.d(TAG, "Selected: Move from Profile to map");
+                Intent user_profile_to_home = new Intent(UserProfileScreen.this, HomeScreen.class);
+                user_profile_to_home.putExtra("User", current_user);
 
-                startActivity(new Intent(UserProfileScreen.this, HomeScreen.class));
+                startActivity(user_profile_to_home);
                 finish();
-                return true;
             }
 
             case R.id.logut_menu: {
                 Log.d(TAG, "Selected: Logout");
 
-                fAuth.signOut();
-                startActivity(new Intent(UserProfileScreen.this, LoginScreen.class));
-                finish();
-                return true;
+                Log.d(TAG, "Sending signOut request to server");
+                client.sendGetRequest(ServerStrings.USER_LOGOUT.toString(), new Callback() {
+                    @Override
+                    public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                        Log.d(TAG, e.getMessage());
+                    }
 
+                    @Override
+                    public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                        String responseBody = response.body().string();
+                        //TODO: fix this, right now response body is empty..  why?
+                        Log.d(TAG, "Server response: " + responseBody);
+                        if (responseBody.equals("User Signed Out Successfully")) {
+                            startActivity(new Intent(UserProfileScreen.this, LoginScreen.class));
+                            finish();
+                        }
+                    }
+                });
             }
             default:
                 return super.onOptionsItemSelected(item);
@@ -136,21 +166,19 @@ public class UserProfileScreen extends AppCompatActivity {
     private void init_widgets() {
         Log.d(TAG, "init_widgets : initializing widgets");
 
-        profile_username = (TextView) findViewById(R.id.profile_username_user);
-        profile_picture = (ImageView) findViewById(R.id.profile_pic_user);
-        edit_profile = (ImageView) findViewById(R.id.edit_profile_user);
-        favorite_stations = (ListView) findViewById(R.id.favorite_list_view);
+        profile_username = findViewById(R.id.profile_username_user);
+        profile_picture = findViewById(R.id.profile_pic_user);
+        edit_profile = findViewById(R.id.edit_profile_user);
+        favorite_stations = findViewById(R.id.favorite_list_view);
 
         // click on profile picture to change it //
-        edit_profile.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent openGalleryIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                startActivityForResult(openGalleryIntent, 1000);
-            }
+        edit_profile.setOnClickListener(v -> {
+            Intent openGalleryIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+            startActivityForResult(openGalleryIntent, 1000);
         });
     }
 
+    // TODO: IMAGE HANDLE, this also needs to be inside the SERVER (LATER) //
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -163,23 +191,12 @@ public class UserProfileScreen extends AppCompatActivity {
                 uploadImageToFirebase(imageUri);
             }
         }
-
     }
 
     private void uploadImageToFirebase(Uri imageUri) {
-        StorageReference fileRef = this.fStorage.child("users/" + fAuth.getCurrentUser().getUid() + "profile_pic.png");
-        fileRef.putFile(imageUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-            @Override
-            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                fileRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                    @Override
-                    public void onSuccess(Uri uri) {
-                        Picasso.get().load(uri).into(profile_picture);
-                    }
-                });
-            }
-        });
-
+        StorageReference fileRef = this.fStorage.child("users/" + current_user.getID() + "profile_pic.png");
+        fileRef.putFile(imageUri).addOnSuccessListener(taskSnapshot -> fileRef.getDownloadUrl().
+                addOnSuccessListener(uri -> Picasso.get().load(uri).into(profile_picture)));
     }
 
 
@@ -189,64 +206,68 @@ public class UserProfileScreen extends AppCompatActivity {
     private void set_user_data_in_layout() {
         Log.d(TAG, "set_user_data_in_profile: Updating User Profile");
 
-        StorageReference profileRef = this.fStorage.child("users/" + fAuth.getCurrentUser().getUid() + "profile_pic.png");
-        profileRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-            @Override
-            public void onSuccess(Uri uri) {
-                Picasso.get().load(uri).into(profile_picture);
-            }
-        });
+        StorageReference profileRef = this.fStorage.child("users/" + current_user.getID() + "profile_pic.png");
+        profileRef.getDownloadUrl().addOnSuccessListener(uri -> Picasso.get().load(uri).into(profile_picture));
 
-        this.profile_username.setText(this.curr_user.getUserName());
+        this.profile_username.setText(this.current_user.getUserName());
         //below should be the entire code for the user profile..//
         String[] stations = favorite_station_map.keySet().toArray(new String[0]);
-        Log.d(TAG, "FAVORITE STATIONS: => " + stations.toString());
+        Log.d(TAG, "Favorite Stations => " + Arrays.toString(stations));
 
-        ArrayAdapter<String> station_adapter = new ArrayAdapter<String>(this, com.google.android.material.R.layout.support_simple_spinner_dropdown_item, stations);
+        ArrayAdapter<String> station_adapter = new ArrayAdapter<>(this, com.google.android.material.R.layout.support_simple_spinner_dropdown_item, stations);
         this.favorite_stations.setAdapter(station_adapter);
-        this.favorite_stations.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        this.favorite_stations.setOnItemClickListener((parent, view, position, id) -> {
 
-                String chosen_station = (String) favorite_stations.getItemAtPosition(position);
-                LatLng loc = favorite_station_map.get(chosen_station);
+            String chosen_station = (String) favorite_stations.getItemAtPosition(position);
+            LatLng loc = favorite_station_map.get(chosen_station);
 
-                Log.d(TAG, "LOCATION IS : => " + loc);
+            Intent profile_screen_to_home = new Intent(UserProfileScreen.this, HomeScreen.class);
+            profile_screen_to_home.putExtra("User", current_user);
+            profile_screen_to_home.putExtra("Lat", loc.latitude);
+            profile_screen_to_home.putExtra("Lng", loc.longitude);
+            startActivity(profile_screen_to_home);
+            finish();
 
-                Intent profile_screen_to_home = new Intent(UserProfileScreen.this, HomeScreen.class);
-                profile_screen_to_home.putExtra("Lat", loc.latitude);
-                profile_screen_to_home.putExtra("Lng", loc.longitude);
-                startActivity(profile_screen_to_home);
-                finish();
-
-            }
         });
     }
 
-    private void fetch_data() {
-        fStore.collection("users").document(this.curr_user.getID())
-                .collection("favorites").get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-                            FavoritesDB db = new FavoritesDB();
-                            for (QueryDocumentSnapshot document : task.getResult()) {
-                                // load all stations data from database to the hashmap with unique key of doc id//
-                                FavoriteObj tmp_favorite = db.GetFavoriteStationFromDB(document);
-                                favorite_station_map.put(tmp_favorite.getStation_name(),
-                                        tmp_favorite.getStation_LatLng());
-                            }
-                        } else {
-                            Log.e(TAG, "fetch_data: Error getting documents: ", task.getException());
-                        }
-                        //after we got the data from db, set it in the layout//
-                        init_widgets();
-                        set_user_data_in_layout();
-                    }
-                });
+    private void load_user_profile() {
+        final CountDownLatch latch = new CountDownLatch(1);
 
+        Log.d(TAG, "loading_stations_data: loading Stations data from database to object");
+        client.sendGetRequest(ServerStrings.ALL_FAVORITES + "/:" + current_user.getID() + "/favorites", new Callback() {
+            @Override
+            public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                Log.d(TAG, e.getMessage());
+            }
 
+            @Override
+            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                String responseBody = response.body().string();
+                Log.d(TAG, "Server response: " + responseBody);
+                JsonArray parser = JsonParser.parseString(responseBody).getAsJsonArray();
+                List<FavoriteObj> parsed_stations = Fdb.station_parser(parser);
+
+                Log.d(TAG, "Station after parsing:" + "\n" + parsed_stations);
+                for (FavoriteObj station : parsed_stations) {
+                    favorite_station_map.put(station.getStation_name(), station.getStation_LatLng());
+                    Log.d(TAG, station.toString());
+                }
+                latch.countDown();
+            }
+        });
+
+        //doing this so it will wait for the onResponse to complete//
+        try {
+            latch.await();
+            if (!favorite_station_map.isEmpty()) {
+                init_widgets();
+                set_user_data_in_layout();
+            }
+
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 }
 

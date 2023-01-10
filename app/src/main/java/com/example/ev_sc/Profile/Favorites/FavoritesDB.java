@@ -1,9 +1,15 @@
 package com.example.ev_sc.Profile.Favorites;
 
 import android.util.Log;
+
 import com.google.firebase.firestore.GeoPoint;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class FavoritesDB {
 
@@ -24,19 +30,24 @@ public class FavoritesDB {
         return fav_station;
     }
 
-    /**
-     * this method parses a firebase Favorite document into a Favorite object.
-     *
-     * @param doc Firebase Favorite Document
-     * @return Object Of Favorite Type.
-     */
-    public FavoriteObj GetFavoriteStationFromDB(QueryDocumentSnapshot doc) {
-        //parser from firebase to object
-        String s_name = doc.getString("Station");
-        String SID = doc.getString("SID");
-        GeoPoint s_loc = doc.getGeoPoint("Location");
+    public List<FavoriteObj> station_parser(JsonArray parser) {
+        List<FavoriteObj> parsed_stations_list = new ArrayList<>();
+        for (JsonElement element : parser) {
+            JsonObject station = element.getAsJsonObject();
+            Log.d(TAG, "JSON Object: " + station);
 
-        return new FavoriteObj(SID, s_name, s_loc);
+            JsonObject locationObject = station.get("Location").getAsJsonObject();
+            double latitude = locationObject.get("latitude").getAsDouble();
+            double longitude = locationObject.get("longitude").getAsDouble();
+            GeoPoint location = new GeoPoint(latitude, longitude);
 
+            String sId = station.get("SID").getAsString();
+            String name = station.get("Station").getAsString();
+
+            FavoriteObj favoriteObj = new FavoriteObj(location, sId, name);
+            // Add the new Favorite station to the all_stations list
+            parsed_stations_list.add(favoriteObj);
+        }
+        return parsed_stations_list;
     }
 }

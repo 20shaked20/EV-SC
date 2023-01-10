@@ -42,6 +42,7 @@ public class StationDB {
         for (JsonElement element : parser) {
             JsonObject station = element.getAsJsonObject();
             Log.d(TAG, "JSON Object: " + station);
+
             int chargingStations = station.get("ChargingStations").getAsInt();
             String address = station.get("Address").getAsString();
             String name = station.get("Name").getAsString();

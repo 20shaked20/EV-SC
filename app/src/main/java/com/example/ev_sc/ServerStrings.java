@@ -6,7 +6,9 @@ public enum ServerStrings {
     ALL_STATIONS("http://10.0.2.2:4242/api/stations"),
     UPDATE_STATION("http://10.0.2.2:4242/api/station"),
     ADD_REVIEW("http://10.0.2.2:4242/api/station"),
-    ADD_FAVORITE("http://10.0.2.2:4242/api/user");
+    ADD_FAVORITE("http://10.0.2.2:4242/api/user"),
+    ALL_FAVORITES("http://10.0.2.2:4242/api/user"),
+    USER_LOGOUT("http://10.0.2.2:4242/api/user/logout");
 
     private final String text;
 

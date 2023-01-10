@@ -122,12 +122,9 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
     /*user profile handle*/
     private UserObj current_user;
     private Location currentLocation;
+    private boolean favorite_flag = false;
 
     private final HomeScreenLogics HSL = new HomeScreenLogics();
-
-    //tmp// // TODO: This needs to be removed
-    LatLng fav_loc;
-
 
     @Override
     public void onCreate(Bundle Instance) {
@@ -137,12 +134,9 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
         search_bar = findViewById(R.id.search_bar);
 
         getLocationPermission();
+
     }
     // TODO: tmp for favorite locating after moving from profile to home//
-//        Bundle extras = getIntent().getExtras();
-//        if (extras != null) {
-//            this.fav_loc = new LatLng((Double) extras.get("Lat"), (Double) extras.get("Lng"));
-//        }
 
 
     /**
@@ -458,9 +452,15 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
     private void moveCamera(LatLng latLng) {
         Log.d(TAG, "moveCamera: Moving the camera to: (lat: " + latLng.latitude + ", lng: " + latLng.longitude + " )");
 
-        if (fav_loc != null) {
-            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(fav_loc, HomeScreen.DEFAULT_ZOOM));
-            fav_loc = null;
+        Bundle extras = getIntent().getExtras();
+        if (extras.get("Lat") != null && extras.get("Lng") != null) {
+            if (!favorite_flag) {
+                //this handles case where the user requested to move to a favorite location from the userProfile//
+                LatLng fav_loc = new LatLng((Double) extras.get("Lat"), (Double) extras.get("Lng"));
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(fav_loc, HomeScreen.DEFAULT_ZOOM));
+                favorite_flag = true;
+            } else
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, HomeScreen.DEFAULT_ZOOM));
         } else
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, HomeScreen.DEFAULT_ZOOM));
     }
@@ -583,7 +583,7 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
      */
     private void AddFavoriteStation(FloatingActionButton favorite_station, StationObj station) {
         favorite_station.setOnClickListener(v -> {
-            FavoriteObj favorite = new FavoriteObj(station.getID(), station.getStation_name(), station.getLocation());
+            FavoriteObj favorite = new FavoriteObj(station.getLocation(), station.getID(), station.getStation_name());
             HashMap<String, Object> mapped_favorite = Fdb.MapFavorite(favorite);
             Log.d(TAG, "Sending favorite post request to server");
             client.sendPostRequest(ServerStrings.ADD_FAVORITE + "/:" + current_user.getID() + "/favorite", mapped_favorite, new Callback() {
