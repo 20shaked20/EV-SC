@@ -77,7 +77,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutionException;
 
 import me.xdrop.fuzzywuzzy.FuzzySearch;
 import okhttp3.Call;
@@ -124,8 +126,6 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
     //tmp// // TODO: This needs to be removed
     LatLng fav_loc;
 
-//    final CountDownLatch latch = new CountDownLatch(1);
-
     @Override
     public void onCreate(Bundle Instance) {
         super.onCreate(Instance);
@@ -134,12 +134,27 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
         search_bar = findViewById(R.id.search_bar);
 
         getLocationPermission();
+
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+//            loadStationDataAsync()
+//                    .thenAccept(result -> {
+//                        create_map_markers();
+//                        BuildAllPopUpStationWindows();
+//                    })
+//                    .exceptionally(e -> null);
+//        }
+//        try {
+//            loadStationDataAsync().get();
+//        } catch (InterruptedException | ExecutionException e) {
+//            e.printStackTrace();
+//        }
         load_user_data();
         load_stations_data();
-        //create_map_markers();
-       // BuildAllPopUpStationWindows();
-        }
-        // TODO: tmp for favorite locating after moving from profile to home//
+//        create_map_markers();
+//        BuildAllPopUpStationWindows();
+
+    }
+    // TODO: tmp for favorite locating after moving from profile to home//
 //        Bundle extras = getIntent().getExtras();
 //        if (extras != null) {
 //            this.fav_loc = new LatLng((Double) extras.get("Lat"), (Double) extras.get("Lng"));
@@ -193,6 +208,13 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
         }
     }
 
+//    private CompletableFuture<Void> loadStationDataAsync() {
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+//            return CompletableFuture.runAsync(this::load_stations_data);
+//        }
+//        return null;
+//    }
+
     /**
      * This method is responsible for loading all the data from the firestore database,
      * it loads it to a HashMap we then use.
@@ -217,7 +239,6 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
                     all_stations.put(station.getStation_name(),station);
                     Log.d(TAG, station.toString());
                 }
-               // latch.countDown();
             }
         });
     }
@@ -230,7 +251,7 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
     private void load_user_data() {
         Log.d(TAG, "load_user_data: loading User data from database");
         current_user = getIntent().getParcelableExtra("User");
-        Log.d(TAG,"Client : " + current_user);
+        Log.d(TAG, "Client : " + current_user);
     }
 
     /**
@@ -459,18 +480,14 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, HomeScreen.DEFAULT_ZOOM));
     }
 
-    private void create_map_markers(){
-        load_stations_data();
-//        try {
-//            latch.await();
-//        } catch (InterruptedException e) {
-//            e.printStackTrace();
-//        }
-        Log.d(TAG,"Map Markers: " + all_stations);
-        for(Map.Entry<String, StationObj> station: all_stations.entrySet()){
+    private void create_map_markers() {
+//        load_stations_data();
+        Log.d(TAG, "Map Markers: " + all_stations);
+        for (Map.Entry<String, StationObj> station : all_stations.entrySet()) {
             createMarker(station.getValue().getLatLng(), station.getValue().getStation_name());
         }
     }
+
     /**
      * this method is responsible for creating a station marker on the map.
      *
