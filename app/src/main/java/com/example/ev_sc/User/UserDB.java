@@ -11,26 +11,22 @@ import java.util.Map;
 
 public class UserDB {
 
-    FirebaseFirestore fStore = FirebaseFirestore.getInstance();
     final private String TAG = "UserDB";
 
-    /**
-     * this method adds a new user to the database.
-     *
-     * @param User user Object
-     */
-    public void AddUserToDatabase(UserObj User) {
-        DocumentReference documentReference = fStore.collection("users").document(User.getID());
-        Map<String, Object> user = new HashMap<>();
 
-        user.put("FirstName", User.getFirstName());
-        user.put("LastName", User.getLastName());
-        user.put("UserName", User.getUserName());
-        user.put("Phone", User.getPhone());
-        user.put("Permission", User.getPermission());
+    public HashMap<String,String> MapUser(String email, String pass, String FirstName, String LastName, String UserName, String Phone, String Permission) {
+        HashMap<String, String> user = new HashMap<>();
 
-        //Check//
-        documentReference.set(user).addOnSuccessListener(unused -> Log.d(TAG, "user Profile is created for " + User.getID()));
+        user.put("email", email);
+        user.put("pass", pass);
+        user.put("FirstName", FirstName);
+        user.put("LastName", LastName);
+        user.put("UserName", UserName);
+        user.put("Phone", Phone);
+        user.put("Permission", Permission);
+
+        Log.d(TAG,"User mapped to: " + "\n" + user);
+        return user;
     }
 
     /**

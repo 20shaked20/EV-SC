@@ -18,6 +18,8 @@ import java.util.Map;
 
 public class StationObj implements StationInterface, Parcelable {
 
+    private static final String TAG = "StationObj"; // tag for logging
+
     private Double sumOf_reviews;
     private double avg_grade;
     private String station_address;

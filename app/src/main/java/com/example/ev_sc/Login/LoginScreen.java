@@ -5,20 +5,18 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+
+import com.example.ev_sc.APIClient;
 import com.example.ev_sc.Home.HomeScreen;
 import com.example.ev_sc.Profile.Register.RegisterScreen;
 import com.example.ev_sc.R;
+import com.example.ev_sc.ServerStrings;
 import com.example.ev_sc.User.UserObj;
-import com.google.firebase.auth.FirebaseAuth;
-import com.example.ev_sc.APIClient;
 import com.google.gson.Gson;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParseException;
 
 import java.io.IOException;
 
@@ -35,6 +33,8 @@ public class LoginScreen extends Activity {
     EditText password_enter_login;
 
     final String TAG = "Login Screen";
+    APIClient client = new APIClient();
+
 
 
     @Override
@@ -72,46 +72,41 @@ public class LoginScreen extends Activity {
      * Adding the listener click to move from Login screen to Home screen Via LOGIN BUTTON
      */
     private void OnClickLoginButton() {
-        login_button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.d(TAG, "PRESSED LOGIN");
+        login_button.setOnClickListener(v -> {
+            Log.d(TAG, "PRESSED LOGIN");
 
-                String email = username_enter_login.getText().toString().trim();
-                String password = password_enter_login.getText().toString().trim();
+            String email = username_enter_login.getText().toString().trim();
+            String password = password_enter_login.getText().toString().trim();
 
-                if (TextUtils.isEmpty(email)) {
-                    username_enter_login.setError("Email Is Required");
-                    return;
-                }
-                if (TextUtils.isEmpty(password)) {
-                    password_enter_login.setError("Password Is Required");
-                }
-                /*TODO: add more exceptions*/
-
-                //authenticate the user
-//                System.out.println("Email:" + email+ "Pass: "+ password);
-                APIClient client = new APIClient();
-                Log.d(TAG,"Sending login request to server");
-                client.sendGetRequest("http://10.0.2.2:4242/api/user/auth/:" + email + "/:" + password, new Callback() {
-                    @Override
-                    public void onFailure(Call call, IOException e) {
-                        Log.d(TAG,e.getMessage());
-                    }
-
-                    @Override
-                    public void onResponse(Call call, Response response) throws IOException {
-                        String responseBody = response.body().string();
-                        Log.d(TAG, "Server response: " + responseBody);
-                        Gson gson = new Gson();
-                        UserObj user = gson.fromJson(responseBody, UserObj.class);
-                        Intent login_to_map = new Intent(getApplicationContext(), HomeScreen.class);
-                        login_to_map.putExtra("User",user);
-                        startActivity(login_to_map);
-                        finish();
-                    }
-                });
+            if (TextUtils.isEmpty(email)) {
+                username_enter_login.setError("Email Is Required");
+                return;
             }
+            if (TextUtils.isEmpty(password)) {
+                password_enter_login.setError("Password Is Required");
+            }
+            /*TODO: add more exceptions*/
+
+            //authenticate the user
+            Log.d(TAG,"Sending login request to server");
+            client.sendGetRequest(ServerStrings.AUTH + email + "/:" + password, new Callback() {
+                @Override
+                public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                    Log.d(TAG,e.getMessage());
+                }
+
+                @Override
+                public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                    String responseBody = response.body().string();
+                    Log.d(TAG, "Server response: " + responseBody);
+                    Gson gson = new Gson();
+                    UserObj user = gson.fromJson(responseBody, UserObj.class);
+                    Intent login_to_map = new Intent(getApplicationContext(), HomeScreen.class);
+                    login_to_map.putExtra("User",user);
+                    startActivity(login_to_map);
+                    finish();
+                }
+            });
         });
     }
 }

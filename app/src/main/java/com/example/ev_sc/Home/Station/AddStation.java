@@ -44,43 +44,43 @@ public class AddStation extends Activity {
 
     private void OnClickAddButton() {
     
-        add_station_button.setOnClickListener(view -> {
-
-            get_user_input();
-
-            if (!validate_input(name, address, charging_stations, station_average_grade, latitude, longtitude)) {
-                Toast.makeText(AddStation.this, "Error! Incorrect Input!", Toast.LENGTH_SHORT).show();
-                Log.e(TAG, "Couldn't validate input for station");
-                return;
-            }
-            // preparing the geo location
-            double lat = Double.parseDouble(latitude);
-            double lon = Double.parseDouble(longtitude);
-            GeoPoint station_coords = new GeoPoint(lat, lon);
-
-            // preparing other station elements
-            int charging = Integer.parseInt(charging_stations);
-            double station_grade = Double.parseDouble(station_average_grade);
-
-            String s_id = UUID.randomUUID().toString();
-            Double sumOf_reviews = Double.valueOf(0);
-            StationObj station_to_add = new StationObj(station_grade, address, charging, name, station_coords,s_id, sumOf_reviews);
-            StationObj.StationDB db = new StationObj.StationDB();
-            Log.d(TAG, "\n" + station_to_add.toString()); // logging station details for debugging
-
-            // adding station to database
-            try {
-                db.AddStationToDatabase(station_to_add);
-                Toast.makeText(AddStation.this, "Station Added!", Toast.LENGTH_SHORT).show();
-                Log.d(TAG, "Success");
-            } catch (Exception e) {
-                Toast.makeText(AddStation.this, "Error ! " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                Log.e(TAG, "Failure adding station to database because of an exception, " + e.getMessage());
-            }
-
-            clear_text();
-            clear_input();
-        });
+//        add_station_button.setOnClickListener(view -> {
+//
+//            get_user_input();
+//
+//            if (!validate_input(name, address, charging_stations, station_average_grade, latitude, longtitude)) {
+//                Toast.makeText(AddStation.this, "Error! Incorrect Input!", Toast.LENGTH_SHORT).show();
+//                Log.e(TAG, "Couldn't validate input for station");
+//                return;
+//            }
+//            // preparing the geo location
+//            double lat = Double.parseDouble(latitude);
+//            double lon = Double.parseDouble(longtitude);
+//            GeoPoint station_coords = new GeoPoint(lat, lon);
+//
+//            // preparing other station elements
+//            int charging = Integer.parseInt(charging_stations);
+//            double station_grade = Double.parseDouble(station_average_grade);
+//
+//            String s_id = UUID.randomUUID().toString();
+//            Double sumOf_reviews = Double.valueOf(0);
+//            StationObj station_to_add = new StationObj(station_grade, address, charging, name, station_coords,s_id, sumOf_reviews);
+//            StationObj.StationDB db = new StationObj.StationDB();
+//            Log.d(TAG, "\n" + station_to_add.toString()); // logging station details for debugging
+//
+//            // adding station to database
+//            try {
+//                db.AddStationToDatabase(station_to_add);
+//                Toast.makeText(AddStation.this, "Station Added!", Toast.LENGTH_SHORT).show();
+//                Log.d(TAG, "Success");
+//            } catch (Exception e) {
+//                Toast.makeText(AddStation.this, "Error ! " + e.getMessage(), Toast.LENGTH_SHORT).show();
+//                Log.e(TAG, "Failure adding station to database because of an exception, " + e.getMessage());
+//            }
+//
+//            clear_text();
+//            clear_input();
+//        });
     }
 
     private boolean validate_input(String s_name, String s_address, String s_charging, String s_grade, String s_lat, String s_lon) {

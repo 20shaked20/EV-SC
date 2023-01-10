@@ -2,6 +2,10 @@ package com.example.ev_sc;
 
 import android.util.Log;
 
+import com.example.ev_sc.User.UserObj;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+
 import java.io.IOException;
 import java.util.Map;
 
@@ -11,6 +15,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
+import okhttp3.MediaType;
 
 public class APIClient {
 
@@ -28,14 +33,13 @@ public class APIClient {
     }
 
     public void sendPostRequest(String url, Map<String, String> postData, Callback callback) {
-        FormBody.Builder formBuilder = new FormBody.Builder();
-        for (Map.Entry<String, String> entry : postData.entrySet()) {
-            formBuilder.add(entry.getKey(), entry.getValue());
-        }
-        RequestBody formBody = formBuilder.build();
+        Gson gson = new Gson();
+        String json = gson.toJson(postData);
+        MediaType JSON = MediaType.get("application/json; charset=utf-8");
+        RequestBody requestBody = RequestBody.create(json,JSON);
         Request request = new Request.Builder()
                 .url(url)
-                .post(formBody)
+                .post(requestBody)
                 .build();
 
         client.newCall(request).enqueue(callback);

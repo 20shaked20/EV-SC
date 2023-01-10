@@ -33,7 +33,9 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.ev_sc.APIClient;
 import com.example.ev_sc.Home.Station.StationObj;
+import com.example.ev_sc.ServerStrings;
 import com.example.ev_sc.User.UserDB;
 import com.example.ev_sc.User.UserObj;
 import com.example.ev_sc.Profile.AdminProfileScreen;
@@ -57,23 +59,36 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.common.reflect.TypeToken;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.GeoPoint;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
+import java.io.IOException;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CountDownLatch;
 
 import me.xdrop.fuzzywuzzy.FuzzySearch;
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.Response;
 
 
 public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback {
 
 
-    private static final String TAG = "MapHome";
+    private static final String TAG = "Home";
 
     private static final String FINE_LOCATION = Manifest.permission.ACCESS_FINE_LOCATION;
     private static final String COURSE_LOCATION = Manifest.permission.ACCESS_COARSE_LOCATION;
@@ -96,18 +111,20 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
     HashMap<String, View> StationPopUps = new HashMap<String, View>(); //this map is used to map each station to its poppable window//
     private HashMap<String, StationObj> all_stations = new HashMap<String, StationObj>(); // this is used to map all the stations upon login //
 
-    /*firebase*/
-    FirebaseFirestore fStore = FirebaseFirestore.getInstance();
+    /*server*/
+    APIClient client = new APIClient();
+    StationDB db = new StationDB();
 
     /*user profile handle*/
-    private final FirebaseAuth fAuth = FirebaseAuth.getInstance();
     private UserObj current_user;
     private Location currentLocation;
 
-    private HomeScreenLogics HSL;
+    private HomeScreenLogics HSL = new HomeScreenLogics();
 
-    //tmp//
+    //tmp// // TODO: This needs to be removed
     LatLng fav_loc;
+
+//    final CountDownLatch latch = new CountDownLatch(1);
 
     @Override
     public void onCreate(Bundle Instance) {
@@ -115,18 +132,19 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
         setContentView(R.layout.home);
 
         search_bar = findViewById(R.id.search_bar);
-        HSL = new HomeScreenLogics();
 
         getLocationPermission();
         load_user_data();
         load_stations_data();
-
+        //create_map_markers();
+       // BuildAllPopUpStationWindows();
+        }
         // TODO: tmp for favorite locating after moving from profile to home//
 //        Bundle extras = getIntent().getExtras();
 //        if (extras != null) {
 //            this.fav_loc = new LatLng((Double) extras.get("Lat"), (Double) extras.get("Lng"));
 //        }
-    }
+
 
     /**
      * this method responsible for creating the menu bar
@@ -181,30 +199,29 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
      */
     private void load_stations_data() {
         Log.d(TAG, "loading_stations_data: loading Stations data from database to object");
+        client.sendGetRequest(ServerStrings.ALL_STATIONS.toString(),new Callback() {
+            @Override
+            public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                Log.d(TAG,e.getMessage());
+            }
 
-        fStore.collection("stations")
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-                            StationDB s_DB = new StationDB();
-                            for (QueryDocumentSnapshot document : task.getResult()) {
-                                // load all stations data from database to the hashmap with unique key of doc id//
-                                StationObj tmp_station = s_DB.getStationFromDatabase(document);
-                                all_stations.put(document.getId(), tmp_station);
+            @Override
+            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                String responseBody = response.body().string();
+                Log.d(TAG, "Server response: " + responseBody);
+                JsonArray parser = JsonParser.parseString(responseBody).getAsJsonArray();
+                List<StationObj> parsed_stations = db.station_parser(parser);
 
-                                //init map markers on the map//
-                                createMarker(tmp_station.getLatLng(), tmp_station.getStation_name());
-
-                            }
-                        } else {
-                            Log.e(TAG, "geoLocate: Error getting documents: ", task.getException());
-                        }
-                        BuildAllPopUpStationWindows();
-                    }
-                });
+                Log.d(TAG,"Station after parsing:" + "\n" + parsed_stations);
+                for(StationObj station: parsed_stations){
+                    all_stations.put(station.getStation_name(),station);
+                    Log.d(TAG, station.toString());
+                }
+               // latch.countDown();
+            }
+        });
     }
+
 
     /**
      * this method loads the current user data,
@@ -213,8 +230,7 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
     private void load_user_data() {
         Log.d(TAG, "load_user_data: loading User data from database");
         current_user = getIntent().getParcelableExtra("User");
-        Log.d(TAG,"Client UID: " + current_user);
-
+        Log.d(TAG,"Client : " + current_user);
     }
 
     /**
@@ -443,6 +459,18 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, HomeScreen.DEFAULT_ZOOM));
     }
 
+    private void create_map_markers(){
+        load_stations_data();
+//        try {
+//            latch.await();
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
+        Log.d(TAG,"Map Markers: " + all_stations);
+        for(Map.Entry<String, StationObj> station: all_stations.entrySet()){
+            createMarker(station.getValue().getLatLng(), station.getValue().getStation_name());
+        }
+    }
     /**
      * this method is responsible for creating a station marker on the map.
      *
@@ -479,7 +507,7 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
      * This private method is responsible for building all the station pop up windows.
      */
     private void BuildAllPopUpStationWindows() {
-        Log.d(TAG, "BuildAllPopUpStationsWindows: building all the stations windows " + this.all_stations.toString());
+        Log.d(TAG, "BuildAllPopUpStationsWindows: building all the stations windows " + this.all_stations);
 
         for (Map.Entry<String, StationObj> station : this.all_stations.entrySet()) {
             Log.d(TAG, "Creating STation Window for STATION : => " + station.getValue());
