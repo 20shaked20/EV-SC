@@ -1,37 +1,27 @@
 package com.example.ev_sc.Profile.Favorites;
 
 import android.util.Log;
-
-import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.GeoPoint;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
-
 import java.util.HashMap;
-import java.util.Map;
 
 public class FavoritesDB {
 
-    FirebaseFirestore fStore = FirebaseFirestore.getInstance();
 
     final private String TAG = "FavoritesDB";
 
     /**
-     * this method adds a new favorite station to the database.
+     * this method maps a favorite object
      */
-    public void AddFavoriteStationToDB(FavoriteObj curr_fav, String UID) {
-        Log.d(TAG, "Added new favorite Station: => " + curr_fav.toString() + " For user: => " + UID);
-        CollectionReference f = fStore.collection("users").document(UID)
-                .collection("favorites");
+    public HashMap<String, Object> MapFavorite(FavoriteObj curr_fav) {
+        Log.d(TAG, "Added new favorite Station  => " + curr_fav.toString());
 
-        Map<String, Object> fav_station = new HashMap<>();
-        fav_station.put("Station", curr_fav.getStation_name());
-        fav_station.put("SID", curr_fav.getStation_id());
+        HashMap<String, Object> fav_station = new HashMap<>();
         fav_station.put("Location", curr_fav.getStation_GeoPoint());
+        fav_station.put("SID", curr_fav.getStation_id());
+        fav_station.put("Station", curr_fav.getStation_name());
 
-        //Check//
-        f.add(fav_station).addOnSuccessListener(unused -> Log.d(TAG, "reviews Profile is created for "));
-
+        return fav_station;
     }
 
     /**

@@ -33,6 +33,7 @@ public class LoginScreen extends Activity {
     EditText password_enter_login;
 
     final String TAG = "Login Screen";
+
     APIClient client = new APIClient();
 
 

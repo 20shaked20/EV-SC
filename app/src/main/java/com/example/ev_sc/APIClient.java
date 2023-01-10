@@ -32,7 +32,7 @@ public class APIClient {
         Log.d(TAG,"Sent GET request: " + request);
     }
 
-    public void sendPostRequest(String url, Map<String, String> postData, Callback callback) {
+    public void sendPostRequest(String url, Map<String, Object> postData, Callback callback) {
         Gson gson = new Gson();
         String json = gson.toJson(postData);
         MediaType JSON = MediaType.get("application/json; charset=utf-8");

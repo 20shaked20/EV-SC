@@ -13,13 +13,22 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.ev_sc.APIClient;
 import com.example.ev_sc.Home.HomeScreen;
 import com.example.ev_sc.Home.Station.StationObj;
 import com.example.ev_sc.Home.StationDB;
 import com.example.ev_sc.Login.LoginScreen;
 import com.example.ev_sc.R;
+import com.example.ev_sc.ServerStrings;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.GeoPoint;
+
+import java.io.IOException;
+import java.util.HashMap;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.Response;
 
 public class EditStationScreen extends AppCompatActivity {
 
@@ -34,6 +43,8 @@ public class EditStationScreen extends AppCompatActivity {
 
     private static final String TAG = "Edit Station";
     FirebaseAuth fAuth = FirebaseAuth.getInstance();
+    APIClient client = new APIClient();
+    StationDB db = new StationDB();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,10 +69,24 @@ public class EditStationScreen extends AppCompatActivity {
                 station.setLocation(updated_coords);
                 // add station reviews
 
-                StationDB.updateStationToDatabase(station);
+                HashMap<String, Object> updateStation = db.MapStation(station);
+
+                Log.d(TAG, "Sending Grade update request to server");
+                client.sendPostRequest(ServerStrings.UPDATE_STATION + "/:" + station.getID(), updateStation, new Callback() {
+                    @Override
+                    public void onFailure(Call call, IOException e) {
+                        Log.d(TAG, e.getMessage());
+                    }
+
+                    @Override
+                    public void onResponse(Call call, Response response) throws IOException {
+                        String responseBody = response.body().string();
+                        Log.d(TAG, "Server response: " + responseBody);
+
+                    }
+                });
 
                 Log.d(TAG, "Station edited, new station details:" + "\n" + station);
-                Toast.makeText(this, "Station Edited Successfully!", Toast.LENGTH_LONG);
                 finish();
             });
             builder.setNegativeButton("No", (dialog, which) -> {

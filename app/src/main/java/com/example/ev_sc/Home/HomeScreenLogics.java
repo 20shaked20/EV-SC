@@ -16,5 +16,15 @@ public class HomeScreenLogics {
         return EARTH_RADIUS * c;
     }
 
+    public double AverageRating(double SumOf_reviews, double user_rating, double curr_grade) {
+        double grade = 0;
+        if (SumOf_reviews == 0) {
+            grade = user_rating;
+        } else {
+            grade = (SumOf_reviews * curr_grade + user_rating) / (SumOf_reviews + 1);
+        }
+        return grade;
+    }
+
 
 }

@@ -111,7 +111,7 @@ public class RegisterScreen extends Activity {
                     line_username_register.setError("Username is required");
                 }
 
-                HashMap<String,String> newUser = db.MapUser(
+                HashMap<String,Object> newUser = db.MapUser(
                         email,
                         password,
                         first_name,
