@@ -77,9 +77,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ExecutionException;
 
 import me.xdrop.fuzzywuzzy.FuzzySearch;
 import okhttp3.Call;
@@ -126,6 +124,7 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
     //tmp// // TODO: This needs to be removed
     LatLng fav_loc;
 
+
     @Override
     public void onCreate(Bundle Instance) {
         super.onCreate(Instance);
@@ -134,25 +133,10 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
         search_bar = findViewById(R.id.search_bar);
 
         getLocationPermission();
-
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-//            loadStationDataAsync()
-//                    .thenAccept(result -> {
-//                        create_map_markers();
-//                        BuildAllPopUpStationWindows();
-//                    })
-//                    .exceptionally(e -> null);
-//        }
-//        try {
-//            loadStationDataAsync().get();
-//        } catch (InterruptedException | ExecutionException e) {
-//            e.printStackTrace();
-//        }
-        load_user_data();
-        load_stations_data();
-//        create_map_markers();
-//        BuildAllPopUpStationWindows();
-
+//        load_user_data();
+//        load_stations_data();
+        //create_map_markers();
+        // BuildAllPopUpStationWindows();
     }
     // TODO: tmp for favorite locating after moving from profile to home//
 //        Bundle extras = getIntent().getExtras();
@@ -208,39 +192,50 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
         }
     }
 
-//    private CompletableFuture<Void> loadStationDataAsync() {
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-//            return CompletableFuture.runAsync(this::load_stations_data);
-//        }
-//        return null;
-//    }
-
     /**
      * This method is responsible for loading all the data from the firestore database,
      * it loads it to a HashMap we then use.
      */
     private void load_stations_data() {
+        final CountDownLatch latch = new CountDownLatch(1);
+
         Log.d(TAG, "loading_stations_data: loading Stations data from database to object");
-        client.sendGetRequest(ServerStrings.ALL_STATIONS.toString(),new Callback() {
+        client.sendGetRequest(ServerStrings.ALL_STATIONS.toString(), new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                Log.d(TAG,e.getMessage());
+                Log.d(TAG, e.getMessage());
             }
 
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+//                if (!all_stations.isEmpty()) {
+//                    call.cancel();
+//                    return;
+//                }
                 String responseBody = response.body().string();
                 Log.d(TAG, "Server response: " + responseBody);
                 JsonArray parser = JsonParser.parseString(responseBody).getAsJsonArray();
                 List<StationObj> parsed_stations = db.station_parser(parser);
 
-                Log.d(TAG,"Station after parsing:" + "\n" + parsed_stations);
-                for(StationObj station: parsed_stations){
-                    all_stations.put(station.getStation_name(),station);
+                Log.d(TAG, "Station after parsing:" + "\n" + parsed_stations);
+                for (StationObj station : parsed_stations) {
+                    all_stations.put(station.getStation_name(), station);
                     Log.d(TAG, station.toString());
                 }
+                latch.countDown();
             }
         });
+        try {
+            latch.await();
+            if (!all_stations.isEmpty()) {
+                Log.d(TAG, "ALL STATIONS NOW! :=> " +all_stations);
+                create_map_markers();
+                BuildAllPopUpStationWindows();
+            }
+
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
 
@@ -288,6 +283,8 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
      * and calls for geoLocate to locate the required place
      */
     private void init() {
+        load_user_data();
+        load_stations_data();
         Log.d(TAG, "init: initializing");
 
         search_bar.setOnEditorActionListener(new TextView.OnEditorActionListener() {
@@ -481,7 +478,6 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
     }
 
     private void create_map_markers() {
-//        load_stations_data();
         Log.d(TAG, "Map Markers: " + all_stations);
         for (Map.Entry<String, StationObj> station : all_stations.entrySet()) {
             createMarker(station.getValue().getLatLng(), station.getValue().getStation_name());
@@ -499,9 +495,16 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
         MarkerOptions options = new MarkerOptions()
                 .position(latLng)
                 .title(s_name); //TODO: consider using a unique title for markerListener//
-        mMap.addMarker(options);
+        Log.d(TAG, "MARKER OPTIONS FOR STATION -> " + options.getTitle() +", "+ options.getPosition());
+        if (mMap == null) {
+            Log.e(TAG, "mMap object is null, can't create marker" );
+        }
+        else {
+            mMap.addMarker(options);
+            MarkerListener();
+        }
 
-        MarkerListener();
+
     }
 
     /**
