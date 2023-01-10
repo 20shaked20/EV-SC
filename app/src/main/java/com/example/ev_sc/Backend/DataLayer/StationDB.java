@@ -1,12 +1,11 @@
-package com.example.ev_sc.Home;
+package com.example.ev_sc.Backend.DataLayer;
 
 import android.util.Log;
 
-import com.example.ev_sc.Home.Station.StationObj;
+import com.example.ev_sc.Backend.Objects.StationObj;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.GeoPoint;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -14,7 +13,6 @@ import com.google.gson.JsonObject;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class StationDB {
 

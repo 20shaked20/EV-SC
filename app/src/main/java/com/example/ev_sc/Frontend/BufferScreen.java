@@ -1,4 +1,4 @@
-package com.example.ev_sc.Home;
+package com.example.ev_sc.Frontend;
 
 import android.app.Activity;
 import android.os.Bundle;

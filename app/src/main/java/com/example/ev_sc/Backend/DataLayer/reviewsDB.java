@@ -1,11 +1,11 @@
-package com.example.ev_sc.Reviews;
+package com.example.ev_sc.Backend.DataLayer;
 
 import android.util.Log;
 
+import com.example.ev_sc.Backend.Objects.reviewsObj;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.HashMap;
-import java.util.Map;
 
 public class reviewsDB {
 

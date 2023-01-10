@@ -1,4 +1,4 @@
-package com.example.ev_sc;
+package com.example.ev_sc.Backend;
 
 public enum ServerStrings {
     AUTH("http://10.0.2.2:4242/api/user/auth/:"),

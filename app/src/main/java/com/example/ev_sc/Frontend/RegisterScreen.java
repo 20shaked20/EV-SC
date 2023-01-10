@@ -1,4 +1,4 @@
-package com.example.ev_sc.Profile.Register;
+package com.example.ev_sc.Frontend;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -9,27 +9,14 @@ import android.view.View;
 
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
-import android.widget.Toast;
 
-import androidx.annotation.NonNull;
-
-import com.example.ev_sc.APIClient;
-import com.example.ev_sc.Home.HomeScreen;
-import com.example.ev_sc.Login.LoginScreen;
-import com.example.ev_sc.ServerStrings;
-import com.example.ev_sc.User.UserDB;
-import com.example.ev_sc.User.UserObj;
+import com.example.ev_sc.Backend.APIClient;
+import com.example.ev_sc.Backend.ServerStrings;
+import com.example.ev_sc.Backend.DataLayer.UserDB;
 import com.example.ev_sc.R;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.gson.Gson;
 
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.Map;
 
 import okhttp3.Call;
 import okhttp3.Callback;

@@ -1,4 +1,4 @@
-package com.example.ev_sc.Profile.EditStation;
+package com.example.ev_sc.Frontend;
 
 import android.app.AlertDialog;
 import android.content.Intent;
@@ -13,13 +13,11 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.ev_sc.APIClient;
-import com.example.ev_sc.Home.HomeScreen;
-import com.example.ev_sc.Home.Station.StationObj;
-import com.example.ev_sc.Home.StationDB;
-import com.example.ev_sc.Login.LoginScreen;
+import com.example.ev_sc.Backend.APIClient;
+import com.example.ev_sc.Backend.Objects.StationObj;
+import com.example.ev_sc.Backend.DataLayer.StationDB;
 import com.example.ev_sc.R;
-import com.example.ev_sc.ServerStrings;
+import com.example.ev_sc.Backend.ServerStrings;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.GeoPoint;
 

@@ -1,7 +1,8 @@
-package com.example.ev_sc.Profile.Favorites;
+package com.example.ev_sc.Backend.DataLayer;
 
 import android.util.Log;
 
+import com.example.ev_sc.Backend.Objects.FavoriteObj;
 import com.google.firebase.firestore.GeoPoint;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;

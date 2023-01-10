@@ -1,4 +1,4 @@
-package com.example.ev_sc.Profile;
+package com.example.ev_sc.Frontend;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -14,10 +14,7 @@ import android.widget.TextView;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.ev_sc.Home.HomeScreen;
-import com.example.ev_sc.Home.Station.AddStation;
-import com.example.ev_sc.Login.LoginScreen;
-import com.example.ev_sc.User.UserObj;
+import com.example.ev_sc.Backend.Objects.UserObj;
 import com.example.ev_sc.R;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -152,7 +149,7 @@ public class AdminProfileScreen extends AppCompatActivity {
 
     private void OnClickAddStationButton() {
         add_station_button.setOnClickListener(view -> {
-            Intent login_to_add_station = new Intent(view.getContext(), AddStation.class);
+            Intent login_to_add_station = new Intent(view.getContext(), AddStationScreen.class);
             startActivityForResult(login_to_add_station, 0);
         });
     }

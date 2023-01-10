@@ -1,4 +1,4 @@
-package com.example.ev_sc.Reviews;
+package com.example.ev_sc.Backend.Objects;
 
 public class reviewsObj {
 

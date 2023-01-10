@@ -1,4 +1,4 @@
-package com.example.ev_sc.Home.Station;
+package com.example.ev_sc.Backend.Objects;
 
 import android.os.Parcel;
 import android.os.Parcelable;

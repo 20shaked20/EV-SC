@@ -1,4 +1,4 @@
-package com.example.ev_sc.Login;
+package com.example.ev_sc.Frontend;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -10,12 +10,10 @@ import android.widget.EditText;
 
 import androidx.annotation.NonNull;
 
-import com.example.ev_sc.APIClient;
-import com.example.ev_sc.Home.HomeScreen;
-import com.example.ev_sc.Profile.Register.RegisterScreen;
+import com.example.ev_sc.Backend.APIClient;
 import com.example.ev_sc.R;
-import com.example.ev_sc.ServerStrings;
-import com.example.ev_sc.User.UserObj;
+import com.example.ev_sc.Backend.ServerStrings;
+import com.example.ev_sc.Backend.Objects.UserObj;
 import com.google.gson.Gson;
 
 import java.io.IOException;

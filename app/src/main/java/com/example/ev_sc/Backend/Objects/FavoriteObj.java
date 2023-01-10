@@ -1,4 +1,4 @@
-package com.example.ev_sc.Profile.Favorites;
+package com.example.ev_sc.Backend.Objects;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.firestore.GeoPoint;

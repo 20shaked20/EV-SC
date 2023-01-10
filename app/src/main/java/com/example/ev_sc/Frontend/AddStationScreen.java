@@ -1,4 +1,4 @@
-package com.example.ev_sc.Home.Station;
+package com.example.ev_sc.Frontend;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -6,21 +6,17 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import com.example.ev_sc.R;
-import com.google.firebase.firestore.GeoPoint;
 
-import java.util.UUID;
-
-public class AddStation extends Activity {
+public class AddStationScreen extends Activity {
 
     EditText station_name;
     EditText station_address;
     EditText station_charging;
     EditText station_avg_grade;
     EditText station_latitude;
-    EditText station_longtitude;
+    EditText station_longitude;
 
     Button add_station_button;
 
@@ -29,7 +25,7 @@ public class AddStation extends Activity {
     String charging_stations;
     String station_average_grade;
     String latitude;
-    String longtitude;
+    String longitude;
 
     private static final String TAG = "Add Station"; // tag for logging
 
@@ -110,7 +106,7 @@ public class AddStation extends Activity {
         }
 
         if (TextUtils.isEmpty(s_lon) || !(TextUtils.isDigitsOnly(s_charging))) {
-            station_longtitude.setError("Longitude is required");
+            station_longitude.setError("Longitude is required");
             return false;
         }
         return true;
@@ -122,7 +118,7 @@ public class AddStation extends Activity {
         station_charging.getText().clear();
         station_avg_grade.getText().clear();
         station_latitude.getText().clear();
-        station_longtitude.getText().clear();
+        station_longitude.getText().clear();
 
         Log.d(TAG,"Cleared user input text");
     }
@@ -133,7 +129,7 @@ public class AddStation extends Activity {
         station_charging = findViewById(R.id.station_charging);
         station_avg_grade = findViewById(R.id.station_avg_grade);
         station_latitude = findViewById(R.id.station_latitude);
-        station_longtitude = findViewById(R.id.station_longtitude);
+        station_longitude = findViewById(R.id.station_longtitude);
         add_station_button = findViewById(R.id.add_station_button);
 
         Log.d(TAG, "Initialized widgets");
@@ -145,10 +141,10 @@ public class AddStation extends Activity {
         charging_stations = station_charging.getText().toString().trim();
         station_average_grade = station_avg_grade.getText().toString().trim();
         latitude = station_latitude.getText().toString().trim();
-        longtitude = station_longtitude.getText().toString().trim();
+        longitude = station_longitude.getText().toString().trim();
 
         Log.d(TAG, "Data to add: " + name + ", " + address + ", " + "charging_stations: " + charging_stations
-                + ", " + "Average Grade: " + station_average_grade + ", " + "Coordinates: " + latitude + "," + longtitude);
+                + ", " + "Average Grade: " + station_average_grade + ", " + "Coordinates: " + latitude + "," + longitude);
     }
 
     private void clear_input(){
@@ -157,7 +153,7 @@ public class AddStation extends Activity {
         charging_stations = "";
         station_average_grade = "";
         latitude = "";
-        longtitude = "";
+        longitude = "";
 
         Log.d(TAG, "Cleared input");
     }
