@@ -16,6 +16,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.ev_sc.Backend.APIClient;
 import com.example.ev_sc.Backend.Objects.StationObj;
 import com.example.ev_sc.Backend.DataLayer.StationDB;
+import com.example.ev_sc.Backend.Objects.UserObj;
 import com.example.ev_sc.R;
 import com.example.ev_sc.Backend.ServerStrings;
 import com.google.firebase.firestore.GeoPoint;
@@ -37,6 +38,9 @@ public class EditStationScreen extends AppCompatActivity {
     private Button save_button;
     private Button remove_button;
 
+    private UserObj current_user;
+    private StationObj current_station;
+
     private static final String TAG = "Edit Station";
     APIClient client = new APIClient();
     StationDB db = new StationDB();
@@ -47,30 +51,30 @@ public class EditStationScreen extends AppCompatActivity {
         setContentView(R.layout.edit_station);
 
         init_widgets();
-        StationObj station = getExtras();
-        set_station_data_in_layout(station);
+        getExtras();
+        set_station_data_in_layout(current_station);
 
-        Log.d(TAG, "Station details:" + "\n" + station);
+        Log.d(TAG, "Station details:" + "\n" + current_station);
 
         save_button.setOnClickListener(view -> {
             AlertDialog.Builder builder = new AlertDialog.Builder(EditStationScreen.this);
             builder.setTitle("Are you sure you want to update station details?");
             builder.setPositiveButton("Yes", (dialog, which) -> {
 
-                station.setStation_name(station_name.getText().toString());
-                station.setStation_address(station_address.getText().toString());
-                station.setCharging_stations(Integer.parseInt(station_charging.getText().toString()));
+                current_station.setStation_name(station_name.getText().toString());
+                current_station.setStation_address(station_address.getText().toString());
+                current_station.setCharging_stations(Integer.parseInt(station_charging.getText().toString()));
                 //parsing geo location//
                 double lat = Double.parseDouble(station_lat.getText().toString().trim());
                 double lon = Double.parseDouble(station_lon.getText().toString().trim());
-                station.setLocation(new GeoPoint(lat, lon));
+                current_station.setLocation(new GeoPoint(lat, lon));
                 // add station reviews
 
-                HashMap<String, Object> updateStation = db.MapStation(station);
-                Log.d(TAG, "STATION!!!!!!!!!!!!!!!!!!!!!!!!!! => " + station);
+                HashMap<String, Object> updateStation = db.MapStation(current_station);
+                Log.d(TAG, "STATION!!!!!!!!!!!!!!!!!!!!!!!!!! => " + current_station);
 
                 Log.d(TAG, "Sending Grade update request to server");
-                client.sendPostRequest(ServerStrings.UPDATE_STATION + station.getID(), updateStation, new Callback() {
+                client.sendPostRequest(ServerStrings.UPDATE_STATION + current_station.getID(), updateStation, new Callback() {
                     @Override
                     public void onFailure(@NonNull Call call, @NonNull IOException e) {
                         Log.d(TAG, e.getMessage());
@@ -84,7 +88,7 @@ public class EditStationScreen extends AppCompatActivity {
                     }
                 });
 
-                Log.d(TAG, "Station edited, new station details:" + "\n" + station);
+                Log.d(TAG, "Station edited, new station details:" + "\n" + current_station);
                 finish();
             });
             builder.setNegativeButton("No", (dialog, which) -> {
@@ -99,7 +103,7 @@ public class EditStationScreen extends AppCompatActivity {
             builder.setPositiveButton("Yes", (dialog, which) -> {
 
                 Log.d(TAG, "Sending remove station request to server");
-                client.sendPostRequest(ServerStrings.REMOVE_STATION + station.getID(), null, new Callback() {
+                client.sendPostRequest(ServerStrings.REMOVE_STATION + current_station.getID(), new HashMap<>(), new Callback() {
                     @Override
                     public void onFailure(@NonNull Call call, @NonNull IOException e) {
                         Log.d(TAG, e.getMessage());
@@ -112,7 +116,7 @@ public class EditStationScreen extends AppCompatActivity {
                     }
                 });
 
-                Log.d(TAG, "Station removed, new station details:" + "\n" + station);
+                Log.d(TAG, "Station removed, new station details:" + "\n" + current_station);
                 finish();
             });
             builder.setNegativeButton("No", (dialog, which) -> {
@@ -143,8 +147,32 @@ public class EditStationScreen extends AppCompatActivity {
             case R.id.map_menu: {
                 Log.d(TAG, "Selected: Move from Profile to map");
 
-                startActivity(new Intent(EditStationScreen.this, HomeScreen.class));
+                Intent edit_station_to_home = new Intent(EditStationScreen.this, HomeScreen.class);
+                edit_station_to_home.putExtra("User", current_user);
+
+                startActivity(edit_station_to_home);
                 finish();
+                return true;
+            }
+            case R.id.logut_menu: {
+                Log.d(TAG, "Selected: Logout");
+
+                Log.d(TAG, "Sending signOut request to server");
+                client.sendGetRequest(ServerStrings.USER_LOGOUT.toString(), new Callback() {
+                    @Override
+                    public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                        Log.d(TAG, e.getMessage());
+                    }
+
+                    @Override
+                    public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                        String responseBody = response.body().string();
+                        //TODO: fix this, right now response body is empty..  why?
+                        Log.d(TAG, "Server response: " + responseBody);
+                        startActivity(new Intent(EditStationScreen.this, LoginScreen.class));
+                        finish();
+                    }
+                });
                 return true;
             }
             default:
@@ -169,12 +197,14 @@ public class EditStationScreen extends AppCompatActivity {
 
     }
 
-    private StationObj getExtras() {
-        Log.d(TAG, "getExtras => getting the data from the previous intent to load station.");
-        StationObj station_data = getIntent().getParcelableExtra("Station");
-        assert station_data != null;
-        Log.d(TAG, "getExtras => grabbed station data \n" + station_data);
-        return new StationObj(station_data);
+    private void getExtras() {
+        Log.d(TAG, "getExtras => getting the data from the previous intent");
+        this.current_station = getIntent().getParcelableExtra("Station");
+        assert current_station != null;
+        Log.d(TAG, "getExtras => grabbed station data \n" + current_station);
+
+        this.current_user = getIntent().getParcelableExtra("User");
+        Log.d(TAG, "getExtras => grabbed user data \n" + current_user);
     }
 
     @SuppressLint("SetTextI18n")
