@@ -7,7 +7,22 @@ import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 
+import androidx.annotation.NonNull;
+
+import com.example.ev_sc.Backend.APIClient;
+import com.example.ev_sc.Backend.DataLayer.StationDB;
+import com.example.ev_sc.Backend.Objects.StationObj;
+import com.example.ev_sc.Backend.ServerStrings;
 import com.example.ev_sc.R;
+import com.google.firebase.firestore.GeoPoint;
+
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.UUID;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.Response;
 
 public class AddStationScreen extends Activity {
 
@@ -27,6 +42,11 @@ public class AddStationScreen extends Activity {
     String latitude;
     String longitude;
 
+    //database//
+    APIClient client = new APIClient();
+    StationDB db = new StationDB();
+
+
     private static final String TAG = "Add Station"; // tag for logging
 
     @Override
@@ -38,45 +58,51 @@ public class AddStationScreen extends Activity {
         OnClickAddButton();
     }
 
+    /**
+     * This method adds the on click button listener for the add station button,
+     * it will simply use the data entered and then send it to the server to be uploaded to the database
+     */
     private void OnClickAddButton() {
-    
-//        add_station_button.setOnClickListener(view -> {
-//
-//            get_user_input();
-//
-//            if (!validate_input(name, address, charging_stations, station_average_grade, latitude, longtitude)) {
-//                Toast.makeText(AddStation.this, "Error! Incorrect Input!", Toast.LENGTH_SHORT).show();
-//                Log.e(TAG, "Couldn't validate input for station");
-//                return;
-//            }
-//            // preparing the geo location
-//            double lat = Double.parseDouble(latitude);
-//            double lon = Double.parseDouble(longtitude);
-//            GeoPoint station_coords = new GeoPoint(lat, lon);
-//
-//            // preparing other station elements
-//            int charging = Integer.parseInt(charging_stations);
-//            double station_grade = Double.parseDouble(station_average_grade);
-//
-//            String s_id = UUID.randomUUID().toString();
-//            Double sumOf_reviews = Double.valueOf(0);
-//            StationObj station_to_add = new StationObj(station_grade, address, charging, name, station_coords,s_id, sumOf_reviews);
-//            StationObj.StationDB db = new StationObj.StationDB();
-//            Log.d(TAG, "\n" + station_to_add.toString()); // logging station details for debugging
-//
-//            // adding station to database
-//            try {
-//                db.AddStationToDatabase(station_to_add);
-//                Toast.makeText(AddStation.this, "Station Added!", Toast.LENGTH_SHORT).show();
-//                Log.d(TAG, "Success");
-//            } catch (Exception e) {
-//                Toast.makeText(AddStation.this, "Error ! " + e.getMessage(), Toast.LENGTH_SHORT).show();
-//                Log.e(TAG, "Failure adding station to database because of an exception, " + e.getMessage());
-//            }
-//
-//            clear_text();
-//            clear_input();
-//        });
+        add_station_button.setOnClickListener(view -> {
+
+            get_user_input();
+
+            if (!validate_input(name, address, charging_stations, station_average_grade, latitude, longitude)) {
+                Log.e(TAG, "Couldn't validate input for station");
+                return;
+            }
+            // preparing the geo location
+            double lat = Double.parseDouble(latitude);
+            double lon = Double.parseDouble(longitude);
+            GeoPoint station_coords = new GeoPoint(lat, lon);
+
+            // preparing other station elements
+            int charging = Integer.parseInt(charging_stations);
+            double station_grade = Double.parseDouble(station_average_grade);
+            String s_id = UUID.randomUUID().toString();
+            Double sumOf_reviews = (double) 0;
+
+            HashMap<String, Object> station_to_add = db.MapStation(new StationObj(station_grade, address, charging, name, station_coords, s_id, sumOf_reviews));
+
+            Log.d(TAG, "\n" + station_to_add); // logging station details for debugging
+
+            // adding station to database
+            Log.d(TAG, "Sending Add Station post request to server");
+            client.sendPostRequest(ServerStrings.ADD_STATION.toString(), station_to_add, new Callback() {
+                @Override
+                public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                    Log.d(TAG, e.getMessage());
+                }
+
+                @Override
+                public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                    String responseBody = response.body().string();
+                    Log.d(TAG, "Server response: " + responseBody);
+                }
+            });
+            clear_text();
+            clear_input();
+        });
     }
 
     private boolean validate_input(String s_name, String s_address, String s_charging, String s_grade, String s_lat, String s_lon) {
@@ -120,7 +146,7 @@ public class AddStationScreen extends Activity {
         station_latitude.getText().clear();
         station_longitude.getText().clear();
 
-        Log.d(TAG,"Cleared user input text");
+        Log.d(TAG, "Cleared user input text");
     }
 
     private void init_widgets() {
@@ -135,7 +161,7 @@ public class AddStationScreen extends Activity {
         Log.d(TAG, "Initialized widgets");
     }
 
-    private void get_user_input(){
+    private void get_user_input() {
         name = station_name.getText().toString().trim();
         address = station_address.getText().toString().trim();
         charging_stations = station_charging.getText().toString().trim();
@@ -147,7 +173,7 @@ public class AddStationScreen extends Activity {
                 + ", " + "Average Grade: " + station_average_grade + ", " + "Coordinates: " + latitude + "," + longitude);
     }
 
-    private void clear_input(){
+    private void clear_input() {
         name = "";
         address = "";
         charging_stations = "";

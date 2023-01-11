@@ -1,5 +1,6 @@
 package com.example.ev_sc.Frontend;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
@@ -8,9 +9,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ScrollView;
-import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.ev_sc.Backend.APIClient;
@@ -18,7 +18,6 @@ import com.example.ev_sc.Backend.Objects.StationObj;
 import com.example.ev_sc.Backend.DataLayer.StationDB;
 import com.example.ev_sc.R;
 import com.example.ev_sc.Backend.ServerStrings;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.GeoPoint;
 
 import java.io.IOException;
@@ -37,10 +36,8 @@ public class EditStationScreen extends AppCompatActivity {
     private EditText station_lon;
     private Button save_button;
     private Button remove_button;
-    private ScrollView station_reviews;
 
     private static final String TAG = "Edit Station";
-    FirebaseAuth fAuth = FirebaseAuth.getInstance();
     APIClient client = new APIClient();
     StationDB db = new StationDB();
 
@@ -63,21 +60,24 @@ public class EditStationScreen extends AppCompatActivity {
                 station.setStation_name(station_name.getText().toString());
                 station.setStation_address(station_address.getText().toString());
                 station.setCharging_stations(Integer.parseInt(station_charging.getText().toString()));
-                GeoPoint updated_coords = new GeoPoint(Double.parseDouble(String.valueOf(station_lat)), Double.parseDouble(String.valueOf(station_lon)));
-                station.setLocation(updated_coords);
+                //parsing geo location//
+                double lat = Double.parseDouble(station_lat.getText().toString().trim());
+                double lon = Double.parseDouble(station_lon.getText().toString().trim());
+                station.setLocation(new GeoPoint(lat, lon));
                 // add station reviews
 
                 HashMap<String, Object> updateStation = db.MapStation(station);
+                Log.d(TAG, "STATION!!!!!!!!!!!!!!!!!!!!!!!!!! => " + station);
 
                 Log.d(TAG, "Sending Grade update request to server");
-                client.sendPostRequest(ServerStrings.UPDATE_STATION + "/:" + station.getID(), updateStation, new Callback() {
+                client.sendPostRequest(ServerStrings.UPDATE_STATION + station.getID(), updateStation, new Callback() {
                     @Override
-                    public void onFailure(Call call, IOException e) {
+                    public void onFailure(@NonNull Call call, @NonNull IOException e) {
                         Log.d(TAG, e.getMessage());
                     }
 
                     @Override
-                    public void onResponse(Call call, Response response) throws IOException {
+                    public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                         String responseBody = response.body().string();
                         Log.d(TAG, "Server response: " + responseBody);
 
@@ -98,11 +98,21 @@ public class EditStationScreen extends AppCompatActivity {
             builder.setTitle("Are you sure you want to delete this station? THIS CAN'T BE REVERSED");
             builder.setPositiveButton("Yes", (dialog, which) -> {
 
-                StationDB db = new StationDB();
-                db.deleteStationFromDatabase(station);
+                Log.d(TAG, "Sending remove station request to server");
+                client.sendPostRequest(ServerStrings.REMOVE_STATION + station.getID(), null, new Callback() {
+                    @Override
+                    public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                        Log.d(TAG, e.getMessage());
+                    }
+
+                    @Override
+                    public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                        String responseBody = response.body().string();
+                        Log.d(TAG, "Server response: " + responseBody);
+                    }
+                });
 
                 Log.d(TAG, "Station removed, new station details:" + "\n" + station);
-                Toast.makeText(this, "Station Deleted Successfully!", Toast.LENGTH_LONG);
                 finish();
             });
             builder.setNegativeButton("No", (dialog, which) -> {
@@ -124,6 +134,7 @@ public class EditStationScreen extends AppCompatActivity {
      * @param item menu bar item
      * @return true on success
      */
+    @SuppressLint("NonConstantResourceId")
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
@@ -135,16 +146,6 @@ public class EditStationScreen extends AppCompatActivity {
                 startActivity(new Intent(EditStationScreen.this, HomeScreen.class));
                 finish();
                 return true;
-            }
-
-            case R.id.logut_menu: {
-                Log.d(TAG, "Selected: Logout");
-
-                fAuth.signOut();
-                startActivity(new Intent(EditStationScreen.this, LoginScreen.class));
-                finish();
-                return true;
-
             }
             default:
                 return super.onOptionsItemSelected(item);
@@ -176,6 +177,7 @@ public class EditStationScreen extends AppCompatActivity {
         return new StationObj(station_data);
     }
 
+    @SuppressLint("SetTextI18n")
     private void set_station_data_in_layout(StationObj curr) {
         Log.d(TAG, "set_station_data_in_layout: Updating Station Profile");
 

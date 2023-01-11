@@ -132,10 +132,8 @@ public class UserProfileScreen extends AppCompatActivity {
                         String responseBody = response.body().string();
                         //TODO: fix this, right now response body is empty..  why?
                         Log.d(TAG, "Server response: " + responseBody);
-                        if (responseBody.equals("User Signed Out Successfully")) {
-                            startActivity(new Intent(UserProfileScreen.this, LoginScreen.class));
-                            finish();
-                        }
+                        startActivity(new Intent(UserProfileScreen.this, LoginScreen.class));
+                        finish();
                     }
                 });
             }
@@ -163,26 +161,26 @@ public class UserProfileScreen extends AppCompatActivity {
         });
     }
 
-    // TODO: IMAGE HANDLE, this also needs to be inside the SERVER (LATER) //
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == 1000) { // checks if the result code is really the open gallery intent//
-            if (resultCode == Activity.RESULT_OK) { // means we have some data inside//
-                Uri imageUri = data.getData();
-
-//                profile_picture.setImageURI(imageUri);
-
-                uploadImageToFirebase(imageUri);
-            }
-        }
-    }
-
-    private void uploadImageToFirebase(Uri imageUri) {
-        StorageReference fileRef = this.fStorage.child("users/" + current_user.getID() + "profile_pic.png");
-        fileRef.putFile(imageUri).addOnSuccessListener(taskSnapshot -> fileRef.getDownloadUrl().
-                addOnSuccessListener(uri -> Picasso.get().load(uri).into(profile_picture)));
-    }
+//    // TODO: IMAGE HANDLE, this also needs to be inside the SERVER (LATER) //
+//    @Override
+//    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+//        super.onActivityResult(requestCode, resultCode, data);
+//        if (requestCode == 1000) { // checks if the result code is really the open gallery intent//
+//            if (resultCode == Activity.RESULT_OK) { // means we have some data inside//
+//                Uri imageUri = data.getData();
+//
+////                profile_picture.setImageURI(imageUri);
+//
+//                uploadImageToFirebase(imageUri);
+//            }
+//        }
+//    }
+//
+//    private void uploadImageToFirebase(Uri imageUri) {
+//        StorageReference fileRef = this.fStorage.child("users/" + current_user.getID() + "profile_pic.png");
+//        fileRef.putFile(imageUri).addOnSuccessListener(taskSnapshot -> fileRef.getDownloadUrl().
+//                addOnSuccessListener(uri -> Picasso.get().load(uri).into(profile_picture)));
+//    }
 
 
     /**
@@ -191,8 +189,8 @@ public class UserProfileScreen extends AppCompatActivity {
     private void set_user_data_in_layout() {
         Log.d(TAG, "set_user_data_in_profile: Updating User Profile");
 
-        StorageReference profileRef = this.fStorage.child("users/" + current_user.getID() + "profile_pic.png");
-        profileRef.getDownloadUrl().addOnSuccessListener(uri -> Picasso.get().load(uri).into(profile_picture));
+//        StorageReference profileRef = this.fStorage.child("users/" + current_user.getID() + "profile_pic.png");
+//        profileRef.getDownloadUrl().addOnSuccessListener(uri -> Picasso.get().load(uri).into(profile_picture));
 
         this.profile_username.setText(this.current_user.getUserName());
         //below should be the entire code for the user profile..//
@@ -241,7 +239,6 @@ public class UserProfileScreen extends AppCompatActivity {
                 latch.countDown();
             }
         });
-
         //doing this so it will wait for the onResponse to complete//
         try {
             latch.await();

@@ -700,24 +700,16 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
      * @param foundStations list of the stations found in the search
      */
     private void showSearchResult(List<StationObj> foundStations) {
-        // Create a DialogBuilder object
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        // Set the title of the dialog
         builder.setTitle("Search Results");
 
-        // Create a RecyclerView object to display the list of found stations
         RecyclerView recyclerView = new RecyclerView(this);
-        // Set the layout manager for the RecyclerView
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        // Create an adapter for the RecyclerView
         SearchResultAdapter adapter = new SearchResultAdapter(foundStations);
-        // Set the adapter for the RecyclerView
         recyclerView.setAdapter(adapter);
 
-        // Add the RecyclerView to the DialogBuilder
         builder.setView(recyclerView);
 
-        // Create and show the dialog
         dialog_search_station = builder.create();
         recyclerView.setTag(dialog_search_station);
         Log.d(TAG, "View tag is " + recyclerView.getTag());

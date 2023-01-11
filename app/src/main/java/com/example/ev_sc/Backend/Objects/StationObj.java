@@ -20,7 +20,7 @@ public class StationObj implements StationInterface, Parcelable {
 
     private static final String TAG = "StationObj"; // tag for logging
 
-    private Double sumOf_reviews;
+    private double sumOf_reviews;
     private double avg_grade;
     private String station_address;
     private GeoPoint location; // https://firebase.google.com/docs/reference/kotlin/com/google/firebase/firestore/GeoPoint
@@ -54,8 +54,8 @@ public class StationObj implements StationInterface, Parcelable {
         return SID;
     }
 
-    public Double getSumOf_reviews() {
-    return sumOf_reviews;
+    public double getSumOf_reviews() {
+    return this.sumOf_reviews;
 }
 
     public double getAverageGrade() {
