@@ -1,4 +1,4 @@
-package com.example.ev_sc.Home;
+package com.example.ev_sc.Frontend;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
@@ -33,17 +33,17 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.ev_sc.Home.Station.StationObj;
-import com.example.ev_sc.User.UserDB;
-import com.example.ev_sc.User.UserObj;
-import com.example.ev_sc.Profile.AdminProfileScreen;
-import com.example.ev_sc.Profile.Favorites.FavoriteObj;
-import com.example.ev_sc.Profile.Favorites.FavoritesDB;
-import com.example.ev_sc.Profile.EditStation.EditStationScreen;
-import com.example.ev_sc.Profile.UserProfileScreen;
+import com.example.ev_sc.Backend.APIClient;
+import com.example.ev_sc.Backend.DataLayer.StationDB;
+import com.example.ev_sc.Backend.HomeScreenLogics;
+import com.example.ev_sc.Backend.Objects.StationObj;
+import com.example.ev_sc.Backend.ServerStrings;
+import com.example.ev_sc.Backend.Objects.UserObj;
+import com.example.ev_sc.Backend.Objects.FavoriteObj;
+import com.example.ev_sc.Backend.DataLayer.FavoritesDB;
 import com.example.ev_sc.R;
-import com.example.ev_sc.Reviews.reviewsDB;
-import com.example.ev_sc.Reviews.reviewsObj;
+import com.example.ev_sc.Backend.DataLayer.reviewsDB;
+import com.example.ev_sc.Backend.Objects.reviewsObj;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -51,29 +51,29 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonParser;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CountDownLatch;
 
 import me.xdrop.fuzzywuzzy.FuzzySearch;
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.Response;
 
 
 public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback {
 
 
-    private static final String TAG = "MapHome";
+    private static final String TAG = "Home";
 
     private static final String FINE_LOCATION = Manifest.permission.ACCESS_FINE_LOCATION;
     private static final String COURSE_LOCATION = Manifest.permission.ACCESS_COARSE_LOCATION;
@@ -96,18 +96,18 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
     HashMap<String, View> StationPopUps = new HashMap<String, View>(); //this map is used to map each station to its poppable window//
     private HashMap<String, StationObj> all_stations = new HashMap<String, StationObj>(); // this is used to map all the stations upon login //
 
-    /*firebase*/
-    FirebaseFirestore fStore = FirebaseFirestore.getInstance();
+    /*server*/
+    APIClient client = new APIClient();
+    StationDB db = new StationDB();
+    reviewsDB Rdb = new reviewsDB();
+    FavoritesDB Fdb = new FavoritesDB();
 
     /*user profile handle*/
-    private final FirebaseAuth fAuth = FirebaseAuth.getInstance();
     private UserObj current_user;
     private Location currentLocation;
+    private boolean favorite_flag = false;
 
-    private HomeScreenLogics HSL;
-
-    //tmp//
-    LatLng fav_loc;
+    private final HomeScreenLogics HSL = new HomeScreenLogics();
 
     @Override
     public void onCreate(Bundle Instance) {
@@ -115,18 +115,12 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
         setContentView(R.layout.home);
 
         search_bar = findViewById(R.id.search_bar);
-        HSL = new HomeScreenLogics();
 
         getLocationPermission();
-        load_user_data();
-        load_stations_data();
 
-        // TODO: tmp for favorite locating after moving from profile to home//
-        Bundle extras = getIntent().getExtras();
-        if (extras != null) {
-            this.fav_loc = new LatLng((Double) extras.get("Lat"), (Double) extras.get("Lng"));
-        }
     }
+    // TODO: tmp for favorite locating after moving from profile to home//
+
 
     /**
      * this method responsible for creating the menu bar
@@ -153,7 +147,7 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
         switch (item.getItemId()) {
 
             case R.id.profile_menu:
-                if (current_user.getPermissions() == 1) {
+                if (current_user.getPermission() == 1) {
                     Intent home_to_admin_profile = new Intent(HomeScreen.this, AdminProfileScreen.class);
                     home_to_admin_profile.putExtra("User", current_user);
 
@@ -176,34 +170,46 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
     }
 
     /**
-     * This method is responsible for loading all the data from the firestore database,
+     * This method is responsible for loading all the data into the all_station object we use to map the information,
      * it loads it to a HashMap we then use.
      */
     private void load_stations_data() {
+        final CountDownLatch latch = new CountDownLatch(1);
+
         Log.d(TAG, "loading_stations_data: loading Stations data from database to object");
+        client.sendGetRequest(ServerStrings.ALL_STATIONS.toString(), new Callback() {
+            @Override
+            public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                Log.d(TAG, e.getMessage());
+            }
 
-        fStore.collection("stations")
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-                            StationDB s_DB = new StationDB();
-                            for (QueryDocumentSnapshot document : task.getResult()) {
-                                // load all stations data from database to the hashmap with unique key of doc id//
-                                StationObj tmp_station = s_DB.getStationFromDatabase(document);
-                                all_stations.put(document.getId(), tmp_station);
+            @Override
+            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                String responseBody = response.body().string();
+                Log.d(TAG, "Server response: " + responseBody);
+                JsonArray parser = JsonParser.parseString(responseBody).getAsJsonArray();
+                List<StationObj> parsed_stations = db.station_parser(parser);
 
-                                //init map markers on the map//
-                                createMarker(tmp_station.getLatLng(), tmp_station.getStation_name());
+                Log.d(TAG, "Station after parsing:" + "\n" + parsed_stations);
+                for (StationObj station : parsed_stations) {
+                    all_stations.put(station.getStation_name(), station);
+                    Log.d(TAG, station.toString());
+                }
+                latch.countDown();
+            }
+        });
 
-                            }
-                        } else {
-                            Log.e(TAG, "geoLocate: Error getting documents: ", task.getException());
-                        }
-                        BuildAllPopUpStationWindows();
-                    }
-                });
+        //doing this so it will wait for the onRespone to complete//
+        try {
+            latch.await();
+            if (!all_stations.isEmpty()) {
+                create_map_markers();
+                BuildAllPopUpStationWindows();
+            }
+
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -212,15 +218,8 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
      */
     private void load_user_data() {
         Log.d(TAG, "load_user_data: loading User data from database");
-        String Client_UID = fAuth.getCurrentUser().getUid();
-
-        // this is parsing the data from firestore using the string UID of the current user logged in!//
-        fStore.collection("users").
-                document(Client_UID).get().addOnSuccessListener(documentSnapshot -> {
-                    UserDB db = new UserDB();
-                    current_user = db.GetUserFromDatabase(documentSnapshot);
-                    Log.d(TAG, "CURRENT USER: => \n" + current_user.toString());
-                });
+        current_user = getIntent().getParcelableExtra("User");
+        Log.d(TAG, "Client : " + current_user);
     }
 
     /**
@@ -248,7 +247,7 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
             // pinpoint to the current location with a button, is set to false because we'll add on later //
             mMap.getUiSettings().setMyLocationButtonEnabled(false);
 
-            init();
+            init_map_objects();
         }
     }
 
@@ -256,21 +255,21 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
      * this method allows for overriding buttons in the keyboard ( enter .. )
      * and calls for geoLocate to locate the required place
      */
-    private void init() {
-        Log.d(TAG, "init: initializing");
+    private void init_map_objects() {
+        //load the data only once the map is ready to serve//
+        load_user_data();
+        load_stations_data();
 
-        search_bar.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent keyEvent) {
-                if (actionId == EditorInfo.IME_ACTION_SEARCH ||
-                        actionId == EditorInfo.IME_ACTION_DONE ||
-                        keyEvent.getAction() == KeyEvent.ACTION_DOWN ||
-                        keyEvent.getAction() == KeyEvent.KEYCODE_ENTER) {
-                    //execute method for searching the location//
-                    geoLocate();
-                }
-                return false;
+        Log.d(TAG, "init: initializing");
+        search_bar.setOnEditorActionListener((v, actionId, keyEvent) -> {
+            if (actionId == EditorInfo.IME_ACTION_SEARCH ||
+                    actionId == EditorInfo.IME_ACTION_DONE ||
+                    keyEvent.getAction() == KeyEvent.ACTION_DOWN ||
+                    keyEvent.getAction() == KeyEvent.KEYCODE_ENTER) {
+                //execute method for searching the location//
+                geoLocate();
             }
+            return false;
         });
     }
 
@@ -314,10 +313,7 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
         } else {
             // sort the list by distance
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                foundStations.sort((s1, s2) -> {
-                    int distDiff = distUserToStation(s1) - distUserToStation(s2);
-                    return distDiff;
-                });
+                foundStations.sort(Comparator.comparingInt(this::distUserToStation));
             }
             search_bar.setText("");
             Log.d(TAG, "Found stations: " + "\n" + foundStations);
@@ -332,9 +328,9 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
      * point
      */
     private int distUserToStation(StationObj station) {
-        LatLng stationCoords = station.getLatLng();
+        LatLng stationCords = station.getLatLng();
         double distance = this.HSL.calcDist(currentLocation.getLatitude(), currentLocation.getLongitude(),
-                stationCoords.latitude, stationCoords.longitude);
+                stationCords.latitude, stationCords.longitude);
         Log.d(TAG, "distance to user from " + station.getStation_name() + "is " + distance);
         return (int) distance;
     }
@@ -351,32 +347,29 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
             if (mLocationPermissionGranted) {
 
                 mFusedLocationProviderClient.getLastLocation()
-                        .addOnSuccessListener(new OnSuccessListener<Location>() {
-                            @Override
-                            public void onSuccess(@NonNull Location location) {
-                                Log.d(TAG, "onComplete getDeviceLocation: found location!");
-                                Log.d(TAG, "LOCATION OF THE USER:=>" + location);
+                        .addOnSuccessListener(location -> {
+                            Log.d(TAG, "onComplete getDeviceLocation: found location!");
+                            Log.d(TAG, "LOCATION OF THE USER:=>" + location);
 
-                                //this if handles cases where the location is null in the phone, it can happen sometimes due to unprovided location/gps problems.
-                                if (location != null)
-                                    currentLocation = location;
-                                else {
-                                    currentLocation = new Location("");
-                                    currentLocation.setLatitude(32.046878537246435);
-                                    currentLocation.setLongitude(34.86588824882881);
-                                }
-
-                                //we're putting sleep because it takes time for the emulator to locate the location of the user//
-                                try {
-                                    Thread.sleep(1500);
-                                } catch (InterruptedException e) {
-                                    e.printStackTrace();
-                                }
-
-                                //move camera to the current location of the user//
-                                moveCamera(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()));
-
+                            //this if handles cases where the location is null in the phone, it can happen sometimes due to unprovided location/gps problems.
+                            if (location != null)
+                                currentLocation = location;
+                            else {
+                                currentLocation = new Location("");
+                                currentLocation.setLatitude(32.046878537246435);
+                                currentLocation.setLongitude(34.86588824882881);
                             }
+
+                            //we're putting sleep because it takes time for the emulator to locate the location of the user//
+                            try {
+                                Thread.sleep(1500);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+
+                            //move camera to the current location of the user//
+                            moveCamera(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()));
+
                         });
             }
         } catch (SecurityException e) {
@@ -442,11 +435,27 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
     private void moveCamera(LatLng latLng) {
         Log.d(TAG, "moveCamera: Moving the camera to: (lat: " + latLng.latitude + ", lng: " + latLng.longitude + " )");
 
-        if (fav_loc != null) {
-            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(fav_loc, HomeScreen.DEFAULT_ZOOM));
-            fav_loc = null;
+        Bundle extras = getIntent().getExtras();
+        if (extras.get("Lat") != null && extras.get("Lng") != null) {
+            if (!favorite_flag) {
+                //this handles case where the user requested to move to a favorite location from the userProfile//
+                LatLng fav_loc = new LatLng((Double) extras.get("Lat"), (Double) extras.get("Lng"));
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(fav_loc, HomeScreen.DEFAULT_ZOOM));
+                favorite_flag = true;
+            } else
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, HomeScreen.DEFAULT_ZOOM));
         } else
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, HomeScreen.DEFAULT_ZOOM));
+    }
+
+    /**
+     * This method simply invokes createMarker method for every marker needed to be created.
+     */
+    private void create_map_markers() {
+        Log.d(TAG, "Map Markers: " + all_stations);
+        for (Map.Entry<String, StationObj> station : all_stations.entrySet()) {
+            createMarker(station.getValue().getLatLng(), station.getValue().getStation_name());
+        }
     }
 
     /**
@@ -455,14 +464,16 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
      * @param latLng a position we currently creating the marker for.
      */
     private void createMarker(LatLng latLng, String s_name) {
-        Log.d(TAG, "CreateMarker: Creating markers for station: =>" + s_name);
-
-        MarkerOptions options = new MarkerOptions()
-                .position(latLng)
-                .title(s_name); //TODO: consider using a unique title for markerListener//
-        mMap.addMarker(options);
-
-        MarkerListener();
+        if (mMap == null) {
+            Log.e(TAG, "mMap object is null, can't create marker");
+        } else {
+            Log.d(TAG, "CreateMarker: Creating markers for station: =>" + s_name);
+            MarkerOptions options = new MarkerOptions()
+                    .position(latLng)
+                    .title(s_name); //TODO: consider using a unique title for markerListener//
+            mMap.addMarker(options);
+            MarkerListener();
+        }
     }
 
     /**
@@ -471,13 +482,10 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
      */
     private void MarkerListener() {
         Log.d(TAG, "MarkerListener: Setting marker listener");
-        mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
-            @Override
-            public boolean onMarkerClick(@NonNull Marker marker) {
-                View v = StationPopUps.get(marker.getTitle());
-                StartDialogStation(v);
-                return true;
-            }
+        mMap.setOnMarkerClickListener(marker -> {
+            View v = StationPopUps.get(marker.getTitle());
+            StartDialogStation(v);
+            return true;
         });
     }
 
@@ -485,10 +493,10 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
      * This private method is responsible for building all the station pop up windows.
      */
     private void BuildAllPopUpStationWindows() {
-        Log.d(TAG, "BuildAllPopUpStationsWindows: building all the stations windows " + this.all_stations.toString());
+        Log.d(TAG, "BuildAllPopUpStationsWindows: building all the stations windows " + this.all_stations);
 
         for (Map.Entry<String, StationObj> station : this.all_stations.entrySet()) {
-            Log.d(TAG, "Creating STation Window for STATION : => " + station.getValue());
+            Log.d(TAG, "Creating Station Window for  => " + station.getValue());
             createMarker(station.getValue().getLatLng(), station.getValue().getStation_name());
             createNewStationPopup(station.getValue());
         }
@@ -504,125 +512,172 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
         Log.d(TAG, "createNewStationPopup: creating new popup window for station => " + station.getStation_name());
 
         dialogBuilder = new AlertDialog.Builder(this);
-        final View PopupStation = getLayoutInflater().inflate(R.layout.station, null);
+        @SuppressLint("InflateParams") final View PopupStation = getLayoutInflater().inflate(R.layout.station, null);
 
         /*widgets*/
-        TextView name_of_station = (TextView) PopupStation.findViewById(R.id.name_of_station);
-        TextView rate_of_station = (TextView) PopupStation.findViewById(R.id.rate_of_station);
-        TextView the_num_of_chargers = (TextView) PopupStation.findViewById(R.id.the_num_of_chargers);
-        TextView address_of_station = (TextView) PopupStation.findViewById(R.id.address_of_station);
-        ImageView return_map_station_widget = (ImageView) PopupStation.findViewById(R.id.return_map_station_widget);
-        FloatingActionButton rate_station = (FloatingActionButton) PopupStation.findViewById(R.id.rate_station_button);
-        FloatingActionButton favorite_station = (FloatingActionButton) PopupStation.findViewById(R.id.favorite_station_button);
-        FloatingActionButton edit_station_button = (FloatingActionButton) PopupStation.findViewById(R.id.admin_edit_station_button_in_popup);
+        TextView name_of_station = PopupStation.findViewById(R.id.name_of_station);
+        TextView rate_of_station = PopupStation.findViewById(R.id.rate_of_station);
+        TextView the_num_of_chargers = PopupStation.findViewById(R.id.the_num_of_chargers);
+        TextView address_of_station = PopupStation.findViewById(R.id.address_of_station);
+        ImageView return_map_station_widget = PopupStation.findViewById(R.id.return_map_station_widget);
+        FloatingActionButton rate_station = PopupStation.findViewById(R.id.rate_station_button);
+        FloatingActionButton favorite_station = PopupStation.findViewById(R.id.favorite_station_button);
+        FloatingActionButton edit_station_button = PopupStation.findViewById(R.id.admin_edit_station_button_in_popup);
+        ImageButton waze_nav = PopupStation.findViewById(R.id.waze_nav);
 
+        //init the widgets//
+        name_of_station.setText(station.getStation_name());
+        address_of_station.setText(station.getStation_address());
+        the_num_of_chargers.setText(Integer.toString(station.getCharging_stations()));
+        rate_of_station.setText(Double.toString(station.getAverageGrade()));
 
         // If the user is an admin, build & show the edit station button
-        if (current_user.getPermissions() == 1) {
+        if (current_user.getPermission() == 1) {
             edit_station_button.setVisibility(View.VISIBLE);
             edit_station_button.setOnClickListener(view -> { // init a listener for the button
                 Intent station_popup_to_edit_station = new Intent(view.getContext(), EditStationScreen.class);
                 station_popup_to_edit_station.putExtra("Station", station);
+                station_popup_to_edit_station.putExtra("User", current_user);
                 startActivity(station_popup_to_edit_station);
             });
         } else {
             edit_station_button.setVisibility(View.GONE);
         }
 
-        name_of_station.setText(station.getStation_name());
-        address_of_station.setText(station.getStation_address());
-        the_num_of_chargers.setText(Integer.toString(station.getCharging_stations()));
-        rate_of_station.setText(Double.toString(station.getAverageGrade()));
-
         // invokes the rating of the station popup window //
-        rate_station.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                final View PopupRating = getLayoutInflater().inflate(R.layout.rating, null);
-                dialogBuilder.setView(PopupRating);
-                AlertDialog rating_dialog = dialogBuilder.create();
-                rating_dialog.show();
+        RatingWidget(rate_station, rate_of_station, dialogBuilder, station);
 
-
-                //widgets//
-                Button button_submit_rating = (Button) PopupRating.findViewById(R.id.button_submit_rating);
-                RatingBar rating_bar = (RatingBar) PopupRating.findViewById(R.id.rating_bar);
-                EditText review_line = (EditText) PopupRating.findViewById(R.id.review_line);
-
-                button_submit_rating.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-
-                        Double user_rating = Double.valueOf(rating_bar.getRating());
-                        Double curr_grade = station.getAverageGrade();
-                        Double SumOf_reviews = station.getSumOf_reviews();
-                        String curr_review = review_line.getText().toString().trim();
-
-                        reviewsObj review = new reviewsObj(current_user.getID(), user_rating, curr_review);
-                        reviewsDB reviewsDB = new reviewsDB();
-                        Log.d(TAG, "Review??????????????????? " + review.toString());
-
-                        reviewsDB.AddReviewToDatabase(review, station.getID());
-                        double grade = 0;
-                        if (SumOf_reviews == 0) {
-                            grade = user_rating;
-                        } else {
-                            grade = (SumOf_reviews * curr_grade + user_rating) / (SumOf_reviews + 1);
-                        }
-
-                        rate_of_station.setText(Double.toString(grade));
-                        station.setAvgGrade(grade);
-                        SumOf_reviews += 1;
-                        station.setSumOf_reviews(SumOf_reviews);
-                        StationObj.StationDB.updateStationToDatabase(station);
-
-                        rating_dialog.dismiss();
-
-                    }
-                });
-            }
-        });
         //button handler to add station to the favorites //
-        favorite_station.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                FavoritesDB db = new FavoritesDB();
-                FavoriteObj favoriteObj = new FavoriteObj(station.getID(), station.getStation_name(), station.getLocation());
-                db.AddFavoriteStationToDB(favoriteObj, current_user.getID());
-            }
-        });
+        AddFavoriteStation(favorite_station, station);
 
         // waze directions upon clicking on the button //
-        ImageButton waze_nav = PopupStation.findViewById(R.id.waze_nav);
-        waze_nav.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String latitude = Double.toString(station.getLocation().getLatitude());
-                String longitude = Double.toString(station.getLocation().getLongitude());
-                try {
-                    // Launch Waze to look for desired station:
-                    String url = "https://waze.com/ul?q=66%20Acacia%20Avenue&ll=" + latitude + "," + longitude + "&navigate=yes";
-                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-                    startActivity(intent);
-                } catch (ActivityNotFoundException ex) {
-                    // If Waze is not installed, open it in Google Play:
-                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=com.waze"));
-                    startActivity(intent);
-                }
-            }
-        });
+        WazeNavigator(waze_nav, station);
 
         // listener to return to the map //
-        return_map_station_widget.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialog_popup_station.dismiss();
-            }
-        });
-
+        return_map_station_widget.setOnClickListener(v -> dialog_popup_station.dismiss());
         //adding the new popup to the hashmap//
         StationPopUps.put(station.getStation_name(), PopupStation);
+    }
 
+    /**
+     * This method handles the request for adding a new favorite station for the user.
+     *
+     * @param favorite_station The button we set the listener on
+     * @param station          the requested station to be favorite.
+     */
+    private void AddFavoriteStation(FloatingActionButton favorite_station, StationObj station) {
+        favorite_station.setOnClickListener(v -> {
+            FavoriteObj favorite = new FavoriteObj(station.getLocation(), station.getID(), station.getStation_name());
+            HashMap<String, Object> mapped_favorite = Fdb.MapFavorite(favorite);
+            Log.d(TAG, "Sending favorite post request to server");
+            client.sendPostRequest(ServerStrings.ADD_FAVORITE + "/:" + current_user.getID() + "/favorite", mapped_favorite, new Callback() {
+                @Override
+                public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                    Log.d(TAG, e.getMessage());
+                }
+
+                @Override
+                public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                    String responseBody = response.body().string();
+                    Log.d(TAG, "Server response: " + responseBody);
+                }
+            });
+        });
+    }
+
+    /**
+     * This method creates the Rating widget.
+     *
+     * @param rate_station    The button we set the listener on
+     * @param rate_of_station the rating of the station as text view object
+     * @param dialogBuilder   the dialog builder we invoke
+     * @param station         the station we update and do our calculations on.
+     */
+    private void RatingWidget(FloatingActionButton rate_station, TextView rate_of_station, AlertDialog.Builder dialogBuilder, StationObj station) {
+        rate_station.setOnClickListener(v -> {
+            final View PopupRating = getLayoutInflater().inflate(R.layout.rating, null);
+            dialogBuilder.setView(PopupRating);
+            AlertDialog rating_dialog = dialogBuilder.create();
+            rating_dialog.show();
+
+            //widgets//
+            Button button_submit_rating = PopupRating.findViewById(R.id.button_submit_rating);
+            RatingBar rating_bar = PopupRating.findViewById(R.id.rating_bar);
+            EditText review_line = PopupRating.findViewById(R.id.review_line);
+            button_submit_rating.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    //vars//
+                    double user_rating = rating_bar.getRating();
+                    double curr_grade = station.getAverageGrade();
+                    double SumOf_reviews = station.getSumOf_reviews();
+                    String curr_review = review_line.getText().toString().trim();
+
+                    //review handle//
+                    reviewsObj review = new reviewsObj(current_user.getID(), user_rating, curr_review);
+                    HashMap<String, Object> mapped_review = Rdb.MapReview(review);
+                    Log.d(TAG, "Sending review post request to server");
+                    client.sendPostRequest(ServerStrings.ADD_REVIEW + "/:" + station.getID() + "/review", mapped_review, new Callback() {
+                        @Override
+                        public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                            Log.d(TAG, e.getMessage());
+                        }
+
+                        @Override
+                        public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                            String responseBody = response.body().string();
+                            Log.d(TAG, "Server response: " + responseBody);
+                        }
+                    });
+                    //rating handle//
+                    double updated_grade = HSL.AverageRating(SumOf_reviews, user_rating, curr_grade);
+                    //doing this in order for the changes be affected immediately//
+                    rate_of_station.setText(Double.toString(updated_grade));
+                    station.setAvgGrade(updated_grade);
+                    station.setSumOf_reviews(SumOf_reviews + 1);
+
+                    HashMap<String, Object> updateStation = db.MapStation(station);
+                    Log.d(TAG, "Sending Grade update request to server");
+                    client.sendPostRequest(ServerStrings.UPDATE_STATION + "/:" + station.getID(), updateStation, new Callback() {
+                        @Override
+                        public void onFailure(@NonNull Call call, IOException e) {
+                            Log.d(TAG, e.getMessage());
+                        }
+
+                        @Override
+                        public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                            String responseBody = response.body().string();
+                            Log.d(TAG, "Server response: " + responseBody);
+                        }
+                    });
+                    rating_dialog.dismiss();
+                }
+            });
+        });
+    }
+
+    /**
+     * This method sets the button to be a click listener to open the waze application
+     * and start navigating to the desired station
+     *
+     * @param waze_nav ImageButton of waze
+     * @param station  the required station to navigate to
+     */
+    private void WazeNavigator(ImageButton waze_nav, StationObj station) {
+        waze_nav.setOnClickListener(v -> {
+            String latitude = Double.toString(station.getLocation().getLatitude());
+            String longitude = Double.toString(station.getLocation().getLongitude());
+            try {
+                // Launch Waze to look for desired station:
+                String url = "https://waze.com/ul?q=66%20Acacia%20Avenue&ll=" + latitude + "," + longitude + "&navigate=yes";
+                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+                startActivity(intent);
+            } catch (ActivityNotFoundException ex) {
+                // If Waze is not installed, open it in Google Play:
+                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=com.waze"));
+                startActivity(intent);
+            }
+        });
     }
 
     /**
@@ -646,24 +701,16 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
      * @param foundStations list of the stations found in the search
      */
     private void showSearchResult(List<StationObj> foundStations) {
-        // Create a DialogBuilder object
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        // Set the title of the dialog
         builder.setTitle("Search Results");
 
-        // Create a RecyclerView object to display the list of found stations
         RecyclerView recyclerView = new RecyclerView(this);
-        // Set the layout manager for the RecyclerView
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        // Create an adapter for the RecyclerView
         SearchResultAdapter adapter = new SearchResultAdapter(foundStations);
-        // Set the adapter for the RecyclerView
         recyclerView.setAdapter(adapter);
 
-        // Add the RecyclerView to the DialogBuilder
         builder.setView(recyclerView);
 
-        // Create and show the dialog
         dialog_search_station = builder.create();
         recyclerView.setTag(dialog_search_station);
         Log.d(TAG, "View tag is " + recyclerView.getTag());
@@ -684,6 +731,7 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
             return new ViewHolder(view);
         }
 
+        @SuppressLint("SetTextI18n")
         @Override
         public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
             StationObj station = foundStations.get(position);

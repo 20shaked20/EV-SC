@@ -1,4 +1,4 @@
-package com.example.ev_sc.Home.Station;
+package com.example.ev_sc.Backend.Objects;
 
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -18,7 +18,9 @@ import java.util.Map;
 
 public class StationObj implements StationInterface, Parcelable {
 
-    private Double sumOf_reviews;
+    private static final String TAG = "StationObj"; // tag for logging
+
+    private double sumOf_reviews;
     private double avg_grade;
     private String station_address;
     private GeoPoint location; // https://firebase.google.com/docs/reference/kotlin/com/google/firebase/firestore/GeoPoint
@@ -52,8 +54,8 @@ public class StationObj implements StationInterface, Parcelable {
         return SID;
     }
 
-    public Double getSumOf_reviews() {
-    return sumOf_reviews;
+    public double getSumOf_reviews() {
+    return this.sumOf_reviews;
 }
 
     public double getAverageGrade() {
@@ -94,7 +96,7 @@ public class StationObj implements StationInterface, Parcelable {
     public LatLng getLatLng() {
         return new LatLng(this.location.getLatitude(), this.location.getLongitude());
     }
-    public void setSumOf_reviews(Double num_of_reviews){this.sumOf_reviews=num_of_reviews;}
+    public void setSumOf_reviews(double num_of_reviews){this.sumOf_reviews=num_of_reviews;}
 
     public void setLocation(GeoPoint new_location) {
         this.location = new_location;

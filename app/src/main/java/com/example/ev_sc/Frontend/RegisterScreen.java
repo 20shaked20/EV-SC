@@ -1,26 +1,26 @@
-package com.example.ev_sc.Profile.Register;
+package com.example.ev_sc.Frontend;
 
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
-import android.widget.Toast;
 
-import androidx.annotation.NonNull;
-
-import com.example.ev_sc.Login.LoginScreen;
-import com.example.ev_sc.User.UserDB;
-import com.example.ev_sc.User.UserObj;
+import com.example.ev_sc.Backend.APIClient;
+import com.example.ev_sc.Backend.ServerStrings;
+import com.example.ev_sc.Backend.DataLayer.UserDB;
 import com.example.ev_sc.R;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.FirebaseAuth;
+
+import java.io.IOException;
+import java.util.HashMap;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.Response;
 
 public class RegisterScreen extends Activity {
 
@@ -33,8 +33,10 @@ public class RegisterScreen extends Activity {
 
     Button register_button;
 
-    FirebaseAuth fAuth = FirebaseAuth.getInstance();
+    final String TAG = "Register Screen";
 
+    UserDB db = new UserDB();
+    APIClient client = new APIClient();
 
     @Override
     protected void onCreate(Bundle Instance) {
@@ -75,6 +77,7 @@ public class RegisterScreen extends Activity {
                 String last_name = line_last_name_register.getText().toString().trim();
                 String username = line_username_register.getText().toString().trim();
 
+                // TODO: move this to a seperate validate_input() function
                 if (TextUtils.isEmpty(email)) {
                     line_email_register.setError("Email Is Required");
                     return;
@@ -95,25 +98,31 @@ public class RegisterScreen extends Activity {
                     line_username_register.setError("Username is required");
                 }
 
-                // register user in firebase //
-                fAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                HashMap<String,Object> newUser = db.MapUser(
+                        email,
+                        password,
+                        first_name,
+                        last_name,
+                        username,
+                        "0",
+                        "0"
+                );
+
+                Log.d(TAG,"Sending register request to server");
+                client.sendPostRequest(ServerStrings.ADD_USER.toString(), newUser, new Callback() {
                     @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            Toast.makeText(RegisterScreen.this, "User Created.", Toast.LENGTH_SHORT).show();
+                    public void onFailure(Call call, IOException e) {
+                        Log.d(TAG,e.getMessage());
+                    }
 
-                            //extract data and add it to database//
-                            UserObj newUser = new UserObj(first_name, last_name, username, "0", fAuth.getCurrentUser().getUid(), 0);
-                            UserDB newUserDB = new UserDB();
-                            newUserDB.AddUserToDatabase(newUser);
+                    @Override
+                    public void onResponse(Call call, Response response) throws IOException {
+                        String responseBody = response.body().string();
+                        Log.d(TAG, "Server response: " + responseBody);
 
-                            Intent register_to_login = new Intent(view.getContext(), LoginScreen.class);
-                            startActivityForResult(register_to_login, 0);
-                            finish();
-
-                        } else {
-                            Toast.makeText(RegisterScreen.this, "Error ! " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
-                        }
+                        Intent register_to_login = new Intent(view.getContext(), LoginScreen.class);
+                        startActivityForResult(register_to_login, 0);
+                        finish();
                     }
                 });
             }

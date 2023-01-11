@@ -1,4 +1,4 @@
-package com.example.ev_sc.Profile.Favorites;
+package com.example.ev_sc.Backend.Objects;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.firestore.GeoPoint;
@@ -9,7 +9,7 @@ public class FavoriteObj implements FavoritesInterface {
     private String station_id;
     private GeoPoint station_location;
 
-    public FavoriteObj(String id, String name, GeoPoint loc) {
+    public FavoriteObj(GeoPoint loc, String id, String name) {
         this.station_id = id;
         this.station_name = name;
         this.station_location = loc;

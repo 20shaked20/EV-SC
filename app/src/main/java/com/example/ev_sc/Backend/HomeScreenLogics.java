@@ -1,4 +1,4 @@
-package com.example.ev_sc.Home;
+package com.example.ev_sc.Backend;
 
 
 public class HomeScreenLogics {
@@ -14,6 +14,16 @@ public class HomeScreenLogics {
                 * Math.sin(lonDistance / 2) * Math.sin(lonDistance / 2);
         double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
         return EARTH_RADIUS * c;
+    }
+
+    public double AverageRating(double SumOf_reviews, double user_rating, double curr_grade) {
+        double grade = 0;
+        if (SumOf_reviews == 0) {
+            grade = user_rating;
+        } else {
+            grade = (SumOf_reviews * curr_grade + user_rating) / (SumOf_reviews + 1);
+        }
+        return grade;
     }
 
 

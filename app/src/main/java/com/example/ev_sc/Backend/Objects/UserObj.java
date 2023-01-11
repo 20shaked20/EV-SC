@@ -1,4 +1,4 @@
-package com.example.ev_sc.User;
+package com.example.ev_sc.Backend.Objects;
 
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -6,39 +6,39 @@ import android.os.Parcelable;
 import androidx.annotation.NonNull;
 
 public class UserObj implements PersonObj, Parcelable {
-    private String First_name;
-    private String Last_name;
-    private String username;
-    private int Permissions;
-    private String phone_number;
+    private String FirstName;
+    private String LastName;
+    private String UserName;
+    private int Permission;
+    private String Phone;
     private String UID;
 
     public UserObj(String first_name, String last_name, String username, String phone_number, String UID, int permissions) {
-        this.Last_name = last_name;
-        this.First_name = first_name;
-        this.username = username;
-        this.phone_number = phone_number;
+        this.LastName = last_name;
+        this.FirstName = first_name;
+        this.UserName = username;
+        this.Phone = phone_number;
         this.UID = UID;
-        this.Permissions = permissions;
+        this.Permission = permissions;
     }
 
     public UserObj(UserObj user) {
-        this.First_name = user.getFirst_name();
-        this.Last_name = user.getLast_name();
-        this.username = user.getUsername();
-        this.Permissions = user.getPermissions();
-        this.phone_number = user.getPhone_number();
+        this.FirstName = user.getFirstName();
+        this.LastName = user.getLastName();
+        this.UserName = user.getUserName();
+        this.Permission = user.getPermission();
+        this.Phone = user.getPhone();
         this.UID = user.getID();
     }
 
     @Override
-    public String getFirst_name() {
-        return First_name;
+    public String getFirstName() {
+        return FirstName;
     }
 
     @Override
-    public String getLast_name() {
-        return Last_name;
+    public String getLastName() {
+        return LastName;
     }
 
     @Override
@@ -47,18 +47,18 @@ public class UserObj implements PersonObj, Parcelable {
     }
 
     @Override
-    public int getPermissions() {
-        return Permissions;
+    public int getPermission() {
+        return Permission;
     }
 
     @Override
-    public void setFirst_name(String first_name) {
-        this.First_name = first_name;
+    public void setFirstName(String firstName) {
+        this.FirstName = firstName;
     }
 
     @Override
-    public void setLast_name(String last_name) {
-        this.Last_name = last_name;
+    public void setLastName(String lastName) {
+        this.LastName = lastName;
     }
 
     /**
@@ -66,8 +66,8 @@ public class UserObj implements PersonObj, Parcelable {
      *
      * @return String representing the phone number of the user.
      */
-    public String getPhone_number() {
-        return phone_number;
+    public String getPhone() {
+        return Phone;
     }
 
     /**
@@ -75,34 +75,34 @@ public class UserObj implements PersonObj, Parcelable {
      *
      * @return String representing the username of the user.
      */
-    public String getUsername() {
-        return username;
+    public String getUserName() {
+        return UserName;
     }
 
     /**
      * Change the username method.
      *
-     * @param username String with the new username
+     * @param userName String with the new username
      */
-    public void setUsername(String username) {
-        this.username = username;
+    public void setUserName(String userName) {
+        this.UserName = userName;
     }
 
     /**
      * Change the phone method.
      *
-     * @param phone_number String with the new phone number
+     * @param phone String with the new phone number
      */
-    public void setPhone_number(String phone_number) {
-        this.phone_number = phone_number;
+    public void setPhone(String phone) {
+        this.Phone = phone;
     }
 
     @NonNull
     public String toString() { // override toString method to better represent user data (logging etc.)
-        return "Full Name: " + this.getFirst_name() + this.getLast_name() + "\n" +
-                "Username: " + this.getUsername() + "\n" +
-                "Phone Number: " + this.getPhone_number() + "\n" +
-                "Permissions: " + this.getPermissions() + "\n" +
+        return "Full Name: " + this.getFirstName() + this.getLastName() + "\n" +
+                "Username: " + this.getUserName() + "\n" +
+                "Phone Number: " + this.getPhone() + "\n" +
+                "Permissions: " + this.getPermission() + "\n" +
                 "User ID: " + this.getID() + "\n";
     }
 
@@ -131,21 +131,21 @@ public class UserObj implements PersonObj, Parcelable {
 
     @Override
     public void writeToParcel(@NonNull Parcel dest, int flags) {
-        dest.writeString(First_name);
-        dest.writeString(Last_name);
-        dest.writeString(username);
-        dest.writeString(phone_number);
-        dest.writeInt(Permissions);
+        dest.writeString(FirstName);
+        dest.writeString(LastName);
+        dest.writeString(UserName);
+        dest.writeString(Phone);
+        dest.writeInt(Permission);
         dest.writeString(UID);
     }
 
     private void readFromParcel(Parcel in) {
 
-        First_name = in.readString();
-        Last_name = in.readString();
-        username = in.readString();
-        phone_number = in.readString();
-        Permissions = in.readInt();
+        FirstName = in.readString();
+        LastName = in.readString();
+        UserName = in.readString();
+        Phone = in.readString();
+        Permission = in.readInt();
         UID = in.readString();
     }
 

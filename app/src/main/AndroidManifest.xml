@@ -25,17 +25,17 @@
             android:value="@string/map_key" />
 
         <activity
-            android:name=".SplashScreen"
-            android:exported="true"
-            android:theme="@style/Theme.AppCompat.NoActionBar">
+            android:name=".Frontend.SplashScreen"
+            android:theme="@style/Theme.AppCompat.NoActionBar"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".Home.BufferScreen" />
+        <activity android:name=".Frontend.BufferScreen"/>
         <activity
-            android:name=".Login.LoginScreen"
+            android:name=".Frontend.LoginScreen"
             android:exported="true"
             android:launchMode="singleInstance"
             android:theme="@style/Theme.EVSC">
@@ -44,13 +44,12 @@
                 android:value="" />
         </activity>
 
-        <activity android:name=".Profile.Register.RegisterScreen" />
-        <activity android:name=".Home.HomeScreen" />
-        <activity android:name=".Home.Station.AddStation" />
-        <activity android:name=".Profile.UserProfileScreen" />
-        <activity android:name=".Profile.AdminProfileScreen" />
-        <activity android:name=".Profile.EditStation.EditStationScreen" />
-        <activity android:name=".Login.ForgotPasswordScreen" />
+        <activity android:name=".Frontend.RegisterScreen" />
+        <activity android:name=".Frontend.HomeScreen" />
+        <activity android:name=".Frontend.AddStationScreen"/>
+        <activity android:name=".Frontend.UserProfileScreen"/>
+        <activity android:name=".Frontend.AdminProfileScreen"/>
+        <activity android:name=".Frontend.EditStationScreen"/>
 
 
     </application>

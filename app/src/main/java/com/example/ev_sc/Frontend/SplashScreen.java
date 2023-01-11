@@ -1,4 +1,4 @@
-package com.example.ev_sc;
+package com.example.ev_sc.Frontend;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -6,7 +6,7 @@ import android.os.Handler;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.ev_sc.Login.LoginScreen;
+import com.example.ev_sc.R;
 
 public class SplashScreen extends AppCompatActivity {
 
