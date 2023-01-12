@@ -47,7 +47,6 @@ public class AdminProfileScreen extends AppCompatActivity {
 
     //Widgets//
     private TextView admin_name;
-    private ImageView admin_pic;
     private Button add_station_button;
     private UserObj current_user;
 
@@ -137,7 +136,6 @@ public class AdminProfileScreen extends AppCompatActivity {
     private void init_widgets() {
         Log.d(TAG, "init_widgets : initializing widgets");
         admin_name = findViewById(R.id.title_admin);
-        admin_pic = findViewById(R.id.admin_profile_image);
         add_station_button = findViewById(R.id.admin_add_station_button);
     }
 
@@ -160,47 +158,7 @@ public class AdminProfileScreen extends AppCompatActivity {
     private void set_user_data_in_layout() {
         Log.d(TAG, "set_user_data_in_profile: Updating User Profile");
 
-//        StorageReference profileRef = this.fStorage.child("users/" + fAuth.getCurrentUser().getUid() + "profile_pic.png");
-//        profileRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-//            @Override
-//            public void onSuccess(Uri uri) {
-//                Picasso.get().load(uri).into(admin_pic);
-//            }
-//        });
-
         this.admin_name.setText(current_user.getUserName());
         //below should be the entire code for the user profile..//
     }
-
-//    @Override
-//    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-//        super.onActivityResult(requestCode, resultCode, data);
-//        if (requestCode == 1000) { // checks if the result code is really the open gallery intent//
-//            if (resultCode == Activity.RESULT_OK) { // means we have some data inside//
-//                Uri imageUri = data.getData();
-//
-////                profile_picture.setImageURI(imageUri);
-//
-//                uploadImageToFirebase(imageUri);
-//            }
-//        }
-//
-//    }
-//
-//    private void uploadImageToFirebase(Uri imageUri) {
-//        StorageReference fileRef = this.fStorage.child("users/" + fAuth.getCurrentUser().getUid() + "profile_pic.png");
-//        fileRef.putFile(imageUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-//            @Override
-//            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-//                fileRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-//                    @Override
-//                    public void onSuccess(Uri uri) {
-//                        Picasso.get().load(uri).into(admin_pic);
-//                    }
-//                });
-//            }
-//        });
-//
-//    }
-
 }
