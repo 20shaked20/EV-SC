@@ -7,6 +7,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 
@@ -22,19 +23,25 @@ import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
 
+/**
+ * This class handles the login screen for the user.
+ * he can navigate to:
+ * Register Screen,
+ * Forgot Password Screen
+ * Home Screen
+ */
 public class LoginScreen extends Activity {
-
-    Button login_button;
-    Button register_button_login;
-
-    EditText username_enter_login;
-    EditText password_enter_login;
 
     final String TAG = "Login Screen";
 
     APIClient client = new APIClient();
 
-
+    //widgets//
+    Button login_button;
+    Button register_button_login;
+    TextView forgot_password;
+    EditText username_enter_login;
+    EditText password_enter_login;
 
     @Override
     protected void onCreate(Bundle Instance) {
@@ -45,16 +52,18 @@ public class LoginScreen extends Activity {
         // init listeners //
         OnClickRegisterButton();
         OnClickLoginButton();
+        OnClickForgotPassword();
     }
 
     /**
      * Init widgets method
      */
     private void init_widgets() {
-        login_button = (Button) findViewById(R.id.login_button);
-        register_button_login = (Button) findViewById(R.id.register_button_login);
-        username_enter_login = (EditText) (findViewById(R.id.username_enter_login));
-        password_enter_login = (EditText) (findViewById(R.id.password_enter_login));
+        login_button = findViewById(R.id.login_button);
+        register_button_login = findViewById(R.id.register_button_login);
+        username_enter_login = findViewById(R.id.username_enter_login);
+        password_enter_login = findViewById(R.id.password_enter_login);
+        forgot_password = findViewById(R.id.forgot_password_login);
     }
 
     /**
@@ -63,7 +72,20 @@ public class LoginScreen extends Activity {
     private void OnClickRegisterButton() {
         register_button_login.setOnClickListener(view -> {
             Intent login_to_register = new Intent(view.getContext(), RegisterScreen.class);
-            startActivityForResult(login_to_register, 0);
+            startActivity(login_to_register);
+            finish();
+        });
+    }
+
+    /**
+     * This method is responsible to set a listener on the forgot password text view.
+     * it moves the user from login to forgot pass screen.
+     */
+    private void OnClickForgotPassword() {
+        forgot_password.setOnClickListener(view -> {
+            Intent login_to_forgot_pass = new Intent(view.getContext(), ForgotPasswordScreen.class);
+            startActivity(login_to_forgot_pass);
+            finish();
         });
     }
 
@@ -87,11 +109,11 @@ public class LoginScreen extends Activity {
             /*TODO: add more exceptions*/
 
             //authenticate the user
-            Log.d(TAG,"Sending login request to server");
+            Log.d(TAG, "Sending login request to server");
             client.sendGetRequest(ServerStrings.AUTH + email + "/:" + password, new Callback() {
                 @Override
                 public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                    Log.d(TAG,e.getMessage());
+                    Log.d(TAG, e.getMessage());
                 }
 
                 @Override
@@ -101,7 +123,7 @@ public class LoginScreen extends Activity {
                     Gson gson = new Gson();
                     UserObj user = gson.fromJson(responseBody, UserObj.class);
                     Intent login_to_map = new Intent(getApplicationContext(), HomeScreen.class);
-                    login_to_map.putExtra("User",user);
+                    login_to_map.putExtra("User", user);
                     startActivity(login_to_map);
                     finish();
                 }

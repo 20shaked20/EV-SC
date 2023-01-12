@@ -6,6 +6,7 @@ import android.os.Parcelable;
 import androidx.annotation.NonNull;
 
 public class UserObj implements PersonObj, Parcelable {
+
     private String FirstName;
     private String LastName;
     private String UserName;
@@ -61,43 +62,28 @@ public class UserObj implements PersonObj, Parcelable {
         this.LastName = lastName;
     }
 
-    /**
-     * Get method to receive the phone number of the user.
-     *
-     * @return String representing the phone number of the user.
-     */
+    @Override
     public String getPhone() {
         return Phone;
     }
 
-    /**
-     * Get method to receive the username of the user.
-     *
-     * @return String representing the username of the user.
-     */
+    @Override
     public String getUserName() {
         return UserName;
     }
 
-    /**
-     * Change the username method.
-     *
-     * @param userName String with the new username
-     */
+    @Override
     public void setUserName(String userName) {
         this.UserName = userName;
     }
 
-    /**
-     * Change the phone method.
-     *
-     * @param phone String with the new phone number
-     */
+    @Override
     public void setPhone(String phone) {
         this.Phone = phone;
     }
 
     @NonNull
+    @Override
     public String toString() { // override toString method to better represent user data (logging etc.)
         return "Full Name: " + this.getFirstName() + this.getLastName() + "\n" +
                 "Username: " + this.getUserName() + "\n" +

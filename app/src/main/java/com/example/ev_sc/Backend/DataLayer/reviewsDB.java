@@ -1,20 +1,15 @@
 package com.example.ev_sc.Backend.DataLayer;
 
 import android.util.Log;
-
 import com.example.ev_sc.Backend.Objects.reviewsObj;
-import com.google.firebase.firestore.FirebaseFirestore;
-
 import java.util.HashMap;
 
 public class reviewsDB {
 
-    FirebaseFirestore fStore = FirebaseFirestore.getInstance();
-
     final private String TAG = "ReviewsDB";
 
     /**
-     * this method adds a new Review to the database.
+     * this method maps a review object
      *
      * @return a mapped review object
      */

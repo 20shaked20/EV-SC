@@ -69,16 +69,27 @@ import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
 
-
+/**
+ * This class handles the Home screen for the user.
+ * he can navigate to:
+ * Station Widget
+ * User profile Screen/ Admin profile Screen upon permission.
+ * Search bar activity
+ */
 public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback {
 
 
     private static final String TAG = "Home";
 
+    /*finals regarding the permissions of the user and map activity*/
     private static final String FINE_LOCATION = Manifest.permission.ACCESS_FINE_LOCATION;
     private static final String COURSE_LOCATION = Manifest.permission.ACCESS_COARSE_LOCATION;
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1234;
     private static final float DEFAULT_ZOOM = 15f;
+
+    /*vars*/
+    private Boolean mLocationPermissionGranted = false;
+    private GoogleMap mMap;
 
     /*widgets*/
     private EditText search_bar;
@@ -86,28 +97,26 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
     /*popup station*/
     private AlertDialog.Builder dialogBuilder;
     private AlertDialog dialog_popup_station;
-    AlertDialog dialog_search_station;
+    private AlertDialog dialog_search_station;
 
-    /*vars*/
-    private Boolean mLocationPermissionGranted = false;
-    private GoogleMap mMap;
+    /*mapped data*/
+    private HashMap<String, View> StationPopUps = new HashMap<>(); //this map is used to map each station to its popup window//
+    private HashMap<String, StationObj> all_stations = new HashMap<>(); // this is used to map all the stations upon login //
 
-    /*maps*/
-    HashMap<String, View> StationPopUps = new HashMap<String, View>(); //this map is used to map each station to its poppable window//
-    private HashMap<String, StationObj> all_stations = new HashMap<String, StationObj>(); // this is used to map all the stations upon login //
+    /*database*/
+    private final StationDB db = new StationDB();
+    private final reviewsDB Rdb = new reviewsDB();
+    private final FavoritesDB Fdb = new FavoritesDB();
 
-    /*server*/
-    APIClient client = new APIClient();
-    StationDB db = new StationDB();
-    reviewsDB Rdb = new reviewsDB();
-    FavoritesDB Fdb = new FavoritesDB();
+    /*logics*/
+    private final APIClient client = new APIClient();
+    private final HomeScreenLogics HSL = new HomeScreenLogics();
 
     /*user profile handle*/
     private UserObj current_user;
     private Location currentLocation;
     private boolean favorite_flag = false;
 
-    private final HomeScreenLogics HSL = new HomeScreenLogics();
 
     @Override
     public void onCreate(Bundle Instance) {
@@ -119,8 +128,6 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
         getLocationPermission();
 
     }
-    // TODO: tmp for favorite locating after moving from profile to home//
-
 
     /**
      * this method responsible for creating the menu bar
@@ -156,10 +163,9 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
                     return true;
                 } else {
                     Intent home_to_profile = new Intent(HomeScreen.this, UserProfileScreen.class);
-                    //load profile upon clicking on it//
                     home_to_profile.putExtra("User", current_user);
-                    startActivity(home_to_profile);
 
+                    startActivity(home_to_profile);
                     finish();
                     return true;
                 }
@@ -199,7 +205,7 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
             }
         });
 
-        //doing this so it will wait for the onRespone to complete//
+        //doing this so it will wait for the onResponse to complete//
         try {
             latch.await();
             if (!all_stations.isEmpty()) {
@@ -285,7 +291,7 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
     }
 
     /**
-     * This method locates the address ltlng from the database given the address name!
+     * This method locates the address lat-lng from the database given the address name!
      */
     @SuppressLint("SetTextI18n")
     private void geoLocate() {
@@ -507,7 +513,6 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
      * it invokes the moment we click on a marker omn the map and shows the details of the station
      */
     @SuppressLint({"SetTextI18n", "CutPasteId"})
-//     ignores cases where numbers are turned to strings.
     public void createNewStationPopup(StationObj station) {
         Log.d(TAG, "createNewStationPopup: creating new popup window for station => " + station.getStation_name());
 
@@ -539,6 +544,9 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
                 station_popup_to_edit_station.putExtra("Station", station);
                 station_popup_to_edit_station.putExtra("User", current_user);
                 startActivity(station_popup_to_edit_station);
+                dialog_popup_station.dismiss();
+                finish();
+
             });
         } else {
             edit_station_button.setVisibility(View.GONE);
@@ -593,6 +601,7 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
      * @param dialogBuilder   the dialog builder we invoke
      * @param station         the station we update and do our calculations on.
      */
+    @SuppressLint("SetTextI18n")
     private void RatingWidget(FloatingActionButton rate_station, TextView rate_of_station, AlertDialog.Builder dialogBuilder, StationObj station) {
         rate_station.setOnClickListener(v -> {
             final View PopupRating = getLayoutInflater().inflate(R.layout.rating, null);
@@ -604,54 +613,52 @@ public class HomeScreen extends AppCompatActivity implements OnMapReadyCallback 
             Button button_submit_rating = PopupRating.findViewById(R.id.button_submit_rating);
             RatingBar rating_bar = PopupRating.findViewById(R.id.rating_bar);
             EditText review_line = PopupRating.findViewById(R.id.review_line);
-            button_submit_rating.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    //vars//
-                    double user_rating = rating_bar.getRating();
-                    double curr_grade = station.getAverageGrade();
-                    double SumOf_reviews = station.getSumOf_reviews();
-                    String curr_review = review_line.getText().toString().trim();
+            button_submit_rating.setOnClickListener(v1 -> {
+                //vars//
+                double user_rating = rating_bar.getRating();
+                double curr_grade = station.getAverageGrade();
+                double SumOf_reviews = station.getSumOf_reviews();
+                String curr_review = review_line.getText().toString().trim();
 
-                    //review handle//
-                    reviewsObj review = new reviewsObj(current_user.getID(), user_rating, curr_review);
-                    HashMap<String, Object> mapped_review = Rdb.MapReview(review);
-                    Log.d(TAG, "Sending review post request to server");
-                    client.sendPostRequest(ServerStrings.ADD_REVIEW + "/:" + station.getID() + "/review", mapped_review, new Callback() {
-                        @Override
-                        public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                            Log.d(TAG, e.getMessage());
-                        }
+                //review handle//
+                reviewsObj review = new reviewsObj(current_user.getID(), user_rating, curr_review);
+                HashMap<String, Object> mapped_review = Rdb.MapReview(review);
+                Log.d(TAG, "Sending review post request to server");
+                client.sendPostRequest(ServerStrings.ADD_REVIEW + "/:" + station.getID() + "/review", mapped_review, new Callback() {
+                    @Override
+                    public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                        Log.d(TAG, e.getMessage());
+                    }
 
-                        @Override
-                        public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
-                            String responseBody = response.body().string();
-                            Log.d(TAG, "Server response: " + responseBody);
-                        }
-                    });
-                    //rating handle//
-                    double updated_grade = HSL.AverageRating(SumOf_reviews, user_rating, curr_grade);
-                    //doing this in order for the changes be affected immediately//
-                    rate_of_station.setText(Double.toString(updated_grade));
-                    station.setAvgGrade(updated_grade);
-                    station.setSumOf_reviews(SumOf_reviews + 1);
+                    @Override
+                    public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                        String responseBody = response.body().string();
+                        Log.d(TAG, "Server response: " + responseBody);
+                    }
+                });
 
-                    HashMap<String, Object> updateStation = db.MapStation(station);
-                    Log.d(TAG, "Sending Grade update request to server");
-                    client.sendPostRequest(ServerStrings.UPDATE_STATION + "/:" + station.getID(), updateStation, new Callback() {
-                        @Override
-                        public void onFailure(@NonNull Call call, IOException e) {
-                            Log.d(TAG, e.getMessage());
-                        }
+                //rating handle//
+                double updated_grade = HSL.AverageRating(SumOf_reviews, user_rating, curr_grade);
+                //doing this in order for the changes be affected immediately//
+                rate_of_station.setText(Double.toString(updated_grade));
+                station.setAvgGrade(updated_grade);
+                station.setSumOf_reviews(SumOf_reviews + 1);
 
-                        @Override
-                        public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
-                            String responseBody = response.body().string();
-                            Log.d(TAG, "Server response: " + responseBody);
-                        }
-                    });
-                    rating_dialog.dismiss();
-                }
+                HashMap<String, Object> updateStation = db.MapStation(station);
+                Log.d(TAG, "Sending Grade update request to server");
+                client.sendPostRequest(ServerStrings.UPDATE_STATION + station.getID(), updateStation, new Callback() {
+                    @Override
+                    public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                        Log.d(TAG, e.getMessage());
+                    }
+
+                    @Override
+                    public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                        String responseBody = response.body().string();
+                        Log.d(TAG, "Server response: " + responseBody);
+                    }
+                });
+                rating_dialog.dismiss();
             });
         });
     }

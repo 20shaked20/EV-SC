@@ -4,20 +4,36 @@ public interface reviewsInterface {
     /**
      * @return String representing the UID of the user
      */
-    public String getUID_user();
+    String getUID_user();
+
     /**
      * @return Double representing the Stars of the Review
      */
-    public Double getStars();
+    double getStars();
+
     /**
      * @return String representing the Review
      */
-    public String getReview();
+    String getReview();
 
+    /**
+     * Changes the user id for the current review
+     *
+     * @param uid new UID
+     */
+    void setUID_user(String uid);
 
-    public void setUID_user(String uid);
+    /**
+     * Sets a new amount of stars for the current review
+     *
+     * @param x amount of stars
+     */
+    void setStars(double x);
 
-    public void setStars(Double x);
-
-    public void setReview(String s);
+    /**
+     * Sets a new review for the current review
+     *
+     * @param s string contains a review.
+     */
+    void setReview(String s);
 }

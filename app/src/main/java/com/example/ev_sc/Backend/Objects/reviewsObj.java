@@ -1,48 +1,48 @@
 package com.example.ev_sc.Backend.Objects;
 
-public class reviewsObj {
+public class reviewsObj implements reviewsInterface {
 
     private String UID_user;
-    private Double stars;
+    private double stars;
     private String review;
 
 
-    public reviewsObj(String UID_user, Double x, String review) {
-
+    public reviewsObj(String UID_user, double x, String review) {
         this.UID_user = UID_user;
         this.stars = x;
         this.review = review;
     }
 
     public reviewsObj(reviewsObj review) {
-
         this.UID_user = review.UID_user;
         this.stars = review.stars;
         this.review = review.review;
     }
 
-
+    @Override
     public String getUID_user() {
         return this.UID_user;
     }
 
-    public Double getStars() {
+    @Override
+    public double getStars() {
         return this.stars;
     }
 
+    @Override
     public String getReview() {
         return this.review;
     }
 
+    @Override
+    public void setUID_user(String uid) { this.UID_user = uid; }
 
-    public void setUID_user(String uid) {
-        this.UID_user = uid;
-    }
-
-    public void setStars(Double x) {
+    @Override
+    public void setStars(double x) {
         this.stars = x;
     }
 
+    @Override
     public void setReview(String s) {
         this.review = s;
     }

@@ -1,17 +1,23 @@
 package com.example.ev_sc.Frontend;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.EditText;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.ev_sc.Backend.APIClient;
 import com.example.ev_sc.Backend.DataLayer.StationDB;
 import com.example.ev_sc.Backend.Objects.StationObj;
+import com.example.ev_sc.Backend.Objects.UserObj;
 import com.example.ev_sc.Backend.ServerStrings;
 import com.example.ev_sc.R;
 import com.google.firebase.firestore.GeoPoint;
@@ -24,17 +30,27 @@ import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
 
-public class AddStationScreen extends Activity {
+/**
+ * This class handles the Add Station Screen for Admins
+ */
+public class AddStationScreen extends AppCompatActivity {
 
+    private static final String TAG = "Add Station"; // tag for logging
+
+    private final APIClient client = new APIClient();
+    private final StationDB db = new StationDB();
+    private UserObj current_user;
+
+    //widgets//
     EditText station_name;
     EditText station_address;
     EditText station_charging;
     EditText station_avg_grade;
     EditText station_latitude;
     EditText station_longitude;
-
     Button add_station_button;
 
+    //vars//
     String name;
     String address;
     String charging_stations;
@@ -42,20 +58,75 @@ public class AddStationScreen extends Activity {
     String latitude;
     String longitude;
 
-    //database//
-    APIClient client = new APIClient();
-    StationDB db = new StationDB();
-
-
-    private static final String TAG = "Add Station"; // tag for logging
-
     @Override
     protected void onCreate(Bundle Instance) {
         super.onCreate(Instance);
         setContentView(R.layout.add_station);
 
+        getExtras();
         init_widgets();
         OnClickAddButton();
+    }
+
+    private void getExtras() {
+        Log.d(TAG, "getExtras => getting the data from the previous intent to load user.");
+        current_user = getIntent().getParcelableExtra("User");
+        assert current_user != null;
+        Log.d(TAG, "getExtras => grabbed user data \n" + current_user);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.profile_appbar, menu);
+        return true;
+    }
+
+    /**
+     * this method is responsible for handling the listeners on the action bar items
+     *
+     * @param item menu bar item
+     * @return true on success
+     */
+    @SuppressLint("NonConstantResourceId")
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        switch (item.getItemId()) {
+
+            case R.id.map_menu: {
+                Log.d(TAG, "Selected: Move from Profile to map");
+
+                Intent edit_station_to_home = new Intent(AddStationScreen.this, HomeScreen.class);
+                edit_station_to_home.putExtra("User", current_user);
+
+                startActivity(edit_station_to_home);
+                finish();
+                return true;
+            }
+            case R.id.logut_menu: {
+                Log.d(TAG, "Selected: Logout");
+
+                Log.d(TAG, "Sending signOut request to server");
+                client.sendGetRequest(ServerStrings.USER_LOGOUT.toString(), new Callback() {
+                    @Override
+                    public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                        Log.d(TAG, e.getMessage());
+                    }
+
+                    @Override
+                    public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                        String responseBody = response.body().string();
+                        Log.d(TAG, "Server response: " + responseBody);
+                        startActivity(new Intent(AddStationScreen.this, LoginScreen.class));
+                        finish();
+                    }
+                });
+                return true;
+            }
+            default:
+                return super.onOptionsItemSelected(item);
+
+        }
     }
 
     /**
@@ -105,6 +176,17 @@ public class AddStationScreen extends Activity {
         });
     }
 
+    /**
+     * This method is responsible for validating the input entered by the Admin in the text edit widgets.
+     *
+     * @param s_name     station name
+     * @param s_address  station address
+     * @param s_charging amount of charging plugs
+     * @param s_grade    current grade ( at first set to 0 )
+     * @param s_lat      station latitude
+     * @param s_lon      station longitude
+     * @return returns true if all data is validated, false otherwise.
+     */
     private boolean validate_input(String s_name, String s_address, String s_charging, String s_grade, String s_lat, String s_lon) {
 
         if (TextUtils.isEmpty(s_name) || (TextUtils.isDigitsOnly(s_name))) {
@@ -138,6 +220,9 @@ public class AddStationScreen extends Activity {
         return true;
     }
 
+    /**
+     * Clears the text after pressing adding the station
+     */
     private void clear_text() {
         station_name.getText().clear();
         station_address.getText().clear();
@@ -149,6 +234,9 @@ public class AddStationScreen extends Activity {
         Log.d(TAG, "Cleared user input text");
     }
 
+    /**
+     * init all the widgets upon entering the activity.
+     */
     private void init_widgets() {
         station_name = findViewById(R.id.station_name);
         station_address = findViewById(R.id.station_address);
@@ -161,6 +249,9 @@ public class AddStationScreen extends Activity {
         Log.d(TAG, "Initialized widgets");
     }
 
+    /**
+     * gets the input the admin entered inside the text edit widgets.
+     */
     private void get_user_input() {
         name = station_name.getText().toString().trim();
         address = station_address.getText().toString().trim();
@@ -173,6 +264,9 @@ public class AddStationScreen extends Activity {
                 + ", " + "Average Grade: " + station_average_grade + ", " + "Coordinates: " + latitude + "," + longitude);
     }
 
+    /**
+     * Clears the input from the text edit widgets.
+     */
     private void clear_input() {
         name = "";
         address = "";

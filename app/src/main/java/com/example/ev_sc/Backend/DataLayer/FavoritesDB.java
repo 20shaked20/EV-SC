@@ -31,6 +31,12 @@ public class FavoritesDB {
         return fav_station;
     }
 
+    /**
+     * This parses a json array of favorites into a list of favorites.
+     *
+     * @param parser json array containing favorite stations
+     * @return List of favorite station objects
+     */
     public List<FavoriteObj> station_parser(JsonArray parser) {
         List<FavoriteObj> parsed_stations_list = new ArrayList<>();
         for (JsonElement element : parser) {

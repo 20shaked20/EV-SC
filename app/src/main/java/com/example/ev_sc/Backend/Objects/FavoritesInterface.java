@@ -10,26 +10,26 @@ public interface FavoritesInterface {
      *
      * @return the station name
      */
-    public String getStation_name();
+    String getStation_name();
 
     /**
      * Get location method
      *
      * @return the location representing the station (GeoPoint)
      */
-    public GeoPoint getStation_GeoPoint();
+    GeoPoint getStation_GeoPoint();
 
     /**
      * Get location method
      *
      * @return the location representing the station (Lat,Lng)
      */
-    public LatLng getStation_LatLng();
+    LatLng getStation_LatLng();
 
     /**
      * Get id method
      *
      * @return the station id
      */
-    public String getStation_id();
+    String getStation_id();
 }

@@ -33,33 +33,34 @@ import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
 
-
+/**
+ * This class handles the Admin profile screen
+ * he can navigate to:
+ * Home Screen
+ * Logout Screen
+ * Add station Screen
+ */
 public class AdminProfileScreen extends AppCompatActivity {
 
-    // Widgets
+    final private String TAG = "AdminProfile";
+    APIClient client = new APIClient();
+
+    //Widgets//
     private TextView admin_name;
     private ImageView admin_pic;
     private Button add_station_button;
     private UserObj current_user;
 
-    // Vars
-    final private String TAG = "AdminProfile";
-    APIClient client = new APIClient();
-
-    StorageReference fStorage = FirebaseStorage.getInstance().getReference();
 
     @Override
     public void onCreate(Bundle Instance) {
-
         Log.d(TAG, "Initializing Admin Profile Screen");
-
         super.onCreate(Instance);
         setContentView(R.layout.admin_profile);
 
         getExtras();
         init_widgets();
-        set_user_data_in_layout(current_user);
-
+        set_user_data_in_layout();
         // Listeners
         OnClickAddStationButton();
     }
@@ -68,7 +69,7 @@ public class AdminProfileScreen extends AppCompatActivity {
         Log.d(TAG, "getExtras => getting the data from the previous intent to load user.");
         current_user = getIntent().getParcelableExtra("User");
         assert current_user != null;
-        Log.d(TAG, "getExtras => grabbed user data \n" + current_user.toString());
+        Log.d(TAG, "getExtras => grabbed user data \n" + current_user);
     }
 
     /**
@@ -117,7 +118,6 @@ public class AdminProfileScreen extends AppCompatActivity {
                     @Override
                     public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                         String responseBody = response.body().string();
-                        //TODO: fix this, right now response body is empty..  why?
                         Log.d(TAG, "Server response: " + responseBody);
                         startActivity(new Intent(AdminProfileScreen.this, LoginScreen.class));
                         finish();
@@ -136,11 +136,40 @@ public class AdminProfileScreen extends AppCompatActivity {
      */
     private void init_widgets() {
         Log.d(TAG, "init_widgets : initializing widgets");
-
         admin_name = findViewById(R.id.title_admin);
         admin_pic = findViewById(R.id.admin_profile_image);
         add_station_button = findViewById(R.id.admin_add_station_button);
+    }
 
+    /**
+     * Adds listener for the add station button to move to AddStationScreen
+     */
+    private void OnClickAddStationButton() {
+        add_station_button.setOnClickListener(view -> {
+            Intent login_to_add_station = new Intent(view.getContext(), AddStationScreen.class);
+            login_to_add_station.putExtra("User", current_user);
+
+            startActivity(login_to_add_station);
+            finish();
+        });
+    }
+
+    /**
+     * This method is responsible for updating the user profile via the current user login details.
+     */
+    private void set_user_data_in_layout() {
+        Log.d(TAG, "set_user_data_in_profile: Updating User Profile");
+
+//        StorageReference profileRef = this.fStorage.child("users/" + fAuth.getCurrentUser().getUid() + "profile_pic.png");
+//        profileRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+//            @Override
+//            public void onSuccess(Uri uri) {
+//                Picasso.get().load(uri).into(admin_pic);
+//            }
+//        });
+
+        this.admin_name.setText(current_user.getUserName());
+        //below should be the entire code for the user profile..//
     }
 
 //    @Override
@@ -173,33 +202,5 @@ public class AdminProfileScreen extends AppCompatActivity {
 //        });
 //
 //    }
-
-    private void OnClickAddStationButton() {
-        add_station_button.setOnClickListener(view -> {
-            Intent login_to_add_station = new Intent(view.getContext(), AddStationScreen.class);
-            startActivityForResult(login_to_add_station, 0);
-            finish();
-        });
-    }
-
-
-    /**
-     * This method is responsible for updating the user profile via the current user login details.
-     */
-    private void set_user_data_in_layout(UserObj curr) {
-        Log.d(TAG, "set_user_data_in_profile: Updating User Profile");
-
-//        StorageReference profileRef = this.fStorage.child("users/" + fAuth.getCurrentUser().getUid() + "profile_pic.png");
-//        profileRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-//            @Override
-//            public void onSuccess(Uri uri) {
-//                Picasso.get().load(uri).into(admin_pic);
-//            }
-//        });
-
-        this.admin_name.setText(curr.getUserName());
-        //below should be the entire code for the user profile..//
-    }
-
 
 }

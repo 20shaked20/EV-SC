@@ -13,6 +13,6 @@ public class BufferScreen extends Activity {
         setContentView(R.layout.splash_screen);
 
         // Add a 5 second delay
-        new Handler().postDelayed(() -> finish(), 3000);  // 3 seconds delay
+        new Handler().postDelayed(this::finish, 3000);  // 3 seconds delay
     }
 }

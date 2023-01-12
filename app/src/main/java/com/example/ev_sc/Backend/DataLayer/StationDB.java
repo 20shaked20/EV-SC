@@ -3,8 +3,6 @@ package com.example.ev_sc.Backend.DataLayer;
 import android.util.Log;
 
 import com.example.ev_sc.Backend.Objects.StationObj;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.GeoPoint;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -16,10 +14,13 @@ import java.util.List;
 
 public class StationDB {
 
-    static FirebaseFirestore fStore = FirebaseFirestore.getInstance();
-
     final private String TAG = "StationDB";
 
+    /**
+     * this method maps a station object
+     *
+     * @return a mapped station object
+     */
     public HashMap<String, Object> MapStation(StationObj station) {
         HashMap<String, Object> mapped_station = new HashMap<>();
 
@@ -35,6 +36,12 @@ public class StationDB {
         return mapped_station;
     }
 
+    /**
+     * This parses a json array of all stations into a list of stations.
+     *
+     * @param parser json array containing all the stations
+     * @return List of all stations in the database
+     */
     public List<StationObj> station_parser(JsonArray parser) {
         List<StationObj> parsed_stations_list = new ArrayList<>();
         for (JsonElement element : parser) {
@@ -62,11 +69,5 @@ public class StationDB {
         }
         return parsed_stations_list;
     }
-
-    public void deleteStationFromDatabase(StationObj Station) {
-        DocumentReference documentReference = fStore.collection("stations").document(Station.getID());
-        documentReference.delete().addOnSuccessListener(unused -> Log.d(TAG, "Station deleted"));
-    }
-
 }
 

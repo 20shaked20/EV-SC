@@ -28,8 +28,24 @@ import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
 
+/**
+ * This class handles the Edit screen for Admins.
+ * he can navigate to:
+ * Home Screen
+ * Logout -> Login Screen
+ */
 public class EditStationScreen extends AppCompatActivity {
 
+    private static final String TAG = "Edit Station";
+
+    APIClient client = new APIClient();
+    StationDB db = new StationDB();
+
+    /*objects*/
+    private UserObj current_user;
+    private StationObj current_station;
+
+    /*widgets*/
     private EditText station_name;
     private EditText station_address;
     private EditText station_charging;
@@ -38,12 +54,6 @@ public class EditStationScreen extends AppCompatActivity {
     private Button save_button;
     private Button remove_button;
 
-    private UserObj current_user;
-    private StationObj current_station;
-
-    private static final String TAG = "Edit Station";
-    APIClient client = new APIClient();
-    StationDB db = new StationDB();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,49 +64,17 @@ public class EditStationScreen extends AppCompatActivity {
         getExtras();
         set_station_data_in_layout(current_station);
 
-        Log.d(TAG, "Station details:" + "\n" + current_station);
+        /*listeners*/
+        onClickListenerSaveButton();
+        onClickListenerRemoveButton();
 
-        save_button.setOnClickListener(view -> {
-            AlertDialog.Builder builder = new AlertDialog.Builder(EditStationScreen.this);
-            builder.setTitle("Are you sure you want to update station details?");
-            builder.setPositiveButton("Yes", (dialog, which) -> {
+    }
 
-                current_station.setStation_name(station_name.getText().toString());
-                current_station.setStation_address(station_address.getText().toString());
-                current_station.setCharging_stations(Integer.parseInt(station_charging.getText().toString()));
-                //parsing geo location//
-                double lat = Double.parseDouble(station_lat.getText().toString().trim());
-                double lon = Double.parseDouble(station_lon.getText().toString().trim());
-                current_station.setLocation(new GeoPoint(lat, lon));
-                // add station reviews
-
-                HashMap<String, Object> updateStation = db.MapStation(current_station);
-                Log.d(TAG, "STATION!!!!!!!!!!!!!!!!!!!!!!!!!! => " + current_station);
-
-                Log.d(TAG, "Sending Grade update request to server");
-                client.sendPostRequest(ServerStrings.UPDATE_STATION + current_station.getID(), updateStation, new Callback() {
-                    @Override
-                    public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                        Log.d(TAG, e.getMessage());
-                    }
-
-                    @Override
-                    public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
-                        String responseBody = response.body().string();
-                        Log.d(TAG, "Server response: " + responseBody);
-
-                    }
-                });
-
-                Log.d(TAG, "Station edited, new station details:" + "\n" + current_station);
-                finish();
-            });
-            builder.setNegativeButton("No", (dialog, which) -> {
-                // Do nothing
-            });
-            builder.show();
-        });
-
+    /**
+     * This listener is responsible to act once pressing the remove button,
+     * it will request from the server to delete the chosen station.
+     */
+    private void onClickListenerRemoveButton() {
         remove_button.setOnClickListener(view -> {
             AlertDialog.Builder builder = new AlertDialog.Builder(EditStationScreen.this);
             builder.setTitle("Are you sure you want to delete this station? THIS CAN'T BE REVERSED");
@@ -113,11 +91,64 @@ public class EditStationScreen extends AppCompatActivity {
                     public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                         String responseBody = response.body().string();
                         Log.d(TAG, "Server response: " + responseBody);
+                        Log.d(TAG, "Station removed, new station details:" + "\n" + current_station);
+
+                        Intent edit_station_to_home = new Intent(EditStationScreen.this, HomeScreen.class);
+                        edit_station_to_home.putExtra("User", current_user);
+
+                        startActivity(edit_station_to_home);
+                        finish();
                     }
                 });
+            });
+            builder.setNegativeButton("No", (dialog, which) -> {
+                // Do nothing
+            });
+            builder.show();
+        });
+    }
 
-                Log.d(TAG, "Station removed, new station details:" + "\n" + current_station);
-                finish();
+    /**
+     * This listener is responsible to act once pressing the save button,
+     * it will call the server with data given in the edit texts and will send a request to edit the chosen station.
+     */
+    private void onClickListenerSaveButton() {
+        save_button.setOnClickListener(view -> {
+            AlertDialog.Builder builder = new AlertDialog.Builder(EditStationScreen.this);
+            builder.setTitle("Are you sure you want to update station details?");
+            builder.setPositiveButton("Yes", (dialog, which) -> {
+
+                current_station.setStation_name(station_name.getText().toString());
+                current_station.setStation_address(station_address.getText().toString());
+                current_station.setCharging_stations(Integer.parseInt(station_charging.getText().toString()));
+                //parsing geo location//
+                double lat = Double.parseDouble(station_lat.getText().toString().trim());
+                double lon = Double.parseDouble(station_lon.getText().toString().trim());
+                current_station.setLocation(new GeoPoint(lat, lon));
+                // add station reviews
+
+                HashMap<String, Object> updateStation = db.MapStation(current_station);
+
+                Log.d(TAG, "Sending Grade update request to server");
+                client.sendPostRequest(ServerStrings.UPDATE_STATION + current_station.getID(), updateStation, new Callback() {
+                    @Override
+                    public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                        Log.d(TAG, e.getMessage());
+                    }
+
+                    @Override
+                    public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                        String responseBody = response.body().string();
+                        Log.d(TAG, "Server response: " + responseBody);
+                        Log.d(TAG, "Station edited, new station details:" + "\n" + current_station);
+
+                        Intent edit_station_to_home = new Intent(EditStationScreen.this, HomeScreen.class);
+                        edit_station_to_home.putExtra("User", current_user);
+
+                        startActivity(edit_station_to_home);
+                        finish();
+                    }
+                });
             });
             builder.setNegativeButton("No", (dialog, which) -> {
                 // Do nothing
@@ -167,7 +198,6 @@ public class EditStationScreen extends AppCompatActivity {
                     @Override
                     public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                         String responseBody = response.body().string();
-                        //TODO: fix this, right now response body is empty..  why?
                         Log.d(TAG, "Server response: " + responseBody);
                         startActivity(new Intent(EditStationScreen.this, LoginScreen.class));
                         finish();
@@ -197,6 +227,12 @@ public class EditStationScreen extends AppCompatActivity {
 
     }
 
+    /**
+     * This method gets the data from the last intent,
+     * here we extract:
+     * The current user logged in.
+     * The current station we wish to edit.
+     */
     private void getExtras() {
         Log.d(TAG, "getExtras => getting the data from the previous intent");
         this.current_station = getIntent().getParcelableExtra("Station");
@@ -207,6 +243,11 @@ public class EditStationScreen extends AppCompatActivity {
         Log.d(TAG, "getExtras => grabbed user data \n" + current_user);
     }
 
+    /**
+     * This method sets the data given to us by the station in the screen.
+     *
+     * @param curr
+     */
     @SuppressLint("SetTextI18n")
     private void set_station_data_in_layout(StationObj curr) {
         Log.d(TAG, "set_station_data_in_layout: Updating Station Profile");
@@ -216,7 +257,5 @@ public class EditStationScreen extends AppCompatActivity {
         this.station_charging.setText(Integer.toString(curr.getCharging_stations()));
         this.station_lat.setText(Double.toString(curr.getLocation().getLatitude()));
         this.station_lon.setText(Double.toString(curr.getLocation().getLongitude()));
-
-
     }
 }

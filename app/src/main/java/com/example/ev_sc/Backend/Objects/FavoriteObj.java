@@ -1,5 +1,7 @@
 package com.example.ev_sc.Backend.Objects;
 
+import androidx.annotation.NonNull;
+
 import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.firestore.GeoPoint;
 
@@ -35,6 +37,7 @@ public class FavoriteObj implements FavoritesInterface {
         return station_id;
     }
 
+    @NonNull
     @Override
     public String toString() {
         return "FavoriteObj{" +
