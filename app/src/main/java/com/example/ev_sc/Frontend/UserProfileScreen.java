@@ -1,7 +1,9 @@
 package com.example.ev_sc.Frontend;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
@@ -13,6 +15,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.ev_sc.Backend.APIClient;
@@ -23,8 +26,11 @@ import com.example.ev_sc.Backend.Objects.FavoriteObj;
 import com.example.ev_sc.Backend.DataLayer.FavoritesDB;
 import com.example.ev_sc.R;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonParser;
+import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -58,6 +64,7 @@ public class UserProfileScreen extends AppCompatActivity {
     private ImageView edit_profile;
     private ListView favorite_stations;
     private UserObj current_user;
+    private final StorageReference fStorage = FirebaseStorage.getInstance().getReference();
 
     @Override
     public void onCreate(Bundle Instance) {
@@ -153,7 +160,7 @@ public class UserProfileScreen extends AppCompatActivity {
         Log.d(TAG, "getExtras => getting the data from the previous intent to load user.");
         current_user = getIntent().getParcelableExtra("User");
         assert current_user != null;
-        Log.d(TAG, "getExtras => grabbed user data \n" + current_user.toString());
+        Log.d(TAG, "getExtras => grabbed user data \n" + current_user);
 
     }
 
@@ -204,8 +211,8 @@ public class UserProfileScreen extends AppCompatActivity {
     private void set_user_data_in_layout() {
         Log.d(TAG, "set_user_data_in_profile: Updating User Profile");
 
-//        StorageReference profileRef = this.fStorage.child("users/" + current_user.getID() + "profile_pic.png");
-//        profileRef.getDownloadUrl().addOnSuccessListener(uri -> Picasso.get().load(uri).into(profile_picture));
+        StorageReference profileRef = this.fStorage.child("users/" + current_user.getID() + "profile_pic.png");
+        profileRef.getDownloadUrl().addOnSuccessListener(uri -> Picasso.get().load(uri).into(profile_picture));
 
         this.profile_username.setText(this.current_user.getUserName());
         //below should be the entire code for the user profile..//
@@ -230,30 +237,26 @@ public class UserProfileScreen extends AppCompatActivity {
     }
 
 
-//    // TODO: IMAGE HANDLE, this also needs to be inside the SERVER (LATER) //
-//    @Override
-//    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-//        super.onActivityResult(requestCode, resultCode, data);
-//        if (requestCode == 1000) { // checks if the result code is really the open gallery intent//
-//            if (resultCode == Activity.RESULT_OK) { // means we have some data inside//
-//                Uri imageUri = data.getData();
-//
-////                profile_picture.setImageURI(imageUri);
-//
-//                uploadImageToFirebase(imageUri);
-//            }
-//        }
-//    }
-//
-//    private void uploadImageToFirebase(Uri imageUri) {
-//        StorageReference fileRef = this.fStorage.child("users/" + current_user.getID() + "profile_pic.png");
-//        fileRef.putFile(imageUri).addOnSuccessListener(taskSnapshot -> fileRef.getDownloadUrl().
-//                addOnSuccessListener(uri -> Picasso.get().load(uri).into(profile_picture)));
-//    }
+    // TODO: IMAGE HANDLE, this also needs to be inside the SERVER (LATER) //
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 1000) { // checks if the result code is really the open gallery intent//
+            if (resultCode == Activity.RESULT_OK) { // means we have some data inside//
+                assert data != null;
+                Uri imageUri = data.getData();
+                profile_picture.setImageURI(imageUri);
+                uploadImageToFirebase(imageUri);
+            }
+        }
+    }
 
-
+    private void uploadImageToFirebase(Uri imageUri) {
+        StorageReference fileRef = this.fStorage.child("users/" + current_user.getID() + "profile_pic.png");
+        fileRef.putFile(imageUri).addOnSuccessListener(taskSnapshot -> fileRef.getDownloadUrl().
+                addOnSuccessListener(uri -> Picasso.get().load(uri).into(profile_picture)));
+    }
 }
-
 
 
 
