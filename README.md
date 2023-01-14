@@ -45,4 +45,4 @@ Fuzzy algorithm is a method that offers an improved ability to identify two elem
 In other words, a fuzzy method may be applied when an exact match is not found for phrases or sentences on a database.</br>
 
 ## Reading Material
-* [Agile&Scrum]([https://en.wikipedia.org/wiki/User_Datagram_Protoco](https://en.wikipedia.org/wiki/Scrum_(software_development))
+* [Scrum](https://en.wikipedia.org/wiki/Scrum_(software_development))
