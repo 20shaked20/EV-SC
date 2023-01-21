@@ -10,7 +10,8 @@ Electric vehicle charging station location app
 * [Yuval's github](https://github.com/YuvalBubnovsky)
 
 ## Introduction
-
+In order to see our work, we've dedicated a simply wiki page for it - </br>
+[wiki app](https://github.com/20shaked20/EV-SC/wiki) where you can see more about our project. </br>
 This project was created in order to to provide accessibility for electric vechicle charging stations. </br>
 In our project we used already known locations and created our own database for stations. </br>
 our application is divided supports two types of users: </br>
